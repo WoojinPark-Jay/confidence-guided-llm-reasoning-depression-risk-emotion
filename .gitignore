@@ -1,0 +1,12 @@
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.venv/
+
+# Large local datasets and generated artifacts.
+data/interim/subreddit_preprocessed/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
+reports/figures/*.png
+
