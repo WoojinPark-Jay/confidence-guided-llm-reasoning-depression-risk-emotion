@@ -4,5 +4,8 @@ pyarrow>=14.0
 nltk>=3.8
 textblob>=0.17
 matplotlib>=3.7
+seaborn>=0.12
+scipy>=1.10
+praw>=7.7
+zstandard>=0.22
 jupyter>=1.0
-
