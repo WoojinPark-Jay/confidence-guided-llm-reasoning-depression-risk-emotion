@@ -9,4 +9,6 @@ data/00_raw_reddit_archives/
 data/01_subreddit_preparation/*.parquet
 data/02_preprocessing_outputs/*.csv
 data/02_preprocessing_outputs/*.parquet
+data/03_modeling_inputs/
+models/
 reports/figures/*.png

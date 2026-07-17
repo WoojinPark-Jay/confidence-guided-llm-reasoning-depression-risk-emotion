@@ -54,3 +54,17 @@ Generated outputs under `data/02_preprocessing_outputs/`:
 - `class_counts_after_filtering.csv`
 - `final_class_distribution.csv`
 - `filtering_summary.csv`
+
+## Stage 2 Inputs
+
+Modeling notebooks read:
+
+- `data/02_preprocessing_outputs/final_preprocessed_df.csv`
+
+They create sampled modeling inputs under:
+
+```text
+data/03_modeling_inputs/
+```
+
+For the first quick run, the notebooks use `SAMPLES_PER_CLASS = 1000`, which creates a balanced 3000-record dataset before train/validation/test splitting.

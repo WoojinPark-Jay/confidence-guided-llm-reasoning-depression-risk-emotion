@@ -48,12 +48,25 @@ Purpose:
 
 ### Stage 2. Modeling
 
-Planned next:
+Notebooks:
+
+- `notebooks/02_distilbert_classification_sample_fine_tuning.ipynb`
+- `notebooks/03_llama_classification_sample_fine_tuning.ipynb`
+- `notebooks/04_mistral_classification_sample_fine_tuning.ipynb`
+
+Script helper:
+
+- `src/modeling_data.py`
+
+Purpose:
 
 - DistilBERT baseline and fine-tuning workflow.
 - Llama 2 / Mistral first-stage classifier workflows.
-- Confidence-threshold routing analysis.
-- Phase 2 reasoning experiments.
+- Load the final preprocessed dataset from `data/02_preprocessing_outputs/`.
+- Sample a configurable number of records per class.
+- Start with `SAMPLES_PER_CLASS = 1000` for quick testing.
+- Increase the value later, for example to 20000 or 40000, for larger runs.
+- Export sampled train/validation/test files under `data/03_modeling_inputs/`.
 
 ## Project Layout
 
@@ -63,12 +76,17 @@ confidence-guided-selective-llm-reasoning/
     00_raw_reddit_archives/           # local archive dumps or raw parquet files; ignored by Git
     01_subreddit_preparation/         # subreddit-level prepared parquet files; ignored by Git
     02_preprocessing_outputs/         # final preprocessing CSV outputs; ignored by Git
+    03_modeling_inputs/               # sampled train/validation/test CSVs; ignored by Git
   notebooks/
     00_reddit_subreddit_data_preparation.ipynb
     01_reddit_data_preprocessing.ipynb
+    02_distilbert_classification_sample_fine_tuning.ipynb
+    03_llama_classification_sample_fine_tuning.ipynb
+    04_mistral_classification_sample_fine_tuning.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
+    modeling_data.py
   docs/
   reports/figures/
   requirements.txt
@@ -113,6 +131,22 @@ Expected outputs:
 - `data/02_preprocessing_outputs/class_counts_after_filtering.csv`
 - `data/02_preprocessing_outputs/final_class_distribution.csv`
 - `data/02_preprocessing_outputs/filtering_summary.csv`
+
+## Run Stage 2
+
+Open one of the model notebooks and start with:
+
+```python
+SAMPLES_PER_CLASS = 1000
+```
+
+The modeling notebooks use this value to sample the same number of records from each class. For example, `1000` creates a 3000-record modeling set before train/validation/test splitting.
+
+Generated modeling inputs:
+
+- `data/03_modeling_inputs/sample_1000_per_class/train_dataset.csv`
+- `data/03_modeling_inputs/sample_1000_per_class/validation_dataset.csv`
+- `data/03_modeling_inputs/sample_1000_per_class/test_dataset.csv`
 
 ## Important Git Note
 
