@@ -1,8 +1,6 @@
 # Confidence-Guided LLM Reasoning for Depression-Risk Emotion Classification
 
-This repository organizes the code and data workflow for the IEEE paper project:
-
-**Confidence-Guided Selective LLM Reasoning for Proxy Emotion Classification in Depression-Risk-Related Social Media Text**
+This repository organizes the code and data workflow for a Reddit-based depression-risk-related proxy emotion classification project.
 
 The project studies a confidence-guided two-phase framework for research-oriented proxy emotion classification in Reddit text. The codebase is being organized step by step so collaborators can reproduce the data preparation, preprocessing, and later modeling experiments.
 
