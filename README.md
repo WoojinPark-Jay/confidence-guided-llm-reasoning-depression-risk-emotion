@@ -21,7 +21,7 @@ Purpose:
 - Load subreddit-level Reddit archive dumps or existing raw parquet files.
 - Convert `created_utc` timestamps.
 - Select common post-level columns.
-- Save subreddit-level preprocessed parquet files under `data/interim/subreddit_preprocessed/`.
+- Save subreddit-level prepared parquet files under `data/01_subreddit_preparation/`.
 
 This stage consolidates the older per-subreddit notebooks such as `reddit_data_preprocessing_depression.ipynb`, `reddit_data_preprocessing_AnxietyDepression.ipynb`, and related notebooks.
 
@@ -60,10 +60,9 @@ Planned next:
 ```text
 confidence-guided-selective-llm-reasoning/
   data/
-    raw/reddit_archives/              # local archive dumps or raw parquet files; ignored by Git
-    interim/subreddit_raw/            # generated raw parquet files; ignored by Git
-    interim/subreddit_preprocessed/   # generated/required subreddit parquet inputs; ignored by Git
-    processed/                        # generated final CSV outputs; ignored by Git
+    00_raw_reddit_archives/           # local archive dumps or raw parquet files; ignored by Git
+    01_subreddit_preparation/         # subreddit-level prepared parquet files; ignored by Git
+    02_preprocessing_outputs/         # final preprocessing CSV outputs; ignored by Git
   notebooks/
     00_reddit_subreddit_data_preparation.ipynb
     01_reddit_data_preprocessing.ipynb
@@ -95,9 +94,8 @@ python src/prepare_subreddit_data.py
 
 Expected outputs:
 
-- `data/interim/subreddit_raw/*.parquet`
-- `data/interim/subreddit_preprocessed/*_preprocessed.parquet`
-- `data/interim/subreddit_preprocessed/subreddit_preparation_summary.csv`
+- `data/01_subreddit_preparation/*_preprocessed.parquet`
+- `data/01_subreddit_preparation/subreddit_preparation_summary.csv`
 
 ## Run Stage 1
 
@@ -109,12 +107,12 @@ python src/preprocess_reddit.py
 
 Expected outputs:
 
-- `data/processed/final_preprocessed_whole_df.csv`
-- `data/processed/final_preprocessed_df.csv`
-- `data/processed/class_counts_before_filtering.csv`
-- `data/processed/class_counts_after_filtering.csv`
-- `data/processed/final_class_distribution.csv`
-- `data/processed/filtering_summary.csv`
+- `data/02_preprocessing_outputs/final_preprocessed_whole_df.csv`
+- `data/02_preprocessing_outputs/final_preprocessed_df.csv`
+- `data/02_preprocessing_outputs/class_counts_before_filtering.csv`
+- `data/02_preprocessing_outputs/class_counts_after_filtering.csv`
+- `data/02_preprocessing_outputs/final_class_distribution.csv`
+- `data/02_preprocessing_outputs/filtering_summary.csv`
 
 ## Important Git Note
 

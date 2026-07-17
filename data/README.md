@@ -9,7 +9,7 @@ Large data files are ignored by Git. Share them through Git LFS, cloud storage, 
 Place available Reddit archive dumps or raw parquet files under:
 
 ```text
-data/raw/reddit_archives/
+data/00_raw_reddit_archives/
 ```
 
 Currently supported raw/archive names:
@@ -30,7 +30,7 @@ If a raw/archive source is unavailable but the corresponding preprocessed parque
 
 ## Stage 0 Outputs / Stage 1 Inputs
 
-Expected subreddit-level files under `data/interim/subreddit_preprocessed/`:
+Expected subreddit-level files under `data/01_subreddit_preparation/`:
 
 - `anxiety_depression_submissions_preprocessed.parquet`
 - `depression_submissions_preprocessed.parquet`
@@ -46,7 +46,7 @@ Expected subreddit-level files under `data/interim/subreddit_preprocessed/`:
 
 ## Stage 1 Outputs
 
-Generated outputs under `data/processed/`:
+Generated outputs under `data/02_preprocessing_outputs/`:
 
 - `final_preprocessed_whole_df.csv`
 - `final_preprocessed_df.csv`

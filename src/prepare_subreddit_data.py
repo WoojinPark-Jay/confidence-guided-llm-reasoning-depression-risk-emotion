@@ -8,9 +8,9 @@ import pandas as pd
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RAW_DIR = PROJECT_ROOT / "data" / "raw" / "reddit_archives"
-RAW_PARQUET_DIR = PROJECT_ROOT / "data" / "interim" / "subreddit_raw"
-PREPROCESSED_DIR = PROJECT_ROOT / "data" / "interim" / "subreddit_preprocessed"
+RAW_DIR = PROJECT_ROOT / "data" / "00_raw_reddit_archives"
+RAW_PARQUET_DIR = RAW_DIR
+PREPROCESSED_DIR = PROJECT_ROOT / "data" / "01_subreddit_preparation"
 
 KEEP_COLUMNS = [
     "subreddit",

@@ -10,8 +10,8 @@ from textblob import TextBlob
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-INPUT_DIR = PROJECT_ROOT / "data" / "interim" / "subreddit_preprocessed"
-OUTPUT_DIR = PROJECT_ROOT / "data" / "processed"
+INPUT_DIR = PROJECT_ROOT / "data" / "01_subreddit_preparation"
+OUTPUT_DIR = PROJECT_ROOT / "data" / "02_preprocessing_outputs"
 
 
 SUBREDDIT_FILES = {
@@ -244,4 +244,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -5,9 +5,8 @@ __pycache__/
 .venv/
 
 # Large local datasets and generated artifacts.
-data/raw/
-data/interim/subreddit_preprocessed/*.parquet
-data/interim/subreddit_raw/*.parquet
-data/processed/*.csv
-data/processed/*.parquet
+data/00_raw_reddit_archives/
+data/01_subreddit_preparation/*.parquet
+data/02_preprocessing_outputs/*.csv
+data/02_preprocessing_outputs/*.parquet
 reports/figures/*.png
