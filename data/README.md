@@ -68,3 +68,22 @@ data/03_modeling_inputs/
 ```
 
 For the first quick run, the notebooks use `SAMPLES_PER_CLASS = 1000`, which creates a balanced 3000-record dataset before train/validation/test splitting.
+
+Default class sampling:
+
+- Depression: 1000 records
+- Neutral: 1000 records
+- Happy: 1000 records
+- Total: 3000 records
+
+Default split:
+
+- Train: 2250 records
+- Validation: 450 records
+- Test: 300 records
+
+Expected generated files for the default run:
+
+- `data/03_modeling_inputs/sample_1000_per_class/train_dataset.csv`
+- `data/03_modeling_inputs/sample_1000_per_class/validation_dataset.csv`
+- `data/03_modeling_inputs/sample_1000_per_class/test_dataset.csv`

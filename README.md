@@ -67,6 +67,20 @@ Purpose:
 - Start with `SAMPLES_PER_CLASS = 1000` for quick testing.
 - Increase the value later, for example to 20000 or 40000, for larger runs.
 - Export sampled train/validation/test files under `data/03_modeling_inputs/`.
+- Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
+
+Current default modeling size:
+
+- `SAMPLES_PER_CLASS = 1000`
+- 1000 Depression, 1000 Neutral, and 1000 Happy records
+- 3000 total records before splitting
+- 2250 train records, 450 validation records, and 300 test records
+
+Local CPU/Mac execution note:
+
+- The Llama and Mistral notebooks keep the original full-model workflow for GPU runs.
+- When CUDA is not available, they automatically switch to tiny debug checkpoints so collaborators can verify the notebook flow locally.
+- To run the full Llama or Mistral checkpoints, use a CUDA GPU environment and disable the local tiny-model fallback only after confirming the environment can load the full model.
 
 ## Project Layout
 
@@ -141,6 +155,23 @@ SAMPLES_PER_CLASS = 1000
 ```
 
 The modeling notebooks use this value to sample the same number of records from each class. For example, `1000` creates a 3000-record modeling set before train/validation/test splitting.
+
+Default split:
+
+- Train: 75%, or 2250 records when `SAMPLES_PER_CLASS = 1000`
+- Validation: 15%, or 450 records when `SAMPLES_PER_CLASS = 1000`
+- Test: 10%, or 300 records when `SAMPLES_PER_CLASS = 1000`
+
+Each model evaluation prints the metric dictionary, the direct number of correct predictions, the number of incorrect predictions, and a normalized confusion matrix.
+
+Example evaluation output:
+
+```text
+Correct predictions: 267 / 300 (89.00%)
+Incorrect predictions: 33 / 300
+```
+
+For DistilBERT, the hidden-state visualization section uses `FEATURE_EXTRACTION_SAMPLE_SIZE = 300` by default to keep local exploratory analysis faster. This limit applies to the feature-extraction/visualization step, not to the main fine-tuning split.
 
 Generated modeling inputs:
 
