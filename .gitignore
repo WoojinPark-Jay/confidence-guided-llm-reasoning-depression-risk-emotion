@@ -12,3 +12,5 @@ data/02_preprocessing_outputs/*.parquet
 data/03_modeling_inputs/
 models/
 reports/figures/*.png
+
+.cache/
