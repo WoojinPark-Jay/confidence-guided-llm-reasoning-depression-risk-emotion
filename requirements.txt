@@ -17,3 +17,6 @@ accelerate>=0.24
 peft>=0.7
 torch>=2.0
 wandb>=0.16
+umap-learn>=0.5
+imbalanced-learn>=0.11
+xgboost>=2.0
