@@ -69,6 +69,14 @@ data/03_modeling_inputs/
 
 For the first quick run, the notebooks use `SAMPLES_PER_CLASS = 1000`, which creates a balanced 3000-record dataset before train/validation/test splitting.
 
+The run size and split ratios are defined near the top of each modeling notebook:
+
+- `SAMPLES_PER_CLASS`
+- `TRAIN_RATIO`
+- `VALIDATION_RATIO`
+- `TEST_RATIO`
+- `SAMPLE_WITH_REPLACEMENT`
+
 Default class sampling:
 
 - Depression: 1000 records

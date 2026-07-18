@@ -72,9 +72,13 @@ Purpose:
 Current default modeling size:
 
 - `SAMPLES_PER_CLASS = 1000`
+- `TRAIN_RATIO = 0.75`
+- `VALIDATION_RATIO = 0.15`
+- `TEST_RATIO = 0.10`
 - 1000 Depression, 1000 Neutral, and 1000 Happy records
 - 3000 total records before splitting
 - 2250 train records, 450 validation records, and 300 test records
+- These values are defined near the top of each modeling notebook so collaborators can change the run size and split ratios in one place.
 
 Local CPU/Mac execution note:
 
@@ -172,6 +176,8 @@ Incorrect predictions: 33 / 300
 ```
 
 For DistilBERT, the hidden-state visualization section uses `FEATURE_EXTRACTION_SAMPLE_SIZE = 300` by default to keep local exploratory analysis faster. This limit applies to the feature-extraction/visualization step, not to the main fine-tuning split.
+
+The Llama and Mistral notebooks use the explicit train/validation/test CSV splits generated from these ratios. They do not re-split the train set after the CSV split, so the final notebook training/evaluation counts remain aligned with the values above.
 
 Generated modeling inputs:
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping
 
@@ -22,6 +23,43 @@ ID_TO_LABEL: Mapping[int, str] = {
     1: "Neutral_Group",
     2: "Happy_Group",
 }
+
+
+@dataclass(frozen=True)
+class ModelingSplitConfig:
+    """Central configuration for balanced modeling samples and data splits."""
+
+    samples_per_class: int = 1000
+    train_ratio: float = 0.75
+    validation_ratio: float = 0.15
+    test_ratio: float = 0.10
+    random_state: int = 42
+
+    def validate(self) -> None:
+        if self.samples_per_class <= 0:
+            raise ValueError("samples_per_class must be positive")
+        ratio_sum = self.train_ratio + self.validation_ratio + self.test_ratio
+        if abs(ratio_sum - 1.0) > 1e-9:
+            raise ValueError(
+                "train_ratio + validation_ratio + test_ratio must equal 1.0; "
+                f"got {ratio_sum}"
+            )
+        if min(self.train_ratio, self.validation_ratio, self.test_ratio) <= 0:
+            raise ValueError("all split ratios must be positive")
+
+    @property
+    def total_records(self) -> int:
+        return self.samples_per_class * len(ID_TO_LABEL)
+
+    def expected_split_counts(self) -> dict[str, int]:
+        train_count = int(self.train_ratio * self.total_records)
+        validation_count = int(self.validation_ratio * self.total_records)
+        test_count = self.total_records - train_count - validation_count
+        return {
+            "train": train_count,
+            "validation": validation_count,
+            "test": test_count,
+        }
 
 
 def load_modeling_dataframe(
@@ -85,22 +123,26 @@ def sample_per_class(
 
 def split_modeling_dataframe(
     df_sampled: pd.DataFrame,
-    train_size: float = 0.75,
-    validation_size: float = 0.15,
+    train_ratio: float = 0.75,
+    validation_ratio: float = 0.15,
+    test_ratio: float = 0.10,
     random_state: int = 42,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Split sampled data into train, validation, and test sets."""
-    test_size = 1.0 - train_size - validation_size
-    if test_size <= 0:
-        raise ValueError("train_size + validation_size must be less than 1.0")
+    ratio_sum = train_ratio + validation_ratio + test_ratio
+    if abs(ratio_sum - 1.0) > 1e-9:
+        raise ValueError(
+            "train_ratio + validation_ratio + test_ratio must equal 1.0; "
+            f"got {ratio_sum}"
+        )
 
     train_df, temp_df = train_test_split(
         df_sampled,
-        train_size=train_size,
+        train_size=train_ratio,
         random_state=random_state,
         stratify=df_sampled["label"],
     )
-    relative_validation_size = validation_size / (validation_size + test_size)
+    relative_validation_size = validation_ratio / (validation_ratio + test_ratio)
     validation_df, test_df = train_test_split(
         temp_df,
         train_size=relative_validation_size,
@@ -121,19 +163,33 @@ def prepare_modeling_splits(
     run_name: str = "sample_1000_per_class",
     text_column: str = "title_with_selftext_cleaned",
     samples_per_class: int = 1000,
+    train_ratio: float = 0.75,
+    validation_ratio: float = 0.15,
+    test_ratio: float = 0.10,
     random_state: int = 42,
     export_csv: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load, sample, split, and optionally save modeling datasets."""
+    config = ModelingSplitConfig(
+        samples_per_class=samples_per_class,
+        train_ratio=train_ratio,
+        validation_ratio=validation_ratio,
+        test_ratio=test_ratio,
+        random_state=random_state,
+    )
+    config.validate()
     df_model = load_modeling_dataframe(input_path=input_path, text_column=text_column)
     df_sampled = sample_per_class(
         df_model=df_model,
-        samples_per_class=samples_per_class,
-        random_state=random_state,
+        samples_per_class=config.samples_per_class,
+        random_state=config.random_state,
     )
     train_df, validation_df, test_df = split_modeling_dataframe(
         df_sampled=df_sampled,
-        random_state=random_state,
+        train_ratio=config.train_ratio,
+        validation_ratio=config.validation_ratio,
+        test_ratio=config.test_ratio,
+        random_state=config.random_state,
     )
 
     if export_csv:
@@ -147,5 +203,33 @@ def prepare_modeling_splits(
         df_sampled[["text", "label", "label_str"]].to_csv(
             output_path / "sampled_dataset.csv", index=False
         )
+        summary_df = summarize_split_counts(train_df, validation_df, test_df)
+        summary_df.to_csv(output_path / "split_summary.csv", index=False)
 
     return train_df, validation_df, test_df
+
+
+def summarize_split_counts(
+    train_df: pd.DataFrame,
+    validation_df: pd.DataFrame,
+    test_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Return row and class counts for train, validation, and test splits."""
+    rows = []
+    for split_name, split_df in {
+        "train": train_df,
+        "validation": validation_df,
+        "test": test_df,
+    }.items():
+        class_counts = split_df["label"].value_counts().sort_index().to_dict()
+        rows.append(
+            {
+                "split": split_name,
+                "total_records": len(split_df),
+                **{
+                    ID_TO_LABEL[label_id]: class_counts.get(label_id, 0)
+                    for label_id in ID_TO_LABEL
+                },
+            }
+        )
+    return pd.DataFrame(rows)
