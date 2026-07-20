@@ -48,15 +48,22 @@ Purpose:
 
 ### Stage 2. Modeling
 
-Notebooks:
+Local sample notebooks:
 
-- `notebooks/02_distilbert_classification_sample_fine_tuning.ipynb`
-- `notebooks/03_llama_classification_sample_fine_tuning.ipynb`
-- `notebooks/04_mistral_classification_sample_fine_tuning.ipynb`
+- `notebooks/local/02_distilbert_classification_sample_fine_tuning.ipynb`
+- `notebooks/local/03_llama_classification_sample_fine_tuning.ipynb`
+- `notebooks/local/04_mistral_classification_sample_fine_tuning.ipynb`
 
-Script helper:
+Colab large-run notebooks:
+
+- `notebooks/colab/10_distilbert_confidence_threshold_wandb_colab.ipynb`
+- `notebooks/colab/11_llama2_confidence_threshold_wandb_colab.ipynb`
+- `notebooks/colab/12_mistral_confidence_threshold_wandb_colab.ipynb`
+
+Script helpers:
 
 - `src/modeling_data.py`
+- `src/colab_notebooks/*.py`
 
 Purpose:
 
@@ -98,13 +105,22 @@ confidence-guided-selective-llm-reasoning/
   notebooks/
     00_reddit_subreddit_data_preparation.ipynb
     01_reddit_data_preprocessing.ipynb
-    02_distilbert_classification_sample_fine_tuning.ipynb
-    03_llama_classification_sample_fine_tuning.ipynb
-    04_mistral_classification_sample_fine_tuning.ipynb
+    local/
+      02_distilbert_classification_sample_fine_tuning.ipynb
+      03_llama_classification_sample_fine_tuning.ipynb
+      04_mistral_classification_sample_fine_tuning.ipynb
+    colab/
+      10_distilbert_confidence_threshold_wandb_colab.ipynb
+      11_llama2_confidence_threshold_wandb_colab.ipynb
+      12_mistral_confidence_threshold_wandb_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
     modeling_data.py
+    colab_notebooks/
+      distilbert_confidence_threshold_wandb_colab.py
+      llama2_confidence_threshold_wandb_colab.py
+      mistral_confidence_threshold_wandb_colab.py
   docs/
   reports/figures/
   requirements.txt
@@ -184,6 +200,20 @@ Generated modeling inputs:
 - `data/03_modeling_inputs/sample_1000_per_class/train_dataset.csv`
 - `data/03_modeling_inputs/sample_1000_per_class/validation_dataset.csv`
 - `data/03_modeling_inputs/sample_1000_per_class/test_dataset.csv`
+
+## Run Stage 2 In Colab
+
+Use the notebooks under `notebooks/colab/` for larger GPU training runs.
+
+Recommended Colab order:
+
+1. Open the target notebook from GitHub in Colab.
+2. Run the dependency installation cell, then restart the runtime once if Colab asks.
+3. Set `SAMPLES_PER_CLASS` near the top of the notebook. The default is `300` per class for a smoke test; increase it to values such as `1000`, `20000`, or `40000` for larger runs.
+4. Keep `WANDB_SWEEP_MODE = "new"` for an independent sweep. Use `continue_existing` only when you have access to the target W&B entity/project/sweep.
+5. Do not paste W&B tokens into notebook source code. Add `WANDB_API_KEY` in Colab Secrets or enter it only when the secure `wandb.login()` prompt appears.
+
+The Colab notebooks save W&B sweep results, predictions, metrics, threshold tables, figures, and final model outputs into their local Colab output directories. These generated outputs are ignored by Git and should be shared through W&B artifacts, cloud storage, or another agreed research storage location.
 
 ## Important Git Note
 

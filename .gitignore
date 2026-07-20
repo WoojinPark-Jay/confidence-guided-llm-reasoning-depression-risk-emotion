@@ -14,3 +14,9 @@ models/
 reports/figures/*.png
 
 .cache/
+# W&B and model-training outputs.
+wandb/
+**/wandb/
+*_outputs/
+notebooks/**/*_outputs/
+notebooks/*lora-token-classification/
