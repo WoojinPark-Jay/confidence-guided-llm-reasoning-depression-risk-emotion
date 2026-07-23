@@ -93,6 +93,31 @@ Local CPU/Mac execution note:
 - When CUDA is not available, they automatically switch to tiny debug checkpoints so collaborators can verify the notebook flow locally.
 - To run the full Llama or Mistral checkpoints, use a CUDA GPU environment and disable the local tiny-model fallback only after confirming the environment can load the full model.
 
+
+### Stage 3. Supplementary Mixed Emotion Stress-Test Dataset
+
+Dataset files:
+
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.csv`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.xlsx`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.jsonl`
+
+Script:
+
+- `scripts/generate_mixed_emotion_dataset.py`
+
+Manuscript support:
+
+- `docs/mixed_emotion_dataset_v2_1_manuscript_insert.md`
+- `data/supplementary/mixed_emotion/appendix_mixed_emotion_dataset_protocol.md`
+
+Purpose:
+
+- Provide a controlled synthetic stress-test set for emotionally ambiguous examples.
+- Include 300 examples, balanced across Depression, Neutral, and Happy proxy emotion labels.
+- Include five ambiguity scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory.
+- Use this dataset only for supplementary robustness evaluation, not for Phase 1 training, hyperparameter tuning, or confidence-threshold selection.
+
 ## Project Layout
 
 ```text
@@ -102,6 +127,8 @@ confidence-guided-selective-llm-reasoning/
     01_subreddit_preparation/         # subreddit-level prepared parquet files; ignored by Git
     02_preprocessing_outputs/         # final preprocessing CSV outputs; ignored by Git
     03_modeling_inputs/               # sampled train/validation/test CSVs; ignored by Git
+    supplementary/
+      mixed_emotion/                  # 300-example synthetic mixed-emotion stress-test dataset
   notebooks/
     00_reddit_subreddit_data_preparation.ipynb
     01_reddit_data_preprocessing.ipynb
@@ -121,6 +148,8 @@ confidence-guided-selective-llm-reasoning/
       distilbert_confidence_threshold_wandb_colab.py
       llama2_confidence_threshold_wandb_colab.py
       mistral_confidence_threshold_wandb_colab.py
+  scripts/
+    generate_mixed_emotion_dataset.py
   docs/
   reports/figures/
   requirements.txt
@@ -214,6 +243,34 @@ Recommended Colab order:
 5. Do not paste W&B tokens into notebook source code. Add `WANDB_API_KEY` in Colab Secrets or enter it only when the secure `wandb.login()` prompt appears.
 
 The Colab notebooks save W&B sweep results, predictions, metrics, threshold tables, figures, and final model outputs into their local Colab output directories. These generated outputs are ignored by Git and should be shared through W&B artifacts, cloud storage, or another agreed research storage location.
+
+
+## Run Stage 3 / Inspect Mixed Emotion Dataset
+
+The supplementary Mixed Emotion Dataset v2.1 is committed because it is small and intended to support reproducible stress-test evaluation.
+
+Open the spreadsheet version directly:
+
+```text
+data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.xlsx
+```
+
+Or regenerate the dataset from the project root:
+
+```bash
+python scripts/generate_mixed_emotion_dataset.py
+```
+
+Dataset design summary:
+
+- Depression: 100 examples
+- Neutral: 100 examples
+- Happy: 100 examples
+- Total: 300 examples
+- Scenario types: 5
+- Examples per scenario type: 60
+- Intended use: supplementary controlled stress-test only
+- Not used for training or threshold selection
 
 ## Important Git Note
 

@@ -95,3 +95,28 @@ Expected generated files for the default run:
 - `data/03_modeling_inputs/sample_1000_per_class/train_dataset.csv`
 - `data/03_modeling_inputs/sample_1000_per_class/validation_dataset.csv`
 - `data/03_modeling_inputs/sample_1000_per_class/test_dataset.csv`
+
+## Supplementary Mixed Emotion Stress-Test Dataset
+
+The repository includes a small, controlled synthetic supplementary dataset under:
+
+```text
+data/supplementary/mixed_emotion/
+```
+
+Files:
+
+- `mixed_emotion_stress_test_v2_1_300.csv` — canonical CSV dataset
+- `mixed_emotion_stress_test_v2_1_300.xlsx` — spreadsheet version for quick inspection
+- `mixed_emotion_stress_test_v2_1_300.jsonl` — JSONL version for pipeline use
+- `appendix_mixed_emotion_dataset_protocol.md` — appendix-ready generation protocol
+
+Composition:
+
+- Depression: 100 examples
+- Neutral: 100 examples
+- Happy: 100 examples
+- Total: 300 examples
+- Five scenario types, 60 examples per scenario type
+
+This dataset is intentionally committed because it is small and supports reproducible supplementary stress-test evaluation. It should not be used for Phase 1 training, hyperparameter tuning, threshold selection, clinical validation, or diagnostic claims.
