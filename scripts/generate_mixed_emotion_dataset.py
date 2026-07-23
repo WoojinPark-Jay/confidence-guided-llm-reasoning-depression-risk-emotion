@@ -6,13 +6,15 @@ from datetime import date
 from pathlib import Path
 
 
-OUTPUT_DIR = Path("/private/tmp/paper_text_only_output/mixed_emotion_dataset_v2")
-OUTPUT_CSV = OUTPUT_DIR / "mixed_emotion_stress_test_v2_1_300.csv"
-OUTPUT_JSONL = OUTPUT_DIR / "mixed_emotion_stress_test_v2_1_300.jsonl"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = PROJECT_ROOT / "data" / "supplementary" / "mixed_emotion"
+OUTPUT_CSV = OUTPUT_DIR / "mixed_emotion_stress_test_v2_2_300.csv"
+OUTPUT_JSONL = OUTPUT_DIR / "mixed_emotion_stress_test_v2_2_300.jsonl"
+OUTPUT_XLSX = OUTPUT_DIR / "mixed_emotion_stress_test_v2_2_300.xlsx"
 OUTPUT_README = OUTPUT_DIR / "README.md"
 OUTPUT_APPENDIX = OUTPUT_DIR / "appendix_mixed_emotion_dataset_protocol.md"
 
-PROMPT_VERSION = "mixed-emotion-stress-test-v2.1"
+PROMPT_VERSION = "mixed-emotion-stress-test-v2.2"
 GENERATION_MODEL = "GPT-5 Codex, 2026-07-23"
 CLASSES = ["Depression", "Neutral", "Happy"]
 COUNT_PER_CLASS = 100
@@ -21,7 +23,7 @@ COUNT_PER_CLASS = 100
 CONTEXTS = [
     ("a school day", "school"),
     ("a workday", "work"),
-    ("time with my family", "family"),
+    ("spending time with my family", "family"),
     ("a friendship issue", "friendship"),
     ("moving to a new city", "relocation"),
     ("recovering after a difficult week", "recovery"),
@@ -134,6 +136,34 @@ TIME_ANCHORS = [
     "while reviewing what I had done",
 ]
 
+DEP_CLOSINGS = [
+    "By the end, the positive parts felt brief compared with the heavier feeling that stayed with me.",
+    "The encouraging detail was real, but it did not change the low feeling that shaped the day.",
+    "What stayed longest was not the good moment, but the sadness that returned after it.",
+    "I could name a few good things, yet the post still settles around feeling low and distant.",
+    "The final emotional weight leans toward exhaustion and withdrawal rather than relief.",
+]
+
+HAPPY_CLOSINGS = [
+    "Even with the mixed parts, the feeling I carried away was mainly relief and quiet happiness.",
+    "The difficult part mattered, but it did not define the final tone of the day.",
+    "What stayed with me most was the sense that things could still move in a better direction.",
+    "The overall memory of the moment feels hopeful rather than weighed down.",
+    "The day did not become perfect, but it ended with more warmth than heaviness.",
+]
+
+NEUTRAL_CLOSINGS = [
+    "Neither emotion became the clear center of the post, which mostly describes a mixed situation in practical terms.",
+    "The post does not settle strongly into either sadness or happiness, and the overall tone remains measured.",
+    "Overall, the post reads more like a balanced account of circumstances than a strongly positive or negative expression.",
+    "The emotional cues are present, but the main purpose of the post is to describe what happened.",
+    "The final tone remains observational, with no single emotion clearly taking over the whole account.",
+]
+
+
+def sentence_case(text: str) -> str:
+    return text[:1].upper() + text[1:] if text else text
+
 SCENARIO_TYPES = [
     "blended_emotion_cooccurrence",
     "positive_to_distress_shift",
@@ -151,6 +181,9 @@ def build_text(label: str, i: int) -> dict[str, str]:
     detail = REFLECTION_DETAILS[(i * 11) % len(REFLECTION_DETAILS)]
     anchor = TIME_ANCHORS[(i * 13) % len(TIME_ANCHORS)]
     scenario = SCENARIO_TYPES[i % len(SCENARIO_TYPES)]
+    dep_close = DEP_CLOSINGS[(i * 2) % len(DEP_CLOSINGS)]
+    happy_close = HAPPY_CLOSINGS[(i * 2) % len(HAPPY_CLOSINGS)]
+    neutral_close = NEUTRAL_CLOSINGS[(i * 2) % len(NEUTRAL_CLOSINGS)]
 
     if label == "Depression":
         if scenario == "positive_to_distress_shift":
@@ -158,7 +191,7 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"At first, {context_phrase} felt manageable because there was {pos}. "
                 f"Still, {neu}, and as the day went on, there was {dis}. "
                 f"{detail}, especially {anchor}. "
-                "By the end, the positive parts felt brief compared with the heavier feeling that stayed with me."
+                + dep_close
             )
             trajectory = "positive cues are outweighed by a later depression-related emotional trajectory"
         elif scenario == "distress_to_recovery_shift":
@@ -166,7 +199,7 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"The day began with {dis} while I was dealing with {context_phrase}. "
                 f"There was {pos}, and I tried to focus on it, but {neu}. "
                 f"{detail}, especially {anchor}. "
-                "The hopeful moment helped only briefly, while the dominant feeling remained low and difficult to carry."
+                + dep_close
             )
             trajectory = "brief recovery cue appears, but the dominant trajectory remains depression-related"
         else:
@@ -174,7 +207,7 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"During {context_phrase}, I noticed {pos}, and {neu}. "
                 f"Even with those ordinary or positive moments, there was {dis}. "
                 f"{detail}, especially {anchor}. "
-                "The overall tone is not simply negative, but the emotional weight settles more on sadness and withdrawal than on relief."
+                + dep_close
             )
             trajectory = "mixed cues co-occur, but depression-related affect dominates"
         rationale = (
@@ -186,16 +219,16 @@ def build_text(label: str, i: int) -> dict[str, str]:
             text = (
                 f"During {context_phrase}, I had a moment when there was {dis}. "
                 f"But then there was {pos}, and I felt the day start to open up again. "
-                f"{neu}. {detail}, especially {anchor}. "
-                "Even with the mixed parts, the feeling I carried away was mainly relief and quiet happiness."
+                f"{sentence_case(neu)}. {detail}, especially {anchor}. "
+                + happy_close
             )
             trajectory = "distress appears early, but the final emotional takeaway is positive"
         elif scenario == "distress_to_recovery_shift":
             text = (
                 f"The start of {context_phrase} was difficult because of {dis}. "
-                f"Later, {pos}, which made the earlier heaviness feel less controlling. "
-                f"Even though {neu}, {detail.lower()}, especially {anchor}. "
-                "The day ended with a stronger sense of gratitude and hope."
+                f"Later, there was {pos}, which made the earlier heaviness feel less controlling. "
+                f"Even though {neu}, {detail}, especially {anchor}. "
+                + happy_close
             )
             trajectory = "negative cue shifts toward a positive dominant ending"
         else:
@@ -203,7 +236,7 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"While dealing with {context_phrase}, I could still feel {dis}. "
                 f"At the same time, there was {pos}, and {neu}. "
                 f"{detail}, especially {anchor}. "
-                "The mixed feelings were real, but the overall message ended in appreciation, energy, and cautious optimism."
+                + happy_close
             )
             trajectory = "mixed cues co-occur, but positive affect dominates"
         rationale = (
@@ -216,15 +249,15 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"In relation to {context_phrase}, there was {pos}, followed by a moment when I noticed {dis}. "
                 f"However, {neu}. "
                 f"{detail}, especially {anchor}. "
-                "Neither emotion became the clear center of the post, which mostly describes a mixed situation in practical terms."
+                + neutral_close
             )
             trajectory = "positive and distress cues are balanced by a factual, descriptive framing"
         elif scenario == "distress_to_recovery_shift":
             text = (
                 f"While thinking about {context_phrase}, I noticed {dis}, then later {pos}. "
-                f"{neu}. "
+                f"{sentence_case(neu)}. "
                 f"{detail}, especially {anchor}. "
-                "The post does not settle strongly into either sadness or happiness, and the overall tone remains measured."
+                + neutral_close
             )
             trajectory = "emotional shift is present, but the dominant tone remains neutral and descriptive"
         else:
@@ -232,7 +265,7 @@ def build_text(label: str, i: int) -> dict[str, str]:
                 f"The situation around {context_phrase} included {pos} and also {dis}. "
                 f"At the same time, {neu}. "
                 f"{detail}, especially {anchor}. "
-                "Overall, the post reads more like a balanced account of circumstances than a strongly positive or negative expression."
+                + neutral_close
             )
             trajectory = "mixed cues co-occur, but the dominant framing is neutral"
         rationale = (
@@ -243,13 +276,44 @@ def build_text(label: str, i: int) -> dict[str, str]:
     return {
         "scenario_type": scenario,
         "primary_context": context_tag,
-        "positive_cue": pos,
-        "neutral_cue": neu,
-        "depression_related_cue": dis,
         "dominant_trajectory": trajectory,
         "text": text,
         "brief_label_rationale": rationale,
     }
+
+
+def write_xlsx(csv_path: Path, xlsx_path: Path) -> None:
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Alignment, Font, PatternFill
+    except ImportError:
+        return
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "mixed_emotion_v2_2"
+    with csv_path.open(newline="", encoding="utf-8") as f:
+        for row in csv.reader(f):
+            ws.append(row)
+
+    header_fill = PatternFill("solid", fgColor="D9EAF7")
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.fill = header_fill
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+    widths = {
+        "A": 16, "B": 14, "C": 28, "D": 20, "E": 38, "F": 72,
+        "G": 62, "H": 18, "I": 26, "J": 26, "K": 24, "L": 16,
+    }
+    for col, width in widths.items():
+        ws.column_dimensions[col].width = width
+    ws.freeze_panes = "A2"
+    ws.auto_filter.ref = ws.dimensions
+    wb.save(xlsx_path)
 
 
 def main() -> None:
@@ -267,16 +331,11 @@ def main() -> None:
                     "dominant_trajectory": item["dominant_trajectory"],
                     "text": item["text"],
                     "brief_label_rationale": item["brief_label_rationale"],
-                    "positive_cue": item["positive_cue"],
-                    "neutral_cue": item["neutral_cue"],
-                    "depression_related_cue": item["depression_related_cue"],
-                    "intended_use": "supplementary controlled stress-test only",
                     "used_for_training": "no",
                     "used_for_threshold_selection": "no",
                     "prompt_version": PROMPT_VERSION,
                     "generation_model": GENERATION_MODEL,
                     "generated_date": str(date.today()),
-                    "clinical_disclaimer": "Synthetic proxy-emotion example; not clinical data or diagnosis.",
                 }
             )
 
@@ -289,6 +348,8 @@ def main() -> None:
     with OUTPUT_JSONL.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+    write_xlsx(OUTPUT_CSV, OUTPUT_XLSX)
 
     label_counts = {label: sum(1 for r in rows if r["target_label"] == label) for label in CLASSES}
     scenario_counts = {
@@ -311,6 +372,7 @@ This folder contains a controlled synthetic mixed-emotion stress-test dataset fo
 Files:
 - `{OUTPUT_CSV.name}`: tabular CSV dataset
 - `{OUTPUT_JSONL.name}`: JSONL version
+- `{OUTPUT_XLSX.name}`: spreadsheet version for quick inspection
 - `{OUTPUT_APPENDIX.name}`: manuscript-ready appendix protocol text
 """,
         encoding="utf-8",
@@ -323,7 +385,7 @@ The supplementary Mixed Emotion Dataset was constructed as a controlled syntheti
 
 Generation Prompt
 
-Generate short social-media-style English posts for a three-class proxy emotion classification stress test. Each example must contain emotionally mixed or shifting cues while remaining realistic, non-diagnostic, and free of personally identifying information. Use one of the target labels: Depression, Neutral, or Happy. The target label must reflect the dominant overall emotional trajectory of the post, not isolated phrases. Generate examples across the following scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory. For each example, return the following fields: example_id, target_label, scenario_type, primary_context, dominant_trajectory, text, brief_label_rationale, positive_cue, neutral_cue, depression_related_cue, intended_use, used_for_training, used_for_threshold_selection, prompt_version, generation_model, generated_date, and clinical_disclaimer.
+Generate short social-media-style English posts for a three-class proxy emotion classification stress test. Each example must contain emotionally mixed or shifting cues while remaining realistic, non-diagnostic, and free of personally identifying information. Use one of the target labels: Depression, Neutral, or Happy. The target label must reflect the dominant overall emotional trajectory of the post, not isolated phrases. Generate examples across the following scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory. For each example, return the following fields: example_id, target_label, scenario_type, primary_context, dominant_trajectory, text, brief_label_rationale, used_for_training, used_for_threshold_selection, prompt_version, generation_model, and generated_date.
 
 Labeling Rules
 
@@ -338,6 +400,7 @@ Examples were excluded from the intended design space if they contained explicit
 
     print(OUTPUT_CSV)
     print(OUTPUT_JSONL)
+    print(OUTPUT_XLSX)
     print(OUTPUT_README)
     print(OUTPUT_APPENDIX)
     print(label_counts)

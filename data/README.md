@@ -106,9 +106,9 @@ data/supplementary/mixed_emotion/
 
 Files:
 
-- `mixed_emotion_stress_test_v2_1_300.csv` — canonical CSV dataset
-- `mixed_emotion_stress_test_v2_1_300.xlsx` — spreadsheet version for quick inspection
-- `mixed_emotion_stress_test_v2_1_300.jsonl` — JSONL version for pipeline use
+- `mixed_emotion_stress_test_v2_2_300.csv` — canonical CSV dataset
+- `mixed_emotion_stress_test_v2_2_300.xlsx` — spreadsheet version for quick inspection
+- `mixed_emotion_stress_test_v2_2_300.jsonl` — JSONL version for pipeline use
 - `appendix_mixed_emotion_dataset_protocol.md` — appendix-ready generation protocol
 
 Composition:

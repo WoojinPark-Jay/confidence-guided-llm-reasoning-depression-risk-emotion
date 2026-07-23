@@ -1,4 +1,4 @@
-# Mixed Emotion Dataset v2.1: Manuscript-Ready Insert
+# Mixed Emotion Dataset v2.2: Manuscript-Ready Insert
 
 ## Recommended Scale
 
@@ -42,7 +42,7 @@ The supplementary Mixed Emotion Dataset was constructed as a controlled syntheti
 
 Generation prompt:
 
-Generate short social-media-style English posts for a three-class proxy emotion classification stress test. Each example must contain emotionally mixed or shifting cues while remaining realistic, non-diagnostic, and free of personally identifying information. Use one of the target labels: Depression, Neutral, or Happy. The target label must reflect the dominant overall emotional trajectory of the post, not isolated phrases. Generate examples across the following scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory. For each example, return the following fields: example_id, target_label, scenario_type, primary_context, dominant_trajectory, text, brief_label_rationale, positive_cue, neutral_cue, depression_related_cue, intended_use, used_for_training, used_for_threshold_selection, prompt_version, generation_model, generated_date, and clinical_disclaimer.
+Generate short social-media-style English posts for a three-class proxy emotion classification stress test. Each example must contain emotionally mixed or shifting cues while remaining realistic, non-diagnostic, and free of personally identifying information. Use one of the target labels: Depression, Neutral, or Happy. The target label must reflect the dominant overall emotional trajectory of the post, not isolated phrases. Generate examples across the following scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory. For each example, return the following fields: example_id, target_label, scenario_type, primary_context, dominant_trajectory, text, brief_label_rationale, used_for_training, used_for_threshold_selection, prompt_version, generation_model, and generated_date.
 
 Labeling rules:
 
@@ -54,7 +54,8 @@ Examples were excluded from the intended design space if they contained explicit
 
 ## Output Files
 
-- Dataset CSV: `/private/tmp/paper_text_only_output/mixed_emotion_dataset_v2/mixed_emotion_stress_test_v2_1_300.csv`
-- Dataset JSONL: `/private/tmp/paper_text_only_output/mixed_emotion_dataset_v2/mixed_emotion_stress_test_v2_1_300.jsonl`
-- Appendix protocol: `/private/tmp/paper_text_only_output/mixed_emotion_dataset_v2/appendix_mixed_emotion_dataset_protocol.md`
-- Generation script: `/Users/woojinpark/Documents/헬스케어 논문/mixed_emotion_dataset_generator.py`
+- Dataset CSV: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
+- Dataset XLSX: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx`
+- Dataset JSONL: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.jsonl`
+- Appendix protocol: `data/supplementary/mixed_emotion/appendix_mixed_emotion_dataset_protocol.md`
+- Generation script: `scripts/generate_mixed_emotion_dataset.py`

@@ -98,9 +98,9 @@ Local CPU/Mac execution note:
 
 Dataset files:
 
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.csv`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.xlsx`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.jsonl`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.jsonl`
 
 Script:
 
@@ -108,7 +108,7 @@ Script:
 
 Manuscript support:
 
-- `docs/mixed_emotion_dataset_v2_1_manuscript_insert.md`
+- `docs/mixed_emotion_dataset_v2_2_manuscript_insert.md`
 - `data/supplementary/mixed_emotion/appendix_mixed_emotion_dataset_protocol.md`
 
 Purpose:
@@ -247,12 +247,12 @@ The Colab notebooks save W&B sweep results, predictions, metrics, threshold tabl
 
 ## Run Stage 3 / Inspect Mixed Emotion Dataset
 
-The supplementary Mixed Emotion Dataset v2.1 is committed because it is small and intended to support reproducible stress-test evaluation.
+The supplementary Mixed Emotion Dataset v2.2 is committed because it is small and intended to support reproducible stress-test evaluation.
 
 Open the spreadsheet version directly:
 
 ```text
-data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_1_300.xlsx
+data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx
 ```
 
 Or regenerate the dataset from the project root:
