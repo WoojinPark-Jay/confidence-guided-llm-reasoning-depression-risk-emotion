@@ -67,16 +67,17 @@ Script helpers:
 
 Purpose:
 
-- DistilBERT baseline and fine-tuning workflow.
-- Llama 2 / Mistral first-stage classifier workflows.
+- DistilBERT baseline and full fine-tuning workflow.
+- Llama 2 / Mistral QLoRA first-stage classifier workflows.
 - Load the final preprocessed dataset from `data/02_preprocessing_outputs/`.
 - Sample a configurable number of records per class.
-- Start with `SAMPLES_PER_CLASS = 1000` for quick testing.
+- Start with a small `SAMPLES_PER_CLASS` value for smoke testing.
 - Increase the value later, for example to 20000 or 40000, for larger runs.
 - Export sampled train/validation/test files under `data/03_modeling_inputs/`.
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
+- For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
 
-Current default modeling size:
+Current local sample default:
 
 - `SAMPLES_PER_CLASS = 1000`
 - `TRAIN_RATIO = 0.75`
@@ -86,6 +87,20 @@ Current default modeling size:
 - 3000 total records before splitting
 - 2250 train records, 450 validation records, and 300 test records
 - These values are defined near the top of each modeling notebook so collaborators can change the run size and split ratios in one place.
+
+Current advanced Colab default:
+
+- `SAMPLES_PER_CLASS = 300`
+- `TRAIN_RATIO = 0.70`
+- `VALIDATION_RATIO = 0.10`
+- `CALIBRATION_RATIO = 0.10`
+- `TEST_RATIO = 0.10`
+- 300 Depression, 300 Neutral, and 300 Happy records
+- 900 total records before splitting
+- approximately 630 train records, 90 validation records, 90 calibration records, and 90 held-out test records
+- The validation split is used for W&B tuning and checkpoint selection.
+- The calibration split is used for temperature scaling and routing-threshold selection.
+- The held-out test split is used only for final evaluation.
 
 Local CPU/Mac execution note:
 
@@ -232,17 +247,22 @@ Generated modeling inputs:
 
 ## Run Stage 2 In Colab
 
-Use the notebooks under `notebooks/colab/` for larger GPU training runs.
+Use the notebooks under `notebooks/colab/` for larger GPU training runs. These are the advanced Colab versions of the first-stage modeling workflow.
 
 Recommended Colab order:
 
 1. Open the target notebook from GitHub in Colab.
 2. Run the dependency installation cell, then restart the runtime once if Colab asks.
 3. Set `SAMPLES_PER_CLASS` near the top of the notebook. The default is `300` per class for a smoke test; increase it to values such as `1000`, `20000`, or `40000` for larger runs.
-4. Keep `WANDB_SWEEP_MODE = "new"` for an independent sweep. Use `continue_existing` only when you have access to the target W&B entity/project/sweep.
+4. Keep `WANDB_SWEEP_MODE = "new"` for an independent sweep. Use `continue_existing` or `reuse_best` only when `WANDB_ENTITY`, `WANDB_PROJECT`, and `WANDB_SWEEP_ID` point to an accessible collaborator sweep.
 5. Do not paste W&B tokens into notebook source code. Add `WANDB_API_KEY` in Colab Secrets or enter it only when the secure `wandb.login()` prompt appears.
+6. If needed, set `WANDB_ENTITY`, `WANDB_PROJECT`, and `WANDB_SWEEP_ID` through Colab environment variables or edit the configuration cell for the current run only.
 
 The Colab notebooks save W&B sweep results, predictions, metrics, threshold tables, figures, and final model outputs into their local Colab output directories. These generated outputs are ignored by Git and should be shared through W&B artifacts, cloud storage, or another agreed research storage location.
+
+Detailed Colab workflow notes are available in:
+
+- `docs/advanced_colab_training_workflow.md`
 
 
 ## Run Stage 3 / Inspect Mixed Emotion Dataset

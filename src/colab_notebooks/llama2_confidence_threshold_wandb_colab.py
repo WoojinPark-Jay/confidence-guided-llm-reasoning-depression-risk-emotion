@@ -1,61 +1,21 @@
-# This file is generated from the matching Colab notebook for code review/reuse.
-# The notebook remains the primary runnable artifact.
+"""
+Llama2_Reddit_WandB_QLoRA_Advanced_Confidence_Threshold_E2E
+"""
+
 
 # %% [markdown]
-# # Llama 2 QLoRA Colab Training Notebook
-# 
-# This Colab-oriented notebook keeps the collaborator workflow structure while making the run safer for GitHub collaboration.
-# 
-# Run setup:
-# 
-# 1. Open this notebook in Google Colab.
-# 2. Use a GPU runtime for Llama 2 or Mistral. DistilBERT can run on a smaller GPU.
-# 3. Keep W&B API keys out of the notebook. Either add `WANDB_API_KEY` in Colab Secrets or let the `wandb.login()` prompt ask for the key.
-# 4. Start with `SAMPLES_PER_CLASS = 300` for a smoke test, then increase it for full training.
-# 5. Use `WANDB_SWEEP_MODE = "new"` unless you intentionally have access to an existing collaborator sweep.
-# 
-# Do not commit W&B tokens, generated model folders, W&B run folders, or large local data files.
+# # Llama 2 Reddit Classification + W&B + Advanced Confidence-Threshold Analysis
 
-# %% [markdown]
-# 
-# # Llama 2 Reddit Classification + W&B QLoRA Tuning + Confidence Threshold Analysis
-# 
-# This notebook performs an end-to-end smoke test for three-class Reddit emotion classification.
-# 
-# Execution order:
-# 
-# 1. Load the Reddit CSV.
-# 2. Sample 300 rows from each class:
-#    - Depression
-#    - Neutral
-#    - Happy
-# 3. Create stratified train/validation/test splits.
-# 4. Tokenize the sampled texts.
-# 5. Run or reuse a W&B hyperparameter sweep.
-# 6. Train each sweep trial with Llama 2 sequence classification and LoRA/QLoRA.
-# 7. Select the best **finished** W&B run using validation macro F1.
-# 8. Create `BEST_HYPERPARAMETERS`.
-# 9. Train a fresh final Llama 2 classifier using the selected configuration.
-# 10. Evaluate the held-out test set.
-# 11. Calculate maximum-softmax-probability confidence.
-# 12. Select a routing threshold on validation data only.
-# 13. Apply the fixed threshold to the held-out test set.
-# 14. Save model adapters, predictions, tables, metrics, and figures.
-# 
-# ## Important resource note
-# 
-# The default full model is `NousResearch/Llama-2-7b-hf`. On a CUDA GPU, the
-# notebook uses 4-bit QLoRA by default. On a CPU-only runtime, it automatically
-# switches to a tiny Llama checkpoint for code-path testing.
 
-# %%
+# %% [cell 1]
 
 # Colab/Jupyter dependency installation.
 # Restart the runtime if the environment requests it after installation.
 
-# %pip install -q -U     transformers datasets accelerate peft bitsandbytes     scikit-learn pandas matplotlib scipy wandb sentencepiece
+# Notebook-only command: %pip install -q -U     transformers datasets accelerate peft bitsandbytes     scikit-learn pandas matplotlib scipy wandb sentencepiece
 
-# %%
+
+# %% [cell 2]
 
 import os
 import gc
@@ -134,20 +94,12 @@ if torch.cuda.is_available():
         torch.cuda.is_bf16_supported(),
     )
 
-# %% [markdown]
-# 
-# ## 1. Configuration
-# 
-# The default repository mode creates a new W&B sweep under the account selected at login:
-# 
-# ```python
-# WANDB_PROJECT = "confidence-guided-llama2-colab"
-# EXISTING_SWEEP_ID = ""
-# ```
-# 
-# When you intentionally continue an existing compatible sweep, set `WANDB_SWEEP_MODE = "continue_existing"`, fill `WANDB_ENTITY`, `WANDB_PROJECT`, and `EXISTING_SWEEP_ID`, and make sure your W&B account has access.
 
-# %%
+# %% [markdown]
+# ## 1. Configuration
+
+
+# %% [cell 4]
 
 DATA_URL = (
     "https://media.githubusercontent.com/media/"
@@ -187,22 +139,17 @@ LABEL_COLUMN_CANDIDATES = [
 # -------------------------------------------------------------------
 # Dataset sampling
 # -------------------------------------------------------------------
-# Default Colab smoke-test size: 300 rows per class, 900 total rows.
-# For larger paper-scale runs, change this value to 1000, 20000, 40000, etc.
 SAMPLES_PER_CLASS = 300
 
 # "first_balanced": fastest smoke test; stops when all classes are filled.
 # "reservoir": reads the whole CSV and is less sensitive to file ordering.
 SAMPLING_MODE = "first_balanced"
-# Use "reservoir" for paper-quality sampling when running the full dataset.
 CSV_CHUNK_SIZE = 5_000
 
-TRAIN_RATIO = 0.75
-VALIDATION_RATIO = 0.15
+TRAIN_RATIO = 0.70
+VALIDATION_RATIO = 0.10
+CALIBRATION_RATIO = 0.10
 TEST_RATIO = 0.10
-
-# With SAMPLES_PER_CLASS=300 this gives approximately:
-# train=675, validation=135, test=90.
 
 # 900 rows -> approximately 675 train / 135 validation / 90 test.
 MAX_LENGTH = 256
@@ -241,18 +188,11 @@ MAX_GRAD_NORM = 0.3
 #   "continue_existing" Add trials to the supplied existing sweep.
 #   "reuse_best"        Add no trials; reuse the best finished run.
 #   "disabled"          Skip W&B and use DEFAULT_HYPERPARAMETERS.
-WANDB_SWEEP_MODE = "new"
+WANDB_SWEEP_MODE = "continue_existing"
 
-WANDB_ENTITY = None
-WANDB_PROJECT = "confidence-guided-llama2-colab"
-EXISTING_SWEEP_ID = ""
-
-# Leave WANDB_ENTITY as None to use the account/team selected at login.
-# To continue a collaborator sweep instead, set for example:
-# WANDB_ENTITY = "kangsy413"
-# WANDB_PROJECT = "my-llama2-sweep"
-# EXISTING_SWEEP_ID = "rwuzwzee"
-# WANDB_SWEEP_MODE = "continue_existing"
+WANDB_ENTITY = os.environ.get("WANDB_ENTITY") or None
+WANDB_PROJECT = os.environ.get("WANDB_PROJECT", "confidence-guided-llama2-colab")
+EXISTING_SWEEP_ID = os.environ.get("WANDB_SWEEP_ID", "")
 
 WANDB_SWEEP_NAME = "llama2-reddit-qlora-validation-macro-f1"
 WANDB_SWEEP_COUNT = 2
@@ -324,6 +264,86 @@ RUN_SELECTION_METRIC_ALIASES = [
     "f1-score",
 ]
 
+
+# -------------------------------------------------------------------
+# Advanced confidence-threshold analysis
+# -------------------------------------------------------------------
+# The model-selection validation split is used only for W&B tuning,
+# early stopping, and best-checkpoint selection.
+#
+# The calibration split is used for temperature scaling and routing
+# threshold selection. The held-out test split is not used for either.
+PRIMARY_CONFIDENCE_METHOD = "temperature_scaled_msp"
+
+CONFIDENCE_METHODS = {
+    "raw_msp": "raw_msp",
+    "temperature_scaled_msp": "calibrated_msp",
+    "entropy_certainty": "raw_entropy_certainty",
+    "probability_margin": "raw_margin",
+}
+
+TARGET_SELECTIVE_RISK = 0.05
+RISK_CONFIDENCE_DELTA = 0.05
+
+# "upper_bound" uses a one-sided Clopper-Pearson upper confidence bound.
+# "empirical" uses the observed accepted-set error rate.
+RISK_CONTROL_METHOD = "upper_bound"
+
+# For a smoke test, an explicit fallback keeps the pipeline executable
+# when the small calibration split cannot satisfy the risk constraint.
+# For the final paper experiment, set this to False.
+ALLOW_EXPLICIT_RISK_FALLBACK = True
+
+MIN_ACCEPTED_COUNT = 10
+MIN_ACCEPTED_FRACTION = 0.10
+
+ALPHA_SENSITIVITY_VALUES = [
+    0.01,
+    0.03,
+    0.05,
+    0.10,
+]
+
+ECE_BIN_COUNTS = [
+    10,
+    15,
+    20,
+]
+PRIMARY_ECE_BINS = 15
+
+BOOTSTRAP_ITERATIONS = 1000
+THRESHOLD_STABILITY_BOOTSTRAPS = 300
+BOOTSTRAP_CONFIDENCE_LEVEL = 0.95
+
+ROUTING_BUDGETS = [
+    0.10,
+    0.20,
+    0.25,
+]
+
+RUN_CLASS_CONDITIONAL_THRESHOLD_ABLATION = True
+
+# Optional empirical cost-sensitive ablation. Disabled by default because
+# misclassification weights require a defensible domain-specific rationale.
+RUN_COST_SENSITIVE_ABLATION = False
+
+COST_MATRIX = np.asarray([
+    [0.0, 2.0, 3.0],  # true Depression -> predicted D/N/H
+    [1.0, 0.0, 1.0],  # true Neutral
+    [1.0, 1.0, 0.0],  # true Happy
+], dtype=np.float64)
+
+# Optional external stress-test evaluation. The Reddit-selected temperature
+# and threshold are reused without re-selection.
+MIXED_EMOTION_CSV_PATH = None
+MIXED_EMOTION_TEXT_COLUMN = "text"
+MIXED_EMOTION_LABEL_COLUMN = "label"
+MIXED_EMOTION_SCENARIO_COLUMN = "scenario_type"
+
+# Optional real Phase 2 result integration.
+PHASE2_PREDICTIONS_PATH = None
+
+
 # -------------------------------------------------------------------
 # Confidence threshold analysis
 # -------------------------------------------------------------------
@@ -343,8 +363,8 @@ SWEEP_RESULTS_PATH = (
 print("Output directory:", OUTPUT_DIR.resolve())
 print("W&B mode:", WANDB_SWEEP_MODE)
 print(
-    "W&B entity/project:",
-    f"{WANDB_ENTITY or 'default-account'}/{WANDB_PROJECT}",
+    "W&B project:",
+    f"{WANDB_ENTITY}/{WANDB_PROJECT}",
 )
 
 if USE_EXISTING_SWEEP:
@@ -372,27 +392,16 @@ print("Model:", ACTIVE_MODEL_NAME)
 print("Tiny debug model:", DEBUG_USE_TINY_MODEL)
 print("4-bit QLoRA:", ACTIVE_USE_4BIT)
 
+
 # %% [markdown]
-# 
 # ### W&B mode behavior
-# 
-# `continue_existing` uses the server-side parameter space and objective stored in
-# `kangsy413/my-llama2-sweep/rwuzwzee`. The local new-sweep configuration does not
-# overwrite it.
-# 
-# The final best-run selector:
-# 
-# 1. excludes interrupted, failed, crashed, killed, and running runs;
-# 2. first looks for `validation_f1_macro`;
-# 3. falls back to legacy F1 keys only if no exact Macro-F1 result exists.
-# 
-# When an existing sweep is loss-based, use `WANDB_SWEEP_MODE="new"` for the
-# cleanest Macro-F1-based experiment.
+
 
 # %% [markdown]
 # ## 2. Load and sample the Reddit dataset
 
-# %%
+
+# %% [cell 7]
 
 CANONICAL_CLASS_TO_ID = {
     "Depression": 0,
@@ -530,7 +539,8 @@ print(
     ).head(10)
 )
 
-# %%
+
+# %% [cell 8]
 
 def sample_balanced_from_csv(
     csv_url: str,
@@ -735,72 +745,109 @@ sampled_df.to_csv(
     index=False,
 )
 
+
 # %% [markdown]
-# ## 3. Stratified train/validation/test split
+# ## 3. Stratified train/model-validation/threshold-calibration/test split
 
-# %%
 
-def stratified_three_way_split(
+# %% [cell 10]
+
+def stratified_four_way_split(
     dataframe: pd.DataFrame,
     train_ratio: float,
     validation_ratio: float,
+    calibration_ratio: float,
     test_ratio: float,
     seed: int,
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    if not np.isclose(
+) -> Tuple[
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+]:
+    total_ratio = (
         train_ratio
         + validation_ratio
-        + test_ratio,
-        1.0,
-    ):
+        + calibration_ratio
+        + test_ratio
+    )
+
+    if not np.isclose(total_ratio, 1.0):
         raise ValueError(
-            "Train, validation, and test ratios must sum to 1."
+            "Train, validation, calibration, and test ratios "
+            "must sum to 1."
         )
 
-    train_df, temporary_df = train_test_split(
+    train_split, remaining = train_test_split(
         dataframe,
         test_size=1.0 - train_ratio,
         random_state=seed,
         stratify=dataframe["label"],
     )
 
-    relative_test_ratio = (
-        test_ratio
-        / (validation_ratio + test_ratio)
+    remaining_ratio = (
+        validation_ratio
+        + calibration_ratio
+        + test_ratio
     )
 
-    validation_df, test_df = train_test_split(
-        temporary_df,
-        test_size=relative_test_ratio,
+    validation_share = (
+        validation_ratio / remaining_ratio
+    )
+
+    validation_split, calibration_and_test = train_test_split(
+        remaining,
+        train_size=validation_share,
         random_state=seed,
-        stratify=temporary_df["label"],
+        stratify=remaining["label"],
+    )
+
+    calibration_share = (
+        calibration_ratio
+        / (calibration_ratio + test_ratio)
+    )
+
+    calibration_split, test_split = train_test_split(
+        calibration_and_test,
+        train_size=calibration_share,
+        random_state=seed,
+        stratify=calibration_and_test["label"],
     )
 
     return (
-        train_df.reset_index(drop=True),
-        validation_df.reset_index(drop=True),
-        test_df.reset_index(drop=True),
+        train_split.reset_index(drop=True),
+        validation_split.reset_index(drop=True),
+        calibration_split.reset_index(drop=True),
+        test_split.reset_index(drop=True),
     )
 
 
-train_df, validation_df, test_df = (
-    stratified_three_way_split(
-        sampled_df,
-        train_ratio=TRAIN_RATIO,
-        validation_ratio=VALIDATION_RATIO,
-        test_ratio=TEST_RATIO,
-        seed=SEED,
-    )
+(
+    train_df,
+    validation_df,
+    calibration_df,
+    test_df,
+) = stratified_four_way_split(
+    sampled_df,
+    train_ratio=TRAIN_RATIO,
+    validation_ratio=VALIDATION_RATIO,
+    calibration_ratio=CALIBRATION_RATIO,
+    test_ratio=TEST_RATIO,
+    seed=SEED,
 )
 
-for split_name, split_df in {
+for split_name, split_dataframe in {
     "train": train_df,
-    "validation": validation_df,
-    "test": test_df,
+    "model_validation": validation_df,
+    "threshold_calibration": calibration_df,
+    "held_out_test": test_df,
 }.items():
-    print(f"\n{split_name}: {len(split_df)}")
     print(
-        split_df[
+        f"\n{split_name}: "
+        f"{len(split_dataframe)}"
+    )
+    print(
+        split_dataframe[
             "label_name"
         ].value_counts().sort_index()
     )
@@ -810,7 +857,13 @@ train_df.to_csv(
     index=False,
 )
 validation_df.to_csv(
-    OUTPUT_DIR / "validation_sample.csv",
+    OUTPUT_DIR
+    / "model_validation_sample.csv",
+    index=False,
+)
+calibration_df.to_csv(
+    OUTPUT_DIR
+    / "threshold_calibration_sample.csv",
     index=False,
 )
 test_df.to_csv(
@@ -818,10 +871,12 @@ test_df.to_csv(
     index=False,
 )
 
+
 # %% [markdown]
 # ## 4. Tokenizer and Hugging Face datasets
 
-# %%
+
+# %% [cell 12]
 
 tokenizer = AutoTokenizer.from_pretrained(
     ACTIVE_MODEL_NAME,
@@ -852,6 +907,12 @@ raw_datasets = DatasetDict({
     ),
     "validation": Dataset.from_pandas(
         validation_df[
+            ["sample_id", "text", "label"]
+        ],
+        preserve_index=False,
+    ),
+    "calibration": Dataset.from_pandas(
+        calibration_df[
             ["sample_id", "text", "label"]
         ],
         preserve_index=False,
@@ -892,12 +953,17 @@ data_collator = DataCollatorWithPadding(
 
 print(tokenized_datasets)
 print("Pad token:", tokenizer.pad_token)
-print("Pad token ID:", tokenizer.pad_token_id)
+print(
+    "Pad token ID:",
+    tokenizer.pad_token_id,
+)
+
 
 # %% [markdown]
 # ## 5. Llama 2 QLoRA model and Trainer helpers
 
-# %%
+
+# %% [cell 14]
 
 id2label = {
     0: "Depression",
@@ -1467,10 +1533,12 @@ def release_training_objects(
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
+
 # %% [markdown]
 # ## 6. W&B sweep setup
 
-# %%
+
+# %% [cell 16]
 
 def build_sweep_path(
     entity: str,
@@ -1610,38 +1678,14 @@ def validate_existing_sweep_objective(
     print("WARNING:", message)
 
 
-def login_wandb_for_colab() -> None:
-    if WANDB_SWEEP_MODE == "disabled" or WANDB_MODE == "disabled":
-        print("W&B disabled; skipping login.")
-        return
-
-    import wandb
-
-    os.environ["WANDB_MODE"] = WANDB_MODE
-
-    api_key = os.environ.get("WANDB_API_KEY")
-
-    try:
-        from google.colab import userdata
-
-        api_key = api_key or userdata.get("WANDB_API_KEY")
-    except Exception:
-        pass
-
-    if api_key:
-        wandb.login(key=api_key)
-    else:
-        print(
-            "No WANDB_API_KEY found in environment or Colab Secrets. "
-            "A secure W&B prompt will appear. Do not hard-code the key."
-        )
-        wandb.login()
-
-
 if WANDB_SWEEP_MODE != "disabled":
     import wandb
 
-    login_wandb_for_colab()
+    os.environ["WANDB_MODE"] = (
+        WANDB_MODE
+    )
+
+    wandb.login()
 
 
 if WANDB_SWEEP_MODE == "new":
@@ -1741,10 +1785,12 @@ else:
         "Fixed defaults will be used."
     )
 
+
 # %% [markdown]
 # ## 7. Run W&B QLoRA trials
 
-# %%
+
+# %% [cell 18]
 
 def append_jsonl(
     path: Path,
@@ -2173,14 +2219,12 @@ elif WANDB_SWEEP_MODE == "reuse_best":
 else:
     ACTIVE_SWEEP_PATH = None
 
-# %% [markdown]
-# 
-# ## 8. Select the best finished W&B run
-# 
-# `BEST_HYPERPARAMETERS` is created in this section and is not referenced by final
-# model training until the following section.
 
-# %%
+# %% [markdown]
+# ## 8. Select the best finished W&B run
+
+
+# %% [cell 20]
 
 def first_available_metric(
     run,
@@ -2625,15 +2669,12 @@ with open(
         indent=2,
     )
 
-# %% [markdown]
-# 
-# ## 9. Train the final Llama 2 classifier
-# 
-# A fresh base model is loaded and adapted using the selected QLoRA
-# hyperparameters. The final W&B run remains active through held-out test
-# evaluation and is closed immediately afterward.
 
-# %%
+# %% [markdown]
+# ## 9. Train the final Llama 2 classifier
+
+
+# %% [cell 22]
 
 if "BEST_HYPERPARAMETERS" not in globals():
     raise RuntimeError(
@@ -2805,10 +2846,12 @@ with open(
         default=str,
     )
 
+
 # %% [markdown]
 # ## 10. Held-out test evaluation
 
-# %%
+
+# %% [cell 24]
 
 test_metrics = trainer.evaluate(
     eval_dataset=(
@@ -2873,48 +2916,320 @@ print(
     "The final W&B run is closed."
 )
 
+
 # %% [markdown]
-# 
-# ## 11. MSP confidence prediction tables
-# 
-# For each row:
-# 
-# - predicted class: class with the largest softmax probability;
-# - confidence: maximum softmax probability;
-# - Phase 1 correctness: whether the Llama classifier prediction matches the label.
+# ## Advanced confidence-threshold analysis
 
-# %%
 
-def build_prediction_dataframe(
-    trainer: Trainer,
-    tokenized_split: Dataset,
-    original_dataframe: pd.DataFrame,
-) -> pd.DataFrame:
-    prediction_output = trainer.predict(
-        tokenized_split
-    )
+# %% [cell 26]
 
-    logits = (
-        prediction_output.predictions
-    )
+from scipy.optimize import minimize_scalar
+from scipy.special import logsumexp
+from scipy.stats import beta as beta_distribution
+
+
+ADVANCED_THRESHOLD_DIR = (
+    OUTPUT_DIR
+    / "advanced_confidence_threshold"
+)
+ADVANCED_THRESHOLD_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+ANALYSIS_MODEL_NAME = ACTIVE_MODEL_NAME
+
+# Deterministic standard inference for MSP analysis.
+trainer.model.eval()
+
+
+def extract_logits(
+    prediction_output,
+) -> np.ndarray:
+    logits = prediction_output.predictions
 
     if isinstance(logits, tuple):
         logits = logits[0]
 
-    probabilities = softmax(
+    # FP16/BF16 model outputs are converted to FP32 before softmax.
+    return np.asarray(
         logits,
-        axis=1,
+        dtype=np.float32,
     )
 
-    predicted_labels = np.argmax(
+
+def predict_split_logits(
+    split_name: str,
+) -> Tuple[np.ndarray, np.ndarray]:
+    output = trainer.predict(
+        tokenized_datasets[split_name]
+    )
+
+    logits = extract_logits(output)
+    labels = np.asarray(
+        output.label_ids,
+        dtype=np.int64,
+    )
+
+    return logits, labels
+
+
+calibration_logits, calibration_labels = (
+    predict_split_logits(
+        "calibration"
+    )
+)
+
+test_logits, test_labels = (
+    predict_split_logits(
+        "test"
+    )
+)
+
+print(
+    "Calibration logits:",
+    calibration_logits.shape,
+)
+print(
+    "Test logits:",
+    test_logits.shape,
+)
+
+
+# %% [markdown]
+# ### Temperature scaling on the dedicated calibration split
+
+
+# %% [cell 28]
+
+def softmax_fp32(
+    logits: np.ndarray,
+    temperature: float = 1.0,
+) -> np.ndarray:
+    if temperature <= 0:
+        raise ValueError(
+            "temperature must be positive."
+        )
+
+    scaled_logits = (
+        np.asarray(
+            logits,
+            dtype=np.float32,
+        )
+        / np.float32(temperature)
+    )
+
+    return softmax(
+        scaled_logits,
+        axis=1,
+    ).astype(np.float32)
+
+
+def negative_log_likelihood_from_logits(
+    logits: np.ndarray,
+    labels: np.ndarray,
+    temperature: float = 1.0,
+) -> float:
+    scaled_logits = (
+        np.asarray(
+            logits,
+            dtype=np.float64,
+        )
+        / float(temperature)
+    )
+
+    log_probabilities = (
+        scaled_logits
+        - logsumexp(
+            scaled_logits,
+            axis=1,
+            keepdims=True,
+        )
+    )
+
+    return float(
+        -np.mean(
+            log_probabilities[
+                np.arange(len(labels)),
+                labels,
+            ]
+        )
+    )
+
+
+def fit_temperature_scaling(
+    logits: np.ndarray,
+    labels: np.ndarray,
+) -> Dict[str, Any]:
+    before_nll = (
+        negative_log_likelihood_from_logits(
+            logits,
+            labels,
+            temperature=1.0,
+        )
+    )
+
+    result = minimize_scalar(
+        lambda log_temperature: (
+            negative_log_likelihood_from_logits(
+                logits,
+                labels,
+                temperature=float(
+                    np.exp(log_temperature)
+                ),
+            )
+        ),
+        bounds=(-3.0, 3.0),
+        method="bounded",
+        options={
+            "xatol": 1e-6,
+        },
+    )
+
+    temperature = float(
+        np.exp(result.x)
+    )
+
+    after_nll = (
+        negative_log_likelihood_from_logits(
+            logits,
+            labels,
+            temperature=temperature,
+        )
+    )
+
+    return {
+        "temperature": temperature,
+        "optimization_success": bool(
+            result.success
+        ),
+        "optimization_message": str(
+            result.message
+        ),
+        "nll_before": before_nll,
+        "nll_after": after_nll,
+    }
+
+
+temperature_result = (
+    fit_temperature_scaling(
+        calibration_logits,
+        calibration_labels,
+    )
+)
+
+SELECTED_TEMPERATURE = (
+    temperature_result["temperature"]
+)
+
+print(
+    "Temperature scaling result:"
+)
+print(
+    json.dumps(
+        temperature_result,
+        indent=2,
+    )
+)
+
+with open(
+    ADVANCED_THRESHOLD_DIR
+    / "temperature_scaling.json",
+    "w",
+    encoding="utf-8",
+) as file:
+    json.dump(
+        temperature_result,
+        file,
+        indent=2,
+    )
+
+
+# %% [markdown]
+# ### FP32 probabilities and confidence-score tables
+
+
+# %% [cell 30]
+
+def probability_margin(
+    probabilities: np.ndarray,
+) -> np.ndarray:
+    sorted_probabilities = np.sort(
         probabilities,
         axis=1,
     )
 
-    confidence = np.max(
+    return (
+        sorted_probabilities[:, -1]
+        - sorted_probabilities[:, -2]
+    )
+
+
+def normalized_entropy_certainty(
+    probabilities: np.ndarray,
+) -> np.ndarray:
+    clipped = np.clip(
         probabilities,
+        1e-12,
+        1.0,
+    )
+
+    entropy = -np.sum(
+        clipped * np.log(clipped),
         axis=1,
     )
+
+    maximum_entropy = np.log(
+        probabilities.shape[1]
+    )
+
+    return (
+        1.0
+        - entropy / maximum_entropy
+    )
+
+
+def compute_token_lengths(
+    texts: Iterable[str],
+) -> np.ndarray:
+    encoded = tokenizer(
+        list(texts),
+        add_special_tokens=True,
+        truncation=False,
+        padding=False,
+    )
+
+    return np.asarray([
+        len(input_ids)
+        for input_ids
+        in encoded["input_ids"]
+    ])
+
+
+def build_advanced_prediction_dataframe(
+    original_dataframe: pd.DataFrame,
+    logits: np.ndarray,
+    temperature: float,
+) -> pd.DataFrame:
+    raw_probabilities = softmax_fp32(
+        logits,
+        temperature=1.0,
+    )
+
+    calibrated_probabilities = softmax_fp32(
+        logits,
+        temperature=temperature,
+    )
+
+    raw_predictions = np.argmax(
+        raw_probabilities,
+        axis=1,
+    ).astype(int)
+
+    calibrated_predictions = np.argmax(
+        calibrated_probabilities,
+        axis=1,
+    ).astype(int)
 
     result = original_dataframe[
         [
@@ -2923,71 +3238,113 @@ def build_prediction_dataframe(
             "label",
             "label_name",
         ]
-    ].copy()
+    ].copy().reset_index(drop=True)
 
     result["predicted_label"] = (
-        predicted_labels.astype(int)
+        raw_predictions
     )
     result["predicted_label_name"] = (
         result[
             "predicted_label"
         ].map(ID_TO_CLASS)
     )
-    result["confidence"] = confidence
-    result["prob_depression"] = (
-        probabilities[:, 0]
+    result["calibrated_predicted_label"] = (
+        calibrated_predictions
     )
-    result["prob_neutral"] = (
-        probabilities[:, 1]
+
+    result["raw_msp"] = np.max(
+        raw_probabilities,
+        axis=1,
     )
-    result["prob_happy"] = (
-        probabilities[:, 2]
+    result["calibrated_msp"] = np.max(
+        calibrated_probabilities,
+        axis=1,
     )
+    result["raw_entropy_certainty"] = (
+        normalized_entropy_certainty(
+            raw_probabilities
+        )
+    )
+    result["raw_margin"] = (
+        probability_margin(
+            raw_probabilities
+        )
+    )
+
+    for class_id, class_name in (
+        ID_TO_CLASS.items()
+    ):
+        normalized_name = (
+            class_name.lower()
+        )
+
+        result[
+            f"raw_prob_{normalized_name}"
+        ] = raw_probabilities[
+            :,
+            class_id,
+        ]
+
+        result[
+            f"calibrated_prob_{normalized_name}"
+        ] = calibrated_probabilities[
+            :,
+            class_id,
+        ]
+
     result["phase1_correct"] = (
         result["predicted_label"]
         == result["label"]
     )
 
+    token_lengths = compute_token_lengths(
+        result["text"].tolist()
+    )
+
+    result["token_length"] = (
+        token_lengths
+    )
+    result["was_truncated"] = (
+        token_lengths > MAX_LENGTH
+    )
+
     return result
 
 
-validation_predictions = (
-    build_prediction_dataframe(
-        trainer,
-        tokenized_datasets[
-            "validation"
-        ],
-        validation_df,
+calibration_predictions = (
+    build_advanced_prediction_dataframe(
+        calibration_df,
+        calibration_logits,
+        SELECTED_TEMPERATURE,
     )
 )
 
 test_predictions = (
-    build_prediction_dataframe(
-        trainer,
-        tokenized_datasets["test"],
+    build_advanced_prediction_dataframe(
         test_df,
+        test_logits,
+        SELECTED_TEMPERATURE,
     )
 )
 
-validation_predictions.to_csv(
-    OUTPUT_DIR
-    / "validation_predictions.csv",
+calibration_predictions.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "calibration_predictions.csv",
     index=False,
 )
 
 test_predictions.to_csv(
-    OUTPUT_DIR
+    ADVANCED_THRESHOLD_DIR
     / "test_predictions.csv",
     index=False,
 )
 
 print(
-    "Validation accuracy:",
-    validation_predictions[
+    "Calibration accuracy:",
+    calibration_predictions[
         "phase1_correct"
     ].mean(),
 )
-
 print(
     "Test accuracy:",
     test_predictions[
@@ -2996,34 +3353,365 @@ print(
 )
 
 display(
-    validation_predictions.head()
+    calibration_predictions.head()
 )
 
+
 # %% [markdown]
-# ## 12. Validation-only risk–coverage threshold selection
+# ### Calibration metrics: ECE, adaptive ECE, Brier score, and NLL
 
-# %%
 
-def calculate_threshold_metrics(
-    predictions_dataframe: pd.DataFrame,
+# %% [cell 32]
+
+def multiclass_brier_score(
+    probabilities: np.ndarray,
+    labels: np.ndarray,
+) -> float:
+    one_hot = np.eye(
+        probabilities.shape[1],
+        dtype=np.float64,
+    )[labels]
+
+    return float(
+        np.mean(
+            np.sum(
+                (
+                    probabilities
+                    - one_hot
+                ) ** 2,
+                axis=1,
+            )
+        )
+    )
+
+
+def reliability_bins_equal_width(
+    probabilities: np.ndarray,
+    labels: np.ndarray,
+    n_bins: int,
+) -> pd.DataFrame:
+    predictions = np.argmax(
+        probabilities,
+        axis=1,
+    )
+    confidence = np.max(
+        probabilities,
+        axis=1,
+    )
+    correctness = (
+        predictions == labels
+    ).astype(float)
+
+    edges = np.linspace(
+        0.0,
+        1.0,
+        n_bins + 1,
+    )
+
+    rows = []
+
+    for bin_index in range(n_bins):
+        lower = edges[bin_index]
+        upper = edges[bin_index + 1]
+
+        if bin_index == n_bins - 1:
+            mask = (
+                (confidence >= lower)
+                & (confidence <= upper)
+            )
+        else:
+            mask = (
+                (confidence >= lower)
+                & (confidence < upper)
+            )
+
+        count = int(mask.sum())
+
+        rows.append({
+            "bin_index": bin_index,
+            "lower": lower,
+            "upper": upper,
+            "count": count,
+            "mean_confidence": (
+                float(
+                    confidence[mask].mean()
+                )
+                if count > 0
+                else np.nan
+            ),
+            "accuracy": (
+                float(
+                    correctness[mask].mean()
+                )
+                if count > 0
+                else np.nan
+            ),
+        })
+
+    return pd.DataFrame(rows)
+
+
+def expected_calibration_error(
+    probabilities: np.ndarray,
+    labels: np.ndarray,
+    n_bins: int,
+) -> float:
+    bins = (
+        reliability_bins_equal_width(
+            probabilities,
+            labels,
+            n_bins,
+        )
+    )
+
+    total = len(labels)
+
+    return float(
+        np.nansum(
+            (
+                bins["count"] / total
+            )
+            * np.abs(
+                bins["accuracy"]
+                - bins["mean_confidence"]
+            )
+        )
+    )
+
+
+def adaptive_expected_calibration_error(
+    probabilities: np.ndarray,
+    labels: np.ndarray,
+    n_bins: int,
+) -> float:
+    predictions = np.argmax(
+        probabilities,
+        axis=1,
+    )
+    confidence = np.max(
+        probabilities,
+        axis=1,
+    )
+    correctness = (
+        predictions == labels
+    ).astype(float)
+
+    order = np.argsort(
+        confidence
+    )
+
+    groups = np.array_split(
+        order,
+        n_bins,
+    )
+
+    total = len(labels)
+    adaptive_ece = 0.0
+
+    for group in groups:
+        if len(group) == 0:
+            continue
+
+        group_confidence = float(
+            confidence[group].mean()
+        )
+        group_accuracy = float(
+            correctness[group].mean()
+        )
+
+        adaptive_ece += (
+            len(group) / total
+        ) * abs(
+            group_accuracy
+            - group_confidence
+        )
+
+    return float(adaptive_ece)
+
+
+def calibration_metric_summary(
+    logits: np.ndarray,
+    labels: np.ndarray,
+    temperature: float,
+) -> pd.DataFrame:
+    rows = []
+
+    for confidence_name, candidate_temperature in [
+        ("raw_msp", 1.0),
+        (
+            "temperature_scaled_msp",
+            temperature,
+        ),
+    ]:
+        probabilities = softmax_fp32(
+            logits,
+            candidate_temperature,
+        )
+
+        row = {
+            "confidence_method": (
+                confidence_name
+            ),
+            "temperature": float(
+                candidate_temperature
+            ),
+            "nll": (
+                negative_log_likelihood_from_logits(
+                    logits,
+                    labels,
+                    candidate_temperature,
+                )
+            ),
+            "brier": (
+                multiclass_brier_score(
+                    probabilities,
+                    labels,
+                )
+            ),
+            "adaptive_ece_15": (
+                adaptive_expected_calibration_error(
+                    probabilities,
+                    labels,
+                    PRIMARY_ECE_BINS,
+                )
+            ),
+        }
+
+        for n_bins in ECE_BIN_COUNTS:
+            row[
+                f"ece_equal_width_{n_bins}"
+            ] = expected_calibration_error(
+                probabilities,
+                labels,
+                n_bins,
+            )
+
+        rows.append(row)
+
+    return pd.DataFrame(rows)
+
+
+calibration_quality_table = (
+    calibration_metric_summary(
+        calibration_logits,
+        calibration_labels,
+        SELECTED_TEMPERATURE,
+    )
+)
+
+calibration_quality_table.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "calibration_quality_metrics.csv",
+    index=False,
+)
+
+display(
+    calibration_quality_table
+)
+
+
+# %% [markdown]
+# ### Exact threshold candidates and selective-risk control
+
+
+# %% [cell 34]
+
+def one_sided_binomial_upper_bound(
+    error_count: int,
+    accepted_count: int,
+    delta: float,
+) -> float:
+    if accepted_count <= 0:
+        return np.nan
+
+    if error_count >= accepted_count:
+        return 1.0
+
+    return float(
+        beta_distribution.ppf(
+            1.0 - delta,
+            error_count + 1,
+            accepted_count - error_count,
+        )
+    )
+
+
+def build_exact_threshold_candidates(
+    scores: Iterable[float],
+) -> np.ndarray:
+    unique_scores = np.sort(
+        np.unique(
+            np.asarray(
+                list(scores),
+                dtype=np.float64,
+            )
+        )
+    )
+
+    if len(unique_scores) == 0:
+        raise ValueError(
+            "No confidence scores were supplied."
+        )
+
+    if len(unique_scores) == 1:
+        return np.asarray([
+            np.nextafter(
+                unique_scores[0],
+                -np.inf,
+            ),
+            np.nextafter(
+                unique_scores[0],
+                np.inf,
+            ),
+        ])
+
+    midpoints = (
+        unique_scores[:-1]
+        + unique_scores[1:]
+    ) / 2.0
+
+    return np.unique(
+        np.concatenate([
+            [
+                np.nextafter(
+                    unique_scores[0],
+                    -np.inf,
+                )
+            ],
+            midpoints,
+            [
+                np.nextafter(
+                    unique_scores[-1],
+                    np.inf,
+                )
+            ],
+        ])
+    )
+
+
+def calculate_selective_metrics(
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
     threshold: float,
-) -> Dict[str, float]:
+    delta: float,
+) -> Dict[str, Any]:
     accepted = (
-        predictions_dataframe[
-            "confidence"
-        ]
+        prediction_dataframe[
+            score_column
+        ].to_numpy()
         >= threshold
     )
     routed = ~accepted
 
-    errors = (
-        ~predictions_dataframe[
+    correct = (
+        prediction_dataframe[
             "phase1_correct"
-        ]
+        ].to_numpy(dtype=bool)
     )
+    errors = ~correct
 
     total_count = len(
-        predictions_dataframe
+        prediction_dataframe
     )
     accepted_count = int(
         accepted.sum()
@@ -3031,504 +3719,1774 @@ def calculate_threshold_metrics(
     routed_count = int(
         routed.sum()
     )
-    error_count = int(
+    total_errors = int(
         errors.sum()
     )
-
-    routed_error_count = int(
+    accepted_errors = int(
+        (accepted & errors).sum()
+    )
+    routed_errors = int(
         (routed & errors).sum()
     )
 
-    coverage = (
-        accepted_count / total_count
-        if total_count
+    empirical_risk = (
+        accepted_errors / accepted_count
+        if accepted_count > 0
         else np.nan
     )
 
-    routing_rate = (
-        routed_count / total_count
-        if total_count
-        else np.nan
+    risk_upper_bound = (
+        one_sided_binomial_upper_bound(
+            accepted_errors,
+            accepted_count,
+            delta,
+        )
     )
 
-    if accepted_count > 0:
-        accepted_accuracy = float(
-            predictions_dataframe.loc[
-                accepted,
-                "phase1_correct",
-            ].mean()
-        )
-        selective_risk = (
-            1.0 - accepted_accuracy
-        )
-    else:
-        accepted_accuracy = np.nan
-        selective_risk = np.nan
+    routing_precision = (
+        routed_errors / routed_count
+        if routed_count > 0
+        else np.nan
+    )
 
     error_capture_rate = (
-        routed_error_count
-        / error_count
-        if error_count > 0
+        routed_errors / total_errors
+        if total_errors > 0
+        else np.nan
+    )
+
+    true_labels = (
+        prediction_dataframe[
+            "label"
+        ].to_numpy(dtype=int)
+    )
+    predicted_labels = (
+        prediction_dataframe[
+            "predicted_label"
+        ].to_numpy(dtype=int)
+    )
+
+    accepted_depression = (
+        accepted
+        & (true_labels == 0)
+    )
+
+    accepted_depression_count = int(
+        accepted_depression.sum()
+    )
+
+    accepted_depression_false_negatives = int(
+        (
+            accepted_depression
+            & (predicted_labels != 0)
+        ).sum()
+    )
+
+    depression_false_negative_risk = (
+        accepted_depression_false_negatives
+        / accepted_depression_count
+        if accepted_depression_count > 0
         else np.nan
     )
 
     return {
+        "score_column": score_column,
         "tau": float(threshold),
         "n_total": total_count,
         "n_accepted": accepted_count,
         "n_routed": routed_count,
-        "coverage": coverage,
-        "routing_rate": routing_rate,
+        "coverage": (
+            accepted_count / total_count
+            if total_count > 0
+            else np.nan
+        ),
+        "routing_rate": (
+            routed_count / total_count
+            if total_count > 0
+            else np.nan
+        ),
         "accepted_accuracy": (
-            accepted_accuracy
+            1.0 - empirical_risk
+            if accepted_count > 0
+            else np.nan
         ),
         "selective_risk": (
-            selective_risk
+            empirical_risk
         ),
-        "phase1_errors": error_count,
+        "selective_risk_upper_bound": (
+            risk_upper_bound
+        ),
+        "phase1_errors": total_errors,
+        "accepted_phase1_errors": (
+            accepted_errors
+        ),
         "routed_phase1_errors": (
-            routed_error_count
+            routed_errors
         ),
         "error_capture_rate": (
             error_capture_rate
+        ),
+        "routing_precision": (
+            routing_precision
+        ),
+        "accepted_depression_count": (
+            accepted_depression_count
+        ),
+        "accepted_depression_false_negatives": (
+            accepted_depression_false_negatives
+        ),
+        "accepted_depression_false_negative_risk": (
+            depression_false_negative_risk
         ),
     }
 
 
 def threshold_sweep(
-    predictions_dataframe: pd.DataFrame,
-    thresholds: Iterable[float],
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
+    delta: float,
 ) -> pd.DataFrame:
-    return pd.DataFrame([
-        calculate_threshold_metrics(
-            predictions_dataframe,
-            float(threshold),
+    candidates = (
+        build_exact_threshold_candidates(
+            prediction_dataframe[
+                score_column
+            ].to_numpy()
         )
-        for threshold in thresholds
+    )
+
+    return pd.DataFrame([
+        calculate_selective_metrics(
+            prediction_dataframe,
+            score_column,
+            threshold,
+            delta,
+        )
+        for threshold in candidates
     ])
 
 
-def build_exact_threshold_candidates(
-    predictions_dataframe: pd.DataFrame,
-) -> np.ndarray:
-    confidence_values = (
-        predictions_dataframe[
-            "confidence"
-        ]
-        .astype(float)
-        .to_numpy()
+def minimum_accepted_samples(
+    sample_count: int,
+) -> int:
+    return max(
+        int(MIN_ACCEPTED_COUNT),
+        int(
+            np.ceil(
+                MIN_ACCEPTED_FRACTION
+                * sample_count
+            )
+        ),
     )
 
-    grid_values = np.arange(
-        0.50,
-        1.00,
-        0.01,
-    )
 
-    candidates = np.unique(
-        np.concatenate([
-            confidence_values,
-            grid_values,
-            np.asarray(
-                REPORT_THRESHOLDS,
-                dtype=float,
-            ),
-        ])
-    )
-
-    candidates = candidates[
-        (candidates >= 0.0)
-        & (candidates <= 1.0)
-    ]
-
-    return np.sort(candidates)
-
-
-validation_threshold_candidates = (
-    build_exact_threshold_candidates(
-        validation_predictions
-    )
-)
-
-validation_sweep = threshold_sweep(
-    validation_predictions,
-    validation_threshold_candidates,
-)
-
-display(validation_sweep.head())
-
-# %%
-
-def select_threshold_by_risk_coverage(
+def select_threshold(
     sweep_dataframe: pd.DataFrame,
-    target_selective_risk: float,
-    minimum_accepted_samples: int,
-) -> Tuple[
-    float,
-    str,
-    pd.Series,
-]:
-    eligible = sweep_dataframe[
-        sweep_dataframe[
-            "selective_risk"
-        ].notna()
-        & (
-            sweep_dataframe[
-                "selective_risk"
-            ]
-            <= target_selective_risk
+    alpha: float,
+    risk_control_method: str,
+    allow_fallback: bool,
+) -> Dict[str, Any]:
+    if risk_control_method not in {
+        "empirical",
+        "upper_bound",
+    }:
+        raise ValueError(
+            "risk_control_method must be "
+            "'empirical' or 'upper_bound'."
         )
+
+    risk_column = (
+        "selective_risk"
+        if risk_control_method
+        == "empirical"
+        else "selective_risk_upper_bound"
+    )
+
+    minimum_count = (
+        minimum_accepted_samples(
+            int(
+                sweep_dataframe[
+                    "n_total"
+                ].iloc[0]
+            )
+        )
+    )
+
+    valid = sweep_dataframe[
+        sweep_dataframe[
+            risk_column
+        ].notna()
         & (
             sweep_dataframe[
                 "n_accepted"
             ]
-            >= minimum_accepted_samples
+            >= minimum_count
         )
     ].copy()
 
-    if not eligible.empty:
-        selected_row = (
-            eligible.sort_values(
+    feasible = valid[
+        valid[risk_column] <= alpha
+    ].copy()
+
+    if not feasible.empty:
+        # Deterministic tie breaking:
+        # 1. maximum coverage
+        # 2. minimum controlled risk
+        # 3. minimum empirical risk
+        # 4. lower threshold
+        selected = (
+            feasible.sort_values(
                 by=[
                     "coverage",
-                    "tau",
-                ],
-                ascending=[
-                    False,
-                    True,
-                ],
-            ).iloc[0]
-        )
-
-        status = (
-            "risk_constraint_satisfied"
-        )
-
-    else:
-        valid_rows = sweep_dataframe[
-            sweep_dataframe[
-                "selective_risk"
-            ].notna()
-            & (
-                sweep_dataframe[
-                    "n_accepted"
-                ]
-                >= minimum_accepted_samples
-            )
-        ].copy()
-
-        if valid_rows.empty:
-            raise ValueError(
-                "No threshold has enough "
-                "accepted validation samples."
-            )
-
-        selected_row = (
-            valid_rows.sort_values(
-                by=[
+                    risk_column,
                     "selective_risk",
-                    "coverage",
                     "tau",
                 ],
                 ascending=[
-                    True,
                     False,
+                    True,
+                    True,
                     True,
                 ],
             ).iloc[0]
         )
 
-        status = (
+        return {
+            "selected_tau": float(
+                selected["tau"]
+            ),
+            "selection_status": (
+                "risk_constraint_satisfied"
+            ),
+            "risk_constraint_satisfied": True,
+            "risk_control_method": (
+                risk_control_method
+            ),
+            "risk_column": risk_column,
+            "alpha": float(alpha),
+            "minimum_accepted_samples": (
+                minimum_count
+            ),
+            "selected_metrics": (
+                selected.to_dict()
+            ),
+        }
+
+    if not allow_fallback:
+        return {
+            "selected_tau": None,
+            "selection_status": (
+                "risk_constraint_infeasible"
+            ),
+            "risk_constraint_satisfied": False,
+            "risk_control_method": (
+                risk_control_method
+            ),
+            "risk_column": risk_column,
+            "alpha": float(alpha),
+            "minimum_accepted_samples": (
+                minimum_count
+            ),
+            "selected_metrics": None,
+        }
+
+    if valid.empty:
+        raise ValueError(
+            "No threshold has enough accepted "
+            "calibration samples."
+        )
+
+    selected = (
+        valid.sort_values(
+            by=[
+                risk_column,
+                "selective_risk",
+                "coverage",
+                "tau",
+            ],
+            ascending=[
+                True,
+                True,
+                False,
+                True,
+            ],
+        ).iloc[0]
+    )
+
+    return {
+        "selected_tau": float(
+            selected["tau"]
+        ),
+        "selection_status": (
             "fallback_minimum_observed_risk"
+        ),
+        "risk_constraint_satisfied": False,
+        "risk_control_method": (
+            risk_control_method
+        ),
+        "risk_column": risk_column,
+        "alpha": float(alpha),
+        "minimum_accepted_samples": (
+            minimum_count
+        ),
+        "selected_metrics": (
+            selected.to_dict()
+        ),
+    }
+
+
+def aurc_and_eaurc(
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
+) -> Dict[str, float]:
+    scores = prediction_dataframe[
+        score_column
+    ].to_numpy(dtype=float)
+
+    errors = (
+        ~prediction_dataframe[
+            "phase1_correct"
+        ].to_numpy(dtype=bool)
+    ).astype(float)
+
+    order = np.argsort(
+        -scores,
+        kind="mergesort",
+    )
+
+    ordered_errors = errors[order]
+    counts = np.arange(
+        1,
+        len(errors) + 1,
+    )
+
+    risk_curve = (
+        np.cumsum(
+            ordered_errors
+        )
+        / counts
+    )
+    coverage_curve = (
+        counts / len(errors)
+    )
+
+    aurc = float(
+        np.trapz(
+            np.concatenate([
+                [0.0],
+                risk_curve,
+            ]),
+            np.concatenate([
+                [0.0],
+                coverage_curve,
+            ]),
+        )
+    )
+
+    oracle_errors = np.sort(
+        errors
+    )
+
+    oracle_risk_curve = (
+        np.cumsum(
+            oracle_errors
+        )
+        / counts
+    )
+
+    oracle_aurc = float(
+        np.trapz(
+            np.concatenate([
+                [0.0],
+                oracle_risk_curve,
+            ]),
+            np.concatenate([
+                [0.0],
+                coverage_curve,
+            ]),
+        )
+    )
+
+    return {
+        "aurc": aurc,
+        "oracle_aurc": oracle_aurc,
+        "eaurc": (
+            aurc - oracle_aurc
+        ),
+    }
+
+
+# %% [markdown]
+# ### Confidence-score ablation and model-specific threshold selection
+
+
+# %% [cell 36]
+
+analysis_rows = []
+analysis_objects = {}
+
+for (
+    confidence_method,
+    score_column,
+) in CONFIDENCE_METHODS.items():
+    calibration_sweep = threshold_sweep(
+        calibration_predictions,
+        score_column,
+        RISK_CONFIDENCE_DELTA,
+    )
+
+    selection = select_threshold(
+        calibration_sweep,
+        alpha=TARGET_SELECTIVE_RISK,
+        risk_control_method=(
+            RISK_CONTROL_METHOD
+        ),
+        allow_fallback=(
+            ALLOW_EXPLICIT_RISK_FALLBACK
+        ),
+    )
+
+    selected_tau = (
+        selection["selected_tau"]
+    )
+
+    if selected_tau is None:
+        test_metrics_for_method = None
+    else:
+        test_metrics_for_method = (
+            calculate_selective_metrics(
+                test_predictions,
+                score_column,
+                selected_tau,
+                RISK_CONFIDENCE_DELTA,
+            )
         )
 
-        print(
-            "WARNING: No threshold satisfied "
-            "the configured selective-risk "
-            "constraint. The lowest-risk "
-            "validation threshold was used "
-            "as an explicit fallback."
+    calibration_ranking = (
+        aurc_and_eaurc(
+            calibration_predictions,
+            score_column,
         )
+    )
 
-    return (
-        float(selected_row["tau"]),
-        status,
-        selected_row,
+    test_ranking = aurc_and_eaurc(
+        test_predictions,
+        score_column,
+    )
+
+    summary_row = {
+        "confidence_method": (
+            confidence_method
+        ),
+        "score_column": score_column,
+        "selected_tau": selected_tau,
+        "selection_status": (
+            selection[
+                "selection_status"
+            ]
+        ),
+        "risk_constraint_satisfied": (
+            selection[
+                "risk_constraint_satisfied"
+            ]
+        ),
+        "calibration_aurc": (
+            calibration_ranking[
+                "aurc"
+            ]
+        ),
+        "calibration_eaurc": (
+            calibration_ranking[
+                "eaurc"
+            ]
+        ),
+        "test_aurc": (
+            test_ranking["aurc"]
+        ),
+        "test_eaurc": (
+            test_ranking["eaurc"]
+        ),
+    }
+
+    if test_metrics_for_method:
+        summary_row.update({
+            f"test_{key}": value
+            for key, value
+            in test_metrics_for_method.items()
+            if key not in {
+                "score_column",
+            }
+        })
+
+    analysis_rows.append(
+        summary_row
+    )
+
+    analysis_objects[
+        confidence_method
+    ] = {
+        "score_column": score_column,
+        "calibration_sweep": (
+            calibration_sweep
+        ),
+        "selection": selection,
+        "test_metrics": (
+            test_metrics_for_method
+        ),
+        "calibration_ranking": (
+            calibration_ranking
+        ),
+        "test_ranking": (
+            test_ranking
+        ),
+    }
+
+    calibration_sweep.to_csv(
+        ADVANCED_THRESHOLD_DIR
+        / (
+            f"{confidence_method}_"
+            "calibration_threshold_sweep.csv"
+        ),
+        index=False,
     )
 
 
-(
-    selected_tau,
-    threshold_selection_status,
-    selected_validation_threshold_row,
-) = select_threshold_by_risk_coverage(
-    validation_sweep,
-    target_selective_risk=(
-        TARGET_SELECTIVE_RISK
-    ),
-    minimum_accepted_samples=(
-        MIN_ACCEPTED_SAMPLES
-    ),
+confidence_method_comparison = (
+    pd.DataFrame(
+        analysis_rows
+    )
 )
 
-print("Selected threshold:", selected_tau)
+confidence_method_comparison.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "confidence_method_comparison.csv",
+    index=False,
+)
+
+display(
+    confidence_method_comparison
+)
+
+
+if (
+    PRIMARY_CONFIDENCE_METHOD
+    not in analysis_objects
+):
+    raise KeyError(
+        "PRIMARY_CONFIDENCE_METHOD was not "
+        "found in CONFIDENCE_METHODS."
+    )
+
+
+primary_analysis = (
+    analysis_objects[
+        PRIMARY_CONFIDENCE_METHOD
+    ]
+)
+
+PRIMARY_SCORE_COLUMN = (
+    primary_analysis[
+        "score_column"
+    ]
+)
+
+PRIMARY_THRESHOLD_SELECTION = (
+    primary_analysis[
+        "selection"
+    ]
+)
+
+SELECTED_THRESHOLD = (
+    PRIMARY_THRESHOLD_SELECTION[
+        "selected_tau"
+    ]
+)
+
+if SELECTED_THRESHOLD is None:
+    raise RuntimeError(
+        "The primary confidence method did "
+        "not produce a feasible threshold and "
+        "fallback was disabled."
+    )
+
+print(
+    "Primary confidence method:",
+    PRIMARY_CONFIDENCE_METHOD,
+)
+print(
+    "Primary score column:",
+    PRIMARY_SCORE_COLUMN,
+)
+print(
+    "Selected threshold:",
+    SELECTED_THRESHOLD,
+)
 print(
     "Selection status:",
-    threshold_selection_status,
+    PRIMARY_THRESHOLD_SELECTION[
+        "selection_status"
+    ],
+)
+print(
+    "Risk constraint satisfied:",
+    PRIMARY_THRESHOLD_SELECTION[
+        "risk_constraint_satisfied"
+    ],
 )
 
-print("\nSelected validation metrics:")
+
+# %% [markdown]
+# ### Target-risk sensitivity and routing-budget analysis
+
+
+# %% [cell 38]
+
+primary_calibration_sweep = (
+    primary_analysis[
+        "calibration_sweep"
+    ]
+)
+
+alpha_rows = []
+
+for alpha in ALPHA_SENSITIVITY_VALUES:
+    selection = select_threshold(
+        primary_calibration_sweep,
+        alpha=alpha,
+        risk_control_method=(
+            RISK_CONTROL_METHOD
+        ),
+        allow_fallback=(
+            ALLOW_EXPLICIT_RISK_FALLBACK
+        ),
+    )
+
+    tau = selection[
+        "selected_tau"
+    ]
+
+    row = {
+        "alpha": alpha,
+        "selected_tau": tau,
+        "selection_status": (
+            selection[
+                "selection_status"
+            ]
+        ),
+        "risk_constraint_satisfied": (
+            selection[
+                "risk_constraint_satisfied"
+            ]
+        ),
+    }
+
+    if tau is not None:
+        test_metrics_alpha = (
+            calculate_selective_metrics(
+                test_predictions,
+                PRIMARY_SCORE_COLUMN,
+                tau,
+                RISK_CONFIDENCE_DELTA,
+            )
+        )
+        row.update({
+            f"test_{key}": value
+            for key, value
+            in test_metrics_alpha.items()
+            if key != "score_column"
+        })
+
+    alpha_rows.append(row)
+
+
+alpha_sensitivity_table = (
+    pd.DataFrame(alpha_rows)
+)
+
+alpha_sensitivity_table.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "alpha_sensitivity.csv",
+    index=False,
+)
+
 display(
-    selected_validation_threshold_row
-    .to_frame("value")
+    alpha_sensitivity_table
 )
 
-threshold_metadata = {
-    "selected_tau": selected_tau,
-    "selection_status": (
-        threshold_selection_status
+
+def select_budget_threshold(
+    sweep_dataframe: pd.DataFrame,
+    routing_budget: float,
+) -> Optional[pd.Series]:
+    eligible = sweep_dataframe[
+        sweep_dataframe[
+            "routing_rate"
+        ]
+        <= routing_budget
+    ].copy()
+
+    if eligible.empty:
+        return None
+
+    return eligible.sort_values(
+        by=[
+            "error_capture_rate",
+            "selective_risk",
+            "coverage",
+            "tau",
+        ],
+        ascending=[
+            False,
+            True,
+            False,
+            True,
+        ],
+    ).iloc[0]
+
+
+budget_rows = []
+
+for budget in ROUTING_BUDGETS:
+    selected_budget_row = (
+        select_budget_threshold(
+            primary_calibration_sweep,
+            budget,
+        )
+    )
+
+    if selected_budget_row is None:
+        budget_rows.append({
+            "routing_budget": budget,
+            "selection_status": (
+                "infeasible"
+            ),
+        })
+        continue
+
+    budget_tau = float(
+        selected_budget_row["tau"]
+    )
+
+    budget_test_metrics = (
+        calculate_selective_metrics(
+            test_predictions,
+            PRIMARY_SCORE_COLUMN,
+            budget_tau,
+            RISK_CONFIDENCE_DELTA,
+        )
+    )
+
+    budget_rows.append({
+        "routing_budget": budget,
+        "selection_status": "selected",
+        "selected_tau": budget_tau,
+        **{
+            f"calibration_{key}": value
+            for key, value
+            in selected_budget_row.to_dict().items()
+        },
+        **{
+            f"test_{key}": value
+            for key, value
+            in budget_test_metrics.items()
+            if key != "score_column"
+        },
+    })
+
+
+routing_budget_table = (
+    pd.DataFrame(
+        budget_rows
+    )
+)
+
+routing_budget_table.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "routing_budget_analysis.csv",
+    index=False,
+)
+
+display(
+    routing_budget_table
+)
+
+
+# %% [markdown]
+# ### Bootstrap confidence intervals, threshold stability, and high-confidence errors
+
+
+# %% [cell 40]
+
+def bootstrap_fixed_threshold_metrics(
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
+    threshold: float,
+    iterations: int,
+    confidence_level: float,
+    seed: int,
+) -> pd.DataFrame:
+    rng = np.random.default_rng(
+        seed
+    )
+
+    records = []
+    sample_count = len(
+        prediction_dataframe
+    )
+
+    for iteration in range(
+        iterations
+    ):
+        sampled_indices = rng.integers(
+            0,
+            sample_count,
+            size=sample_count,
+        )
+
+        sampled_dataframe = (
+            prediction_dataframe.iloc[
+                sampled_indices
+            ].reset_index(drop=True)
+        )
+
+        metrics = (
+            calculate_selective_metrics(
+                sampled_dataframe,
+                score_column,
+                threshold,
+                RISK_CONFIDENCE_DELTA,
+            )
+        )
+
+        records.append({
+            "iteration": iteration,
+            **metrics,
+        })
+
+    bootstrap_dataframe = (
+        pd.DataFrame(records)
+    )
+
+    lower_percentile = (
+        100.0
+        * (1.0 - confidence_level)
+        / 2.0
+    )
+    upper_percentile = (
+        100.0 - lower_percentile
+    )
+
+    summary_rows = []
+
+    metric_names = [
+        "coverage",
+        "routing_rate",
+        "accepted_accuracy",
+        "selective_risk",
+        "selective_risk_upper_bound",
+        "error_capture_rate",
+        "routing_precision",
+        "accepted_depression_false_negative_risk",
+    ]
+
+    for metric_name in metric_names:
+        values = (
+            bootstrap_dataframe[
+                metric_name
+            ]
+            .dropna()
+            .to_numpy()
+        )
+
+        if len(values) == 0:
+            continue
+
+        summary_rows.append({
+            "metric": metric_name,
+            "point_estimate": (
+                calculate_selective_metrics(
+                    prediction_dataframe,
+                    score_column,
+                    threshold,
+                    RISK_CONFIDENCE_DELTA,
+                )[metric_name]
+            ),
+            "bootstrap_mean": float(
+                np.mean(values)
+            ),
+            "ci_lower": float(
+                np.percentile(
+                    values,
+                    lower_percentile,
+                )
+            ),
+            "ci_upper": float(
+                np.percentile(
+                    values,
+                    upper_percentile,
+                )
+            ),
+            "confidence_level": (
+                confidence_level
+            ),
+        })
+
+    return pd.DataFrame(
+        summary_rows
+    )
+
+
+test_bootstrap_ci = (
+    bootstrap_fixed_threshold_metrics(
+        test_predictions,
+        PRIMARY_SCORE_COLUMN,
+        SELECTED_THRESHOLD,
+        BOOTSTRAP_ITERATIONS,
+        BOOTSTRAP_CONFIDENCE_LEVEL,
+        SEED,
+    )
+)
+
+test_bootstrap_ci.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "test_selective_metrics_bootstrap_ci.csv",
+    index=False,
+)
+
+display(
+    test_bootstrap_ci
+)
+
+
+def bootstrap_threshold_stability(
+    calibration_dataframe: pd.DataFrame,
+    score_column: str,
+    iterations: int,
+    seed: int,
+) -> pd.DataFrame:
+    rng = np.random.default_rng(
+        seed
+    )
+
+    records = []
+    sample_count = len(
+        calibration_dataframe
+    )
+
+    for iteration in range(
+        iterations
+    ):
+        sampled_indices = rng.integers(
+            0,
+            sample_count,
+            size=sample_count,
+        )
+
+        sampled = (
+            calibration_dataframe.iloc[
+                sampled_indices
+            ].reset_index(drop=True)
+        )
+
+        sampled_sweep = (
+            threshold_sweep(
+                sampled,
+                score_column,
+                RISK_CONFIDENCE_DELTA,
+            )
+        )
+
+        selection = select_threshold(
+            sampled_sweep,
+            TARGET_SELECTIVE_RISK,
+            RISK_CONTROL_METHOD,
+            ALLOW_EXPLICIT_RISK_FALLBACK,
+        )
+
+        records.append({
+            "iteration": iteration,
+            "selected_tau": (
+                selection[
+                    "selected_tau"
+                ]
+            ),
+            "selection_status": (
+                selection[
+                    "selection_status"
+                ]
+            ),
+            "risk_constraint_satisfied": (
+                selection[
+                    "risk_constraint_satisfied"
+                ]
+            ),
+        })
+
+    return pd.DataFrame(records)
+
+
+threshold_stability = (
+    bootstrap_threshold_stability(
+        calibration_predictions,
+        PRIMARY_SCORE_COLUMN,
+        THRESHOLD_STABILITY_BOOTSTRAPS,
+        SEED,
+    )
+)
+
+threshold_stability.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "threshold_bootstrap_stability.csv",
+    index=False,
+)
+
+valid_tau_values = (
+    threshold_stability[
+        "selected_tau"
+    ].dropna()
+)
+
+threshold_stability_summary = {
+    "bootstrap_iterations": (
+        THRESHOLD_STABILITY_BOOTSTRAPS
     ),
-    "target_selective_risk": (
-        TARGET_SELECTIVE_RISK
+    "valid_threshold_count": int(
+        valid_tau_values.shape[0]
     ),
-    "minimum_accepted_samples": (
-        MIN_ACCEPTED_SAMPLES
+    "tau_mean": (
+        float(valid_tau_values.mean())
+        if len(valid_tau_values)
+        else None
     ),
-    "selected_validation_metrics": (
-        selected_validation_threshold_row
-        .to_dict()
+    "tau_std": (
+        float(valid_tau_values.std())
+        if len(valid_tau_values)
+        else None
+    ),
+    "tau_median": (
+        float(valid_tau_values.median())
+        if len(valid_tau_values)
+        else None
+    ),
+    "tau_ci_lower": (
+        float(
+            np.percentile(
+                valid_tau_values,
+                2.5,
+            )
+        )
+        if len(valid_tau_values)
+        else None
+    ),
+    "tau_ci_upper": (
+        float(
+            np.percentile(
+                valid_tau_values,
+                97.5,
+            )
+        )
+        if len(valid_tau_values)
+        else None
+    ),
+    "constraint_satisfaction_rate": (
+        float(
+            threshold_stability[
+                "risk_constraint_satisfied"
+            ].mean()
+        )
     ),
 }
 
 with open(
-    OUTPUT_DIR
-    / "selected_threshold.json",
+    ADVANCED_THRESHOLD_DIR
+    / "threshold_stability_summary.json",
     "w",
     encoding="utf-8",
 ) as file:
     json.dump(
-        threshold_metadata,
+        threshold_stability_summary,
         file,
         indent=2,
-        default=str,
     )
-
-# %% [markdown]
-# ## 13. Apply the fixed validation-selected threshold to test data
-
-# %%
-
-def apply_routing(
-    predictions_dataframe: pd.DataFrame,
-    threshold: float,
-) -> pd.DataFrame:
-    result = (
-        predictions_dataframe.copy()
-    )
-
-    result["selected_tau"] = (
-        threshold
-    )
-
-    result["is_routed"] = (
-        result["confidence"]
-        < threshold
-    )
-
-    result["routing_decision"] = (
-        np.where(
-            result["is_routed"],
-            "Phase2",
-            "Phase1_accept",
-        )
-    )
-
-    return result
-
-
-test_routed = apply_routing(
-    test_predictions,
-    selected_tau,
-)
-
-test_routing_metrics = (
-    calculate_threshold_metrics(
-        test_predictions,
-        selected_tau,
-    )
-)
-
-print(
-    "Fixed threshold applied to "
-    "held-out test set:",
-    selected_tau,
-)
 
 print(
     json.dumps(
-        test_routing_metrics,
+        threshold_stability_summary,
         indent=2,
     )
 )
 
-display(
-    test_routed[
-        [
-            "sample_id",
-            "label_name",
-            "predicted_label_name",
-            "confidence",
-            "phase1_correct",
-            "routing_decision",
-        ]
-    ].sort_values(
-        "confidence"
-    )
+
+test_with_routing = (
+    test_predictions.copy()
 )
 
-test_routed.to_csv(
-    OUTPUT_DIR
+test_with_routing[
+    "selected_threshold"
+] = SELECTED_THRESHOLD
+
+test_with_routing[
+    "is_routed"
+] = (
+    test_with_routing[
+        PRIMARY_SCORE_COLUMN
+    ]
+    < SELECTED_THRESHOLD
+)
+
+test_with_routing[
+    "routing_decision"
+] = np.where(
+    test_with_routing[
+        "is_routed"
+    ],
+    "Phase2",
+    "Phase1_accept",
+)
+
+test_with_routing.to_csv(
+    ADVANCED_THRESHOLD_DIR
     / "test_predictions_with_routing.csv",
     index=False,
 )
 
-with open(
-    OUTPUT_DIR
-    / "test_routing_metrics.json",
-    "w",
-    encoding="utf-8",
-) as file:
-    json.dump(
-        test_routing_metrics,
-        file,
-        indent=2,
-    )
+
+high_confidence_errors = (
+    test_with_routing[
+        (
+            ~test_with_routing[
+                "phase1_correct"
+            ]
+        )
+        & (
+            ~test_with_routing[
+                "is_routed"
+            ]
+        )
+    ].copy()
+)
+
+high_confidence_errors.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "high_confidence_accepted_errors.csv",
+    index=False,
+)
+
+print(
+    "Accepted high-confidence errors:",
+    len(high_confidence_errors),
+)
+
+display(
+    high_confidence_errors.head(20)
+)
+
 
 # %% [markdown]
-# ## 14. Threshold sensitivity tables and figures
+# ### Per-class and class-conditional threshold analysis
 
-# %%
 
-validation_report_table = (
-    threshold_sweep(
-        validation_predictions,
-        REPORT_THRESHOLDS,
+# %% [cell 42]
+
+def per_class_selective_metrics(
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
+    threshold: float,
+) -> pd.DataFrame:
+    accepted = (
+        prediction_dataframe[
+            score_column
+        ] >= threshold
     )
-)
+    routed = ~accepted
 
-test_report_table = (
-    threshold_sweep(
+    rows = []
+
+    for class_id, class_name in (
+        ID_TO_CLASS.items()
+    ):
+        class_mask = (
+            prediction_dataframe[
+                "label"
+            ] == class_id
+        )
+
+        accepted_class = (
+            accepted & class_mask
+        )
+        routed_class = (
+            routed & class_mask
+        )
+
+        accepted_count = int(
+            accepted_class.sum()
+        )
+        routed_count = int(
+            routed_class.sum()
+        )
+        total_count = int(
+            class_mask.sum()
+        )
+
+        accepted_errors = int(
+            (
+                accepted_class
+                & ~prediction_dataframe[
+                    "phase1_correct"
+                ]
+            ).sum()
+        )
+
+        routed_errors = int(
+            (
+                routed_class
+                & ~prediction_dataframe[
+                    "phase1_correct"
+                ]
+            ).sum()
+        )
+
+        total_errors = int(
+            (
+                class_mask
+                & ~prediction_dataframe[
+                    "phase1_correct"
+                ]
+            ).sum()
+        )
+
+        rows.append({
+            "class_id": class_id,
+            "class_name": class_name,
+            "n_total": total_count,
+            "n_accepted": accepted_count,
+            "n_routed": routed_count,
+            "coverage": (
+                accepted_count / total_count
+                if total_count
+                else np.nan
+            ),
+            "selective_risk": (
+                accepted_errors
+                / accepted_count
+                if accepted_count
+                else np.nan
+            ),
+            "error_capture_rate": (
+                routed_errors
+                / total_errors
+                if total_errors
+                else np.nan
+            ),
+            "routing_precision": (
+                routed_errors
+                / routed_count
+                if routed_count
+                else np.nan
+            ),
+        })
+
+    return pd.DataFrame(rows)
+
+
+per_class_test_metrics = (
+    per_class_selective_metrics(
         test_predictions,
-        REPORT_THRESHOLDS,
+        PRIMARY_SCORE_COLUMN,
+        SELECTED_THRESHOLD,
     )
 )
 
-validation_report_table.to_csv(
-    OUTPUT_DIR
-    / "validation_threshold_sensitivity.csv",
+per_class_test_metrics.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "per_class_selective_metrics.csv",
     index=False,
 )
 
-test_report_table.to_csv(
-    OUTPUT_DIR
-    / "test_threshold_sensitivity.csv",
+display(
+    per_class_test_metrics
+)
+
+
+def class_conditional_thresholds(
+    calibration_dataframe: pd.DataFrame,
+    score_column: str,
+) -> Dict[int, Dict[str, Any]]:
+    result = {}
+
+    for class_id in sorted(
+        ID_TO_CLASS
+    ):
+        class_subset = (
+            calibration_dataframe[
+                calibration_dataframe[
+                    "predicted_label"
+                ] == class_id
+            ].reset_index(drop=True)
+        )
+
+        if len(class_subset) == 0:
+            result[class_id] = {
+                "selected_tau": (
+                    SELECTED_THRESHOLD
+                ),
+                "selection_status": (
+                    "global_threshold_fallback_"
+                    "empty_predicted_class"
+                ),
+            }
+            continue
+
+        class_sweep = threshold_sweep(
+            class_subset,
+            score_column,
+            RISK_CONFIDENCE_DELTA,
+        )
+
+        selection = select_threshold(
+            class_sweep,
+            TARGET_SELECTIVE_RISK,
+            RISK_CONTROL_METHOD,
+            ALLOW_EXPLICIT_RISK_FALLBACK,
+        )
+
+        if (
+            selection[
+                "selected_tau"
+            ]
+            is None
+        ):
+            selection[
+                "selected_tau"
+            ] = SELECTED_THRESHOLD
+            selection[
+                "selection_status"
+            ] = (
+                "global_threshold_fallback_"
+                "class_infeasible"
+            )
+
+        result[class_id] = selection
+
+    return result
+
+
+if (
+    RUN_CLASS_CONDITIONAL_THRESHOLD_ABLATION
+):
+    class_threshold_results = (
+        class_conditional_thresholds(
+            calibration_predictions,
+            PRIMARY_SCORE_COLUMN,
+        )
+    )
+
+    class_threshold_values = {
+        int(class_id): float(
+            details[
+                "selected_tau"
+            ]
+        )
+        for class_id, details
+        in class_threshold_results.items()
+    }
+
+    class_conditional_test = (
+        test_predictions.copy()
+    )
+
+    applied_thresholds = (
+        class_conditional_test[
+            "predicted_label"
+        ].map(
+            class_threshold_values
+        )
+    )
+
+    class_conditional_test[
+        "class_conditional_threshold"
+    ] = applied_thresholds
+
+    class_conditional_test[
+        "is_routed"
+    ] = (
+        class_conditional_test[
+            PRIMARY_SCORE_COLUMN
+        ]
+        < applied_thresholds
+    )
+
+    class_conditional_test[
+        "final_phase1_accepted_correct"
+    ] = (
+        ~class_conditional_test[
+            "is_routed"
+        ]
+        & class_conditional_test[
+            "phase1_correct"
+        ]
+    )
+
+    class_conditional_summary = {
+        "thresholds": (
+            class_threshold_values
+        ),
+        "routing_rate": float(
+            class_conditional_test[
+                "is_routed"
+            ].mean()
+        ),
+        "routed_phase1_errors": int(
+            (
+                class_conditional_test[
+                    "is_routed"
+                ]
+                & ~class_conditional_test[
+                    "phase1_correct"
+                ]
+            ).sum()
+        ),
+        "phase1_errors": int(
+            (
+                ~class_conditional_test[
+                    "phase1_correct"
+                ]
+            ).sum()
+        ),
+    }
+
+    with open(
+        ADVANCED_THRESHOLD_DIR
+        / "class_conditional_thresholds.json",
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            {
+                "selection_details": (
+                    class_threshold_results
+                ),
+                "test_summary": (
+                    class_conditional_summary
+                ),
+            },
+            file,
+            indent=2,
+            default=str,
+        )
+
+    class_conditional_test.to_csv(
+        ADVANCED_THRESHOLD_DIR
+        / (
+            "test_class_conditional_"
+            "threshold_ablation.csv"
+        ),
+        index=False,
+    )
+
+    print(
+        json.dumps(
+            class_conditional_summary,
+            indent=2,
+        )
+    )
+
+
+# %% [markdown]
+# ### Optional cost-sensitive analysis, input-length analysis, and figures
+
+
+# %% [cell 44]
+
+if RUN_COST_SENSITIVE_ABLATION:
+    cost_rows = []
+
+    for _, threshold_row in (
+        primary_calibration_sweep.iterrows()
+    ):
+        threshold = float(
+            threshold_row["tau"]
+        )
+
+        accepted = (
+            calibration_predictions[
+                PRIMARY_SCORE_COLUMN
+            ] >= threshold
+        )
+
+        if accepted.sum() == 0:
+            weighted_risk = np.nan
+        else:
+            true_labels = (
+                calibration_predictions.loc[
+                    accepted,
+                    "label",
+                ].to_numpy(dtype=int)
+            )
+            predicted_labels = (
+                calibration_predictions.loc[
+                    accepted,
+                    "predicted_label",
+                ].to_numpy(dtype=int)
+            )
+
+            weighted_risk = float(
+                np.mean(
+                    COST_MATRIX[
+                        true_labels,
+                        predicted_labels,
+                    ]
+                )
+            )
+
+        cost_rows.append({
+            **threshold_row.to_dict(),
+            "cost_sensitive_selective_risk": (
+                weighted_risk
+            ),
+        })
+
+    cost_sensitive_table = (
+        pd.DataFrame(cost_rows)
+    )
+
+    cost_sensitive_table.to_csv(
+        ADVANCED_THRESHOLD_DIR
+        / "cost_sensitive_threshold_ablation.csv",
+        index=False,
+    )
+
+
+def length_group_analysis(
+    prediction_dataframe: pd.DataFrame,
+    score_column: str,
+    threshold: float,
+) -> pd.DataFrame:
+    dataframe = (
+        prediction_dataframe.copy()
+    )
+
+    dataframe[
+        "length_group"
+    ] = pd.cut(
+        dataframe[
+            "token_length"
+        ],
+        bins=[
+            -np.inf,
+            64,
+            128,
+            MAX_LENGTH,
+            np.inf,
+        ],
+        labels=[
+            "0-64",
+            "65-128",
+            f"129-{MAX_LENGTH}",
+            "truncated",
+        ],
+    )
+
+    rows = []
+
+    for group_name, group in (
+        dataframe.groupby(
+            "length_group",
+            observed=False,
+        )
+    ):
+        if len(group) == 0:
+            continue
+
+        metrics = (
+            calculate_selective_metrics(
+                group.reset_index(
+                    drop=True
+                ),
+                score_column,
+                threshold,
+                RISK_CONFIDENCE_DELTA,
+            )
+        )
+
+        rows.append({
+            "length_group": str(
+                group_name
+            ),
+            "mean_score": float(
+                group[
+                    score_column
+                ].mean()
+            ),
+            "accuracy": float(
+                group[
+                    "phase1_correct"
+                ].mean()
+            ),
+            **metrics,
+        })
+
+    return pd.DataFrame(rows)
+
+
+length_analysis = length_group_analysis(
+    test_predictions,
+    PRIMARY_SCORE_COLUMN,
+    SELECTED_THRESHOLD,
+)
+
+length_analysis.to_csv(
+    ADVANCED_THRESHOLD_DIR
+    / "input_length_threshold_analysis.csv",
     index=False,
 )
 
-print("Validation threshold sensitivity")
-display(validation_report_table)
+display(
+    length_analysis
+)
 
-print("Held-out test threshold sensitivity")
-display(test_report_table)
 
-# %%
+raw_calibration_probabilities = (
+    softmax_fp32(
+        calibration_logits,
+        1.0,
+    )
+)
 
-plot_dataframe = (
-    validation_sweep.dropna(
-        subset=["selective_risk"]
-    ).copy()
+scaled_calibration_probabilities = (
+    softmax_fp32(
+        calibration_logits,
+        SELECTED_TEMPERATURE,
+    )
+)
+
+raw_reliability = (
+    reliability_bins_equal_width(
+        raw_calibration_probabilities,
+        calibration_labels,
+        PRIMARY_ECE_BINS,
+    )
+)
+
+scaled_reliability = (
+    reliability_bins_equal_width(
+        scaled_calibration_probabilities,
+        calibration_labels,
+        PRIMARY_ECE_BINS,
+    )
 )
 
 plt.figure(figsize=(7, 5))
 plt.plot(
-    plot_dataframe["coverage"],
-    plot_dataframe["selective_risk"],
+    [0, 1],
+    [0, 1],
+    linestyle="--",
+    label="Perfect calibration",
 )
+plt.plot(
+    raw_reliability[
+        "mean_confidence"
+    ],
+    raw_reliability["accuracy"],
+    marker="o",
+    label="Raw MSP",
+)
+plt.plot(
+    scaled_reliability[
+        "mean_confidence"
+    ],
+    scaled_reliability["accuracy"],
+    marker="o",
+    label="Temperature-scaled MSP",
+)
+plt.xlabel("Mean confidence")
+plt.ylabel("Empirical accuracy")
+plt.title(
+    "Calibration Reliability Diagram"
+)
+plt.legend()
+plt.tight_layout()
+plt.savefig(
+    ADVANCED_THRESHOLD_DIR
+    / "reliability_diagram.png",
+    dpi=200,
+)
+plt.show()
 
-selected_plot_rows = plot_dataframe[
-    np.isclose(
-        plot_dataframe["tau"],
-        selected_tau,
-    )
-]
 
-if not selected_plot_rows.empty:
-    selected_plot_row = (
-        selected_plot_rows.iloc[0]
-    )
-
-    plt.scatter(
-        [
-            selected_plot_row[
-                "coverage"
-            ]
-        ],
-        [
-            selected_plot_row[
-                "selective_risk"
-            ]
-        ],
-        s=100,
-        label=(
-            f"selected tau="
-            f"{selected_tau:.4f}"
-        ),
-    )
-    plt.legend()
-
+plt.figure(figsize=(7, 5))
+plt.plot(
+    primary_calibration_sweep[
+        "coverage"
+    ],
+    primary_calibration_sweep[
+        "selective_risk"
+    ],
+    label="Empirical risk",
+)
+plt.plot(
+    primary_calibration_sweep[
+        "coverage"
+    ],
+    primary_calibration_sweep[
+        "selective_risk_upper_bound"
+    ],
+    label=(
+        "One-sided risk upper bound"
+    ),
+)
 plt.xlabel("Coverage")
 plt.ylabel("Selective risk")
 plt.title(
-    "Llama 2 Validation "
-    "Risk–Coverage Curve"
+    "Calibration Risk–Coverage Curve"
 )
-plt.grid(alpha=0.3)
+plt.legend()
 plt.tight_layout()
-
 plt.savefig(
-    OUTPUT_DIR
-    / "validation_risk_coverage_curve.png",
+    ADVANCED_THRESHOLD_DIR
+    / "risk_coverage_curve.png",
     dpi=200,
 )
-
 plt.show()
 
-# %%
-
-correct_confidence = (
-    validation_predictions.loc[
-        validation_predictions[
-            "phase1_correct"
-        ],
-        "confidence",
-    ]
-)
-
-incorrect_confidence = (
-    validation_predictions.loc[
-        ~validation_predictions[
-            "phase1_correct"
-        ],
-        "confidence",
-    ]
-)
 
 plt.figure(figsize=(7, 5))
+plt.plot(
+    primary_calibration_sweep[
+        "routing_rate"
+    ],
+    primary_calibration_sweep[
+        "error_capture_rate"
+    ],
+)
+plt.xlabel("Routing rate")
+plt.ylabel("Error capture rate")
+plt.title(
+    "Error Capture vs Routing Cost"
+)
+plt.tight_layout()
+plt.savefig(
+    ADVANCED_THRESHOLD_DIR
+    / "error_capture_vs_routing_rate.png",
+    dpi=200,
+)
+plt.show()
 
+
+plt.figure(figsize=(7, 5))
 plt.hist(
     [
-        correct_confidence,
-        incorrect_confidence,
+        calibration_predictions.loc[
+            calibration_predictions[
+                "phase1_correct"
+            ],
+            PRIMARY_SCORE_COLUMN,
+        ],
+        calibration_predictions.loc[
+            ~calibration_predictions[
+                "phase1_correct"
+            ],
+            PRIMARY_SCORE_COLUMN,
+        ],
     ],
     bins=10,
     alpha=0.7,
@@ -3537,41 +5495,36 @@ plt.hist(
         "Incorrect",
     ],
 )
-
 plt.axvline(
-    selected_tau,
+    SELECTED_THRESHOLD,
     linestyle="--",
     label=(
-        f"selected tau="
-        f"{selected_tau:.4f}"
+        "Selected threshold = "
+        f"{SELECTED_THRESHOLD:.4f}"
     ),
 )
-
 plt.xlabel(
-    "Maximum softmax probability"
+    PRIMARY_SCORE_COLUMN
 )
-plt.ylabel(
-    "Number of validation samples"
-)
+plt.ylabel("Calibration samples")
 plt.title(
-    "Llama 2 Validation "
     "Confidence Distribution"
 )
 plt.legend()
 plt.tight_layout()
-
 plt.savefig(
-    OUTPUT_DIR
-    / "validation_confidence_distribution.png",
+    ADVANCED_THRESHOLD_DIR
+    / "confidence_distribution.png",
     dpi=200,
 )
-
 plt.show()
 
-# %% [markdown]
-# ## 15. Classification report and confusion matrix
 
-# %%
+# %% [markdown]
+# ### Standard held-out classification report
+
+
+# %% [cell 46]
 
 print(
     classification_report(
@@ -3608,138 +5561,479 @@ confusion_dataframe = pd.DataFrame(
     ],
 )
 
-display(confusion_dataframe)
+display(
+    confusion_dataframe
+)
 
 confusion_dataframe.to_csv(
-    OUTPUT_DIR
+    ADVANCED_THRESHOLD_DIR
     / "test_confusion_matrix.csv"
 )
 
-# %% [markdown]
-# 
-# ## 16. Optional Phase 2 integration
-# 
-# This notebook evaluates the Llama classifier and its routing decisions. A true
-# two-phase final accuracy requires Phase 2 predictions for rows whose
-# `is_routed=True`.
-# 
-# Create a CSV with:
-# 
-# - `sample_id`
-# - `phase2_predicted_label`
-# 
-# Then uncomment the next cell.
-
-# %%
-
-# PHASE2_PREDICTIONS_PATH = (
-#     "./phase2_predictions.csv"
-# )
-#
-# phase2_predictions = pd.read_csv(
-#     PHASE2_PREDICTIONS_PATH
-# )
-#
-# required_columns = {
-#     "sample_id",
-#     "phase2_predicted_label",
-# }
-#
-# missing_columns = (
-#     required_columns
-#     - set(phase2_predictions.columns)
-# )
-#
-# if missing_columns:
-#     raise KeyError(
-#         f"Missing columns: "
-#         f"{sorted(missing_columns)}"
-#     )
-#
-# end_to_end_predictions = (
-#     test_routed.merge(
-#         phase2_predictions[
-#             [
-#                 "sample_id",
-#                 "phase2_predicted_label",
-#             ]
-#         ],
-#         on="sample_id",
-#         how="left",
-#         validate="one_to_one",
-#     )
-# )
-#
-# missing_phase2 = (
-#     end_to_end_predictions[
-#         "is_routed"
-#     ]
-#     & end_to_end_predictions[
-#         "phase2_predicted_label"
-#     ].isna()
-# )
-#
-# if missing_phase2.any():
-#     raise ValueError(
-#         "Phase 2 predictions are missing "
-#         "for routed rows."
-#     )
-#
-# end_to_end_predictions[
-#     "final_prediction"
-# ] = np.where(
-#     end_to_end_predictions[
-#         "is_routed"
-#     ],
-#     end_to_end_predictions[
-#         "phase2_predicted_label"
-#     ],
-#     end_to_end_predictions[
-#         "predicted_label"
-#     ],
-# )
-#
-# end_to_end_predictions[
-#     "final_correct"
-# ] = (
-#     end_to_end_predictions[
-#         "final_prediction"
-#     ]
-#     == end_to_end_predictions["label"]
-# )
-#
-# print(
-#     "Llama classifier accuracy:",
-#     end_to_end_predictions[
-#         "phase1_correct"
-#     ].mean(),
-# )
-#
-# print(
-#     "Final two-phase accuracy:",
-#     end_to_end_predictions[
-#         "final_correct"
-#     ].mean(),
-# )
-#
-# end_to_end_predictions.to_csv(
-#     OUTPUT_DIR
-#     / "test_end_to_end_predictions.csv",
-#     index=False,
-# )
 
 # %% [markdown]
-# 
-# ## 17. Interpretation and limitations
-# 
-# - Each W&B trial is a separate Llama 2 fine-tuning run.
-# - The 900-row experiment is a smoke test, not the final paper experiment.
-# - The held-out test set is never used for hyperparameter selection.
-# - The confidence threshold is selected on validation data and fixed before test evaluation.
-# - MSP is a confidence proxy, not a calibrated uncertainty estimate.
-# - An existing W&B sweep keeps its server-side search objective.
-# - For a strict Macro-F1 Bayesian sweep, use `WANDB_SWEEP_MODE="new"`.
-# - Only finished W&B runs are eligible for best-run selection.
-# - The saved final model is a PEFT/LoRA adapter plus the sequence-classification head.
-# - Full Llama 2 7B execution requires substantially more GPU memory and time than DistilBERT.
+# ### Optional Mixed Emotion and real Phase 2 integration
 
+
+# %% [cell 48]
+
+def prepare_external_dataframe(
+    dataframe: pd.DataFrame,
+    text_column: str,
+    label_column: str,
+) -> pd.DataFrame:
+    prepared = dataframe.copy()
+
+    prepared["text"] = (
+        prepared[text_column]
+        .astype(str)
+        .str.strip()
+    )
+    prepared["label"] = (
+        prepared[label_column]
+        .map(normalize_label)
+    )
+
+    prepared = prepared[
+        prepared["label"].notna()
+        & (prepared["text"].str.len() > 0)
+    ].copy()
+
+    prepared["label"] = (
+        prepared["label"].astype(int)
+    )
+    prepared["label_name"] = (
+        prepared["label"].map(
+            ID_TO_CLASS
+        )
+    )
+    prepared["sample_id"] = (
+        np.arange(len(prepared))
+    )
+
+    return prepared.reset_index(
+        drop=True
+    )
+
+
+if MIXED_EMOTION_CSV_PATH:
+    mixed_raw = pd.read_csv(
+        MIXED_EMOTION_CSV_PATH
+    )
+
+    mixed_dataframe = (
+        prepare_external_dataframe(
+            mixed_raw,
+            MIXED_EMOTION_TEXT_COLUMN,
+            MIXED_EMOTION_LABEL_COLUMN,
+        )
+    )
+
+    mixed_dataset = Dataset.from_pandas(
+        mixed_dataframe[
+            ["sample_id", "text", "label"]
+        ],
+        preserve_index=False,
+    )
+
+    mixed_tokenized = mixed_dataset.map(
+        tokenize_batch,
+        batched=True,
+        remove_columns=[
+            column
+            for column in [
+                "sample_id",
+                "text",
+            ]
+            if column
+            in mixed_dataset.column_names
+        ],
+    )
+
+    mixed_output = trainer.predict(
+        mixed_tokenized
+    )
+
+    mixed_logits = extract_logits(
+        mixed_output
+    )
+
+    mixed_predictions = (
+        build_advanced_prediction_dataframe(
+            mixed_dataframe,
+            mixed_logits,
+            SELECTED_TEMPERATURE,
+        )
+    )
+
+    mixed_metrics = (
+        calculate_selective_metrics(
+            mixed_predictions,
+            PRIMARY_SCORE_COLUMN,
+            SELECTED_THRESHOLD,
+            RISK_CONFIDENCE_DELTA,
+        )
+    )
+
+    mixed_predictions[
+        "is_routed"
+    ] = (
+        mixed_predictions[
+            PRIMARY_SCORE_COLUMN
+        ]
+        < SELECTED_THRESHOLD
+    )
+
+    mixed_predictions.to_csv(
+        ADVANCED_THRESHOLD_DIR
+        / "mixed_emotion_fixed_threshold_predictions.csv",
+        index=False,
+    )
+
+    with open(
+        ADVANCED_THRESHOLD_DIR
+        / "mixed_emotion_fixed_threshold_metrics.json",
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            mixed_metrics,
+            file,
+            indent=2,
+        )
+
+    print(
+        "Mixed Emotion evaluation used the "
+        "Reddit-selected temperature and threshold."
+    )
+    print(
+        json.dumps(
+            mixed_metrics,
+            indent=2,
+        )
+    )
+
+    if (
+        MIXED_EMOTION_SCENARIO_COLUMN
+        in mixed_raw.columns
+    ):
+        mixed_predictions[
+            MIXED_EMOTION_SCENARIO_COLUMN
+        ] = mixed_dataframe[
+            MIXED_EMOTION_SCENARIO_COLUMN
+        ].to_numpy()
+
+        scenario_rows = []
+
+        for (
+            scenario_name,
+            scenario_dataframe,
+        ) in mixed_predictions.groupby(
+            MIXED_EMOTION_SCENARIO_COLUMN
+        ):
+            metrics = (
+                calculate_selective_metrics(
+                    scenario_dataframe.reset_index(
+                        drop=True
+                    ),
+                    PRIMARY_SCORE_COLUMN,
+                    SELECTED_THRESHOLD,
+                    RISK_CONFIDENCE_DELTA,
+                )
+            )
+            scenario_rows.append({
+                "scenario_type": (
+                    scenario_name
+                ),
+                **metrics,
+            })
+
+        pd.DataFrame(
+            scenario_rows
+        ).to_csv(
+            ADVANCED_THRESHOLD_DIR
+            / "mixed_emotion_scenario_metrics.csv",
+            index=False,
+        )
+
+
+if PHASE2_PREDICTIONS_PATH:
+    phase2_predictions = pd.read_csv(
+        PHASE2_PREDICTIONS_PATH
+    )
+
+    required_columns = {
+        "sample_id",
+        "phase2_predicted_label",
+    }
+
+    missing_columns = (
+        required_columns
+        - set(
+            phase2_predictions.columns
+        )
+    )
+
+    if missing_columns:
+        raise KeyError(
+            "Phase 2 result file is missing: "
+            f"{sorted(missing_columns)}"
+        )
+
+    end_to_end = (
+        test_with_routing.merge(
+            phase2_predictions[
+                [
+                    "sample_id",
+                    "phase2_predicted_label",
+                ]
+            ],
+            on="sample_id",
+            how="left",
+            validate="one_to_one",
+        )
+    )
+
+    missing_routed_outputs = (
+        end_to_end[
+            "is_routed"
+        ]
+        & end_to_end[
+            "phase2_predicted_label"
+        ].isna()
+    )
+
+    if missing_routed_outputs.any():
+        raise ValueError(
+            "Phase 2 predictions are missing "
+            "for routed test rows."
+        )
+
+    end_to_end[
+        "final_prediction"
+    ] = np.where(
+        end_to_end[
+            "is_routed"
+        ],
+        end_to_end[
+            "phase2_predicted_label"
+        ],
+        end_to_end[
+            "predicted_label"
+        ],
+    ).astype(int)
+
+    end_to_end[
+        "final_correct"
+    ] = (
+        end_to_end[
+            "final_prediction"
+        ]
+        == end_to_end["label"]
+    )
+
+    end_to_end[
+        "corrected_error"
+    ] = (
+        end_to_end[
+            "is_routed"
+        ]
+        & ~end_to_end[
+            "phase1_correct"
+        ]
+        & end_to_end[
+            "final_correct"
+        ]
+    )
+
+    end_to_end[
+        "introduced_error"
+    ] = (
+        end_to_end[
+            "is_routed"
+        ]
+        & end_to_end[
+            "phase1_correct"
+        ]
+        & ~end_to_end[
+            "final_correct"
+        ]
+    )
+
+    final_summary = {
+        "phase1_accuracy": float(
+            end_to_end[
+                "phase1_correct"
+            ].mean()
+        ),
+        "final_accuracy": float(
+            end_to_end[
+                "final_correct"
+            ].mean()
+        ),
+        "corrected_errors": int(
+            end_to_end[
+                "corrected_error"
+            ].sum()
+        ),
+        "introduced_errors": int(
+            end_to_end[
+                "introduced_error"
+            ].sum()
+        ),
+        "net_corrections": int(
+            end_to_end[
+                "corrected_error"
+            ].sum()
+            - end_to_end[
+                "introduced_error"
+            ].sum()
+        ),
+    }
+
+    end_to_end.to_csv(
+        ADVANCED_THRESHOLD_DIR
+        / "test_end_to_end_phase2_predictions.csv",
+        index=False,
+    )
+
+    with open(
+        ADVANCED_THRESHOLD_DIR
+        / "phase2_end_to_end_summary.json",
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            final_summary,
+            file,
+            indent=2,
+        )
+
+    print(
+        json.dumps(
+            final_summary,
+            indent=2,
+        )
+    )
+
+
+# %% [markdown]
+# ### Reproducibility and threshold provenance
+
+
+# %% [cell 50]
+
+primary_test_metrics = (
+    calculate_selective_metrics(
+        test_predictions,
+        PRIMARY_SCORE_COLUMN,
+        SELECTED_THRESHOLD,
+        RISK_CONFIDENCE_DELTA,
+    )
+)
+
+provenance = {
+    "model": str(
+        ANALYSIS_MODEL_NAME
+    ),
+    "model_display_name": "Llama 2",
+    "sample_size_per_class": (
+        SAMPLES_PER_CLASS
+    ),
+    "split_ratios": {
+        "train": TRAIN_RATIO,
+        "model_validation": (
+            VALIDATION_RATIO
+        ),
+        "threshold_calibration": (
+            CALIBRATION_RATIO
+        ),
+        "held_out_test": (
+            TEST_RATIO
+        ),
+    },
+    "confidence_method": (
+        PRIMARY_CONFIDENCE_METHOD
+    ),
+    "score_column": (
+        PRIMARY_SCORE_COLUMN
+    ),
+    "temperature": (
+        SELECTED_TEMPERATURE
+    ),
+    "alpha": (
+        TARGET_SELECTIVE_RISK
+    ),
+    "delta": (
+        RISK_CONFIDENCE_DELTA
+    ),
+    "risk_control_method": (
+        RISK_CONTROL_METHOD
+    ),
+    "candidate_method": (
+        "unique_confidence_midpoints"
+    ),
+    "boundary_rule": (
+        "score >= tau is accepted; "
+        "score < tau is routed"
+    ),
+    "tie_breaking": [
+        "maximum coverage",
+        "minimum controlled risk",
+        "minimum empirical risk",
+        "lower threshold",
+    ],
+    "selected_tau": (
+        SELECTED_THRESHOLD
+    ),
+    "selection_status": (
+        PRIMARY_THRESHOLD_SELECTION[
+            "selection_status"
+        ]
+    ),
+    "risk_constraint_satisfied": (
+        PRIMARY_THRESHOLD_SELECTION[
+            "risk_constraint_satisfied"
+        ]
+    ),
+    "calibration_n": int(
+        len(calibration_predictions)
+    ),
+    "test_n": int(
+        len(test_predictions)
+    ),
+    "primary_test_metrics": (
+        primary_test_metrics
+    ),
+    "threshold_stability": (
+        threshold_stability_summary
+    ),
+    "random_seed": SEED,
+    "max_length": MAX_LENGTH,
+}
+
+with open(
+    ADVANCED_THRESHOLD_DIR
+    / "threshold_provenance.json",
+    "w",
+    encoding="utf-8",
+) as file:
+    json.dump(
+        provenance,
+        file,
+        indent=2,
+        default=str,
+    )
+
+print(
+    "Advanced confidence-threshold "
+    "analysis completed."
+)
+print(
+    "Results:",
+    ADVANCED_THRESHOLD_DIR.resolve(),
+)
+
+
+# %% [markdown]
+# ## Notes for paper-quality reruns
