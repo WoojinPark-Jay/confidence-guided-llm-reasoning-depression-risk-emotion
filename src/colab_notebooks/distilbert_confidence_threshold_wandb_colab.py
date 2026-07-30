@@ -149,9 +149,9 @@ EARLY_STOPPING_PATIENCE = 2
 #   "disabled": skip W&B and use DEFAULT_HYPERPARAMETERS.
 WANDB_SWEEP_MODE = "new"
 
-WANDB_ENTITY = os.environ.get("WANDB_ENTITY") or None
-WANDB_PROJECT = os.environ.get("WANDB_PROJECT", "confidence-guided-distilbert-colab")
-EXISTING_SWEEP_ID = os.environ.get("WANDB_SWEEP_ID", "")
+WANDB_ENTITY = "kangsy413"
+WANDB_PROJECT = "my-bert-sweep"
+EXISTING_SWEEP_ID = "8v1kemw0"
 
 WANDB_SWEEP_NAME = "distilbert-reddit-validation-macro-f1"
 WANDB_SWEEP_COUNT = 4

@@ -190,9 +190,9 @@ MAX_GRAD_NORM = 0.3
 #   "disabled"          Skip W&B and use DEFAULT_HYPERPARAMETERS.
 WANDB_SWEEP_MODE = "continue_existing"
 
-WANDB_ENTITY = os.environ.get("WANDB_ENTITY") or None
-WANDB_PROJECT = os.environ.get("WANDB_PROJECT", "confidence-guided-llama2-colab")
-EXISTING_SWEEP_ID = os.environ.get("WANDB_SWEEP_ID", "")
+WANDB_ENTITY = "kangsy413"
+WANDB_PROJECT = "my-llama2-sweep"
+EXISTING_SWEEP_ID = "rwuzwzee"
 
 WANDB_SWEEP_NAME = "llama2-reddit-qlora-validation-macro-f1"
 WANDB_SWEEP_COUNT = 2

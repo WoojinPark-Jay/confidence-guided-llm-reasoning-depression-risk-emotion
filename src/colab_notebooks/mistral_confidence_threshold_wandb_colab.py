@@ -287,9 +287,9 @@ if (
 #   "disabled"          Skip W&B and use DEFAULT_HYPERPARAMETERS.
 WANDB_SWEEP_MODE = "continue_existing"
 
-WANDB_ENTITY = os.environ.get("WANDB_ENTITY") or None
-WANDB_PROJECT = os.environ.get("WANDB_PROJECT", "confidence-guided-mistral-colab")
-EXISTING_SWEEP_ID = os.environ.get("WANDB_SWEEP_ID", "")
+WANDB_ENTITY = "kangsy413"
+WANDB_PROJECT = "my-mistral-sweep"
+EXISTING_SWEEP_ID = "rjo3737f"
 
 WANDB_SWEEP_NAME = "mistral-reddit-qlora-validation-macro-f1"
 WANDB_SWEEP_COUNT = 2
