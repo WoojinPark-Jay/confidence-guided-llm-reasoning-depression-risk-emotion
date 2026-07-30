@@ -1685,7 +1685,16 @@ if WANDB_SWEEP_MODE != "disabled":
         WANDB_MODE
     )
 
-    wandb.login()
+    try:
+        from google.colab import userdata
+        wandb_api_key = userdata.get("WANDB_API_KEY")
+    except Exception:
+        wandb_api_key = None
+
+    if wandb_api_key:
+        wandb.login(key=wandb_api_key)
+    else:
+        wandb.login()
 
 
 if WANDB_SWEEP_MODE == "new":
