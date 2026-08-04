@@ -158,6 +158,8 @@ The combined output table is the easiest file to inspect first. It includes both
 
 Use a GPU runtime. L4, A100, or T4 can be used depending on availability.
 
+The first setup cell installs `bitsandbytes>=0.46.1`, which is required for 4-bit loading. If the notebook still raises a bitsandbytes import error after installation, restart the Colab runtime once and rerun from the top.
+
 Running this notebook while another Colab notebook is running does not cause code-level conflicts if each notebook has its own runtime. The runtimes do not share variables, memory, or local output folders. However, Google Colab may limit simultaneous GPU sessions or total usage quota for the same account.
 
 If Hugging Face access is required, add a Colab secret named:

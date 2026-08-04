@@ -333,6 +333,12 @@ Detailed Phase 2 reasoning notes are available in:
 
 - `docs/phase2_mixed_emotion_reasoning_colab_guide.md`
 
+Colab dependency note:
+
+- The Phase 2 reasoning notebook requires `bitsandbytes>=0.46.1` for 4-bit model loading.
+- Run the first setup cell before loading the models.
+- If Colab imported `transformers` or `bitsandbytes` before the install finished, restart the runtime once and rerun from the top.
+
 ## Important Git Note
 
 The local parquet, zst, and generated CSV files are large. They are intentionally ignored by Git.
