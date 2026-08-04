@@ -173,3 +173,15 @@ The notebook reads it automatically when available.
 ## Current Role in the Project
 
 This notebook is a Phase 2 reasoning-only workflow. It can be used now to verify the Mixed Emotion Dataset reasoning behavior on all 300 examples. Later, after Phase 1 confidence routing is finalized, the same structure should be applied only to routed low-confidence examples and evaluated with correction counts, introduced errors, net corrections, and final two-phase accuracy.
+
+## Resume behavior
+
+The Phase 2 Colab notebook uses row-level checkpointing. Each completed example is appended immediately to a model-specific CSV. By default, the notebook mounts Google Drive and writes outputs under `MyDrive/confidence_guided_llm_reasoning/outputs_phase2_reasoning/`, so checkpoints can survive Colab runtime resets. If the Colab runtime disconnects, rerun the notebook. It will load the existing result CSV, skip completed `example_id` values, and continue with only the unfinished rows. Manual batching is therefore optional rather than required.
+
+Main output files:
+
+- `outputs_phase2_reasoning/mixed_emotion_llama2_cot_results.csv`
+- `outputs_phase2_reasoning/mixed_emotion_llama3_self_discover_results.csv`
+
+For long runs, keep the Colab tab open until at least one row has completed and the CSV appears in Google Drive. If `USE_GOOGLE_DRIVE_OUTPUT = False`, outputs are only stored in the temporary Colab runtime and may disappear when the runtime is reset.
+
