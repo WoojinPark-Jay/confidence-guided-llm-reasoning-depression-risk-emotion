@@ -155,6 +155,7 @@ confidence-guided-selective-llm-reasoning/
       10_distilbert_confidence_threshold_wandb_colab.ipynb
       11_llama2_confidence_threshold_wandb_colab.ipynb
       12_mistral_confidence_threshold_wandb_colab.ipynb
+      13_phase2_mixed_emotion_reasoning_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
@@ -291,6 +292,46 @@ Dataset design summary:
 - Examples per scenario type: 60
 - Intended use: supplementary controlled stress-test only
 - Not used for training or threshold selection
+
+## Run Stage 4 / Phase 2 Reasoning on Mixed Emotion Dataset
+
+Colab notebook:
+
+- `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
+
+Purpose:
+
+- Load the 300-example Mixed Emotion Dataset directly from the GitHub raw CSV URL.
+- Run Appendix B-aligned Llama 2 Chain-of-Thought prompting on all 300 examples.
+- Run Appendix C-aligned Llama 3 SELF-DISCOVER prompting on all 300 examples.
+- Preserve the raw reasoning outputs and add final-label columns for evaluation.
+- Save model-specific outputs, a combined output table, and a summary evaluation CSV.
+
+Default Phase 2 reasoning configuration:
+
+- Dataset: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
+- Default rows: `MAX_ROWS = 300`
+- Llama 2 model: `NousResearch/Llama-2-7b-chat-hf`
+- Llama 3 model: `NousResearch/Meta-Llama-3-8B-Instruct`
+- Llama 2 final label: derived from the largest value in `LLaMA2_3`
+- Llama 3 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA3_Answer`
+- `prompts.py` upload is not required because the SELF-DISCOVER prompt templates are embedded in the notebook.
+
+Current Phase 2 notebook assumption:
+
+- This notebook can be run before Phase 1 routed predictions are available.
+- In that mode, `target_label` is used as a temporary placeholder for the AI-generated label in the prompt.
+- After Phase 1 threshold routing is available, set `PHASE1_LABEL_MODE = "prediction_column"` and provide a `prediction` column for the routed examples.
+
+Colab execution note:
+
+- Use a GPU runtime, preferably L4, A100, or T4.
+- The notebook is independent from the Stage 2 training notebooks. Running it in a separate Colab runtime does not share variables, memory, or local files with another currently running notebook.
+- Two notebooks can run at the same time if Colab grants separate runtimes, but Google account GPU quota or session limits may still interrupt one of them.
+
+Detailed Phase 2 reasoning notes are available in:
+
+- `docs/phase2_mixed_emotion_reasoning_colab_guide.md`
 
 ## Important Git Note
 
