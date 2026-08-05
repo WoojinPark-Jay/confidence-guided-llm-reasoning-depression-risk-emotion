@@ -185,3 +185,12 @@ Main output files:
 
 For long runs, keep the Colab tab open until at least one row has completed and the CSV appears in Google Drive. If `USE_GOOGLE_DRIVE_OUTPUT = False`, outputs are only stored in the temporary Colab runtime and may disappear when the runtime is reset.
 
+## Trajectory-aware prompt variant
+
+A separate experimental notebook is available at `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`. It keeps the same model, dataset, Google Drive checkpointing, row-level append/resume behavior, and evaluation structure as the main Phase 2 notebook, but strengthens the prompt policy for blended or emotionally shifting texts.
+
+The variant uses separate output files so results do not overwrite the main prompt run:
+
+- `mixed_emotion_llama2_cot_trajectory_prompt_results.csv`
+- `mixed_emotion_llama3_self_discover_trajectory_prompt_results.csv`
+
