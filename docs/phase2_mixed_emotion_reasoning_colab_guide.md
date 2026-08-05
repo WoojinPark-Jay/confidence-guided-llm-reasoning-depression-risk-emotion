@@ -189,6 +189,8 @@ For long runs, keep the Colab tab open until at least one row has completed and 
 
 A separate experimental notebook is available at `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`. It keeps the same model, dataset, Google Drive checkpointing, row-level append/resume behavior, and evaluation structure as the main Phase 2 notebook, but strengthens the prompt policy for blended or emotionally shifting texts.
 
+Detailed experiment rationale and comparison criteria are documented in `docs/phase2_trajectory_prompt_experiment_plan_ko.md`.
+
 The variant uses separate output files so results do not overwrite the main prompt run:
 
 - `mixed_emotion_llama2_cot_trajectory_prompt_results.csv`

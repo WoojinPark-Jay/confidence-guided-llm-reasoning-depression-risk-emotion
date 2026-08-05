@@ -156,6 +156,7 @@ confidence-guided-selective-llm-reasoning/
       11_llama2_confidence_threshold_wandb_colab.ipynb
       12_mistral_confidence_threshold_wandb_colab.ipynb
       13_phase2_mixed_emotion_reasoning_colab.ipynb
+      14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
@@ -295,9 +296,10 @@ Dataset design summary:
 
 ## Run Stage 4 / Phase 2 Reasoning on Mixed Emotion Dataset
 
-Colab notebook:
+Colab notebooks:
 
 - `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
+- `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`
 
 Purpose:
 
@@ -306,6 +308,7 @@ Purpose:
 - Run Appendix C-aligned Llama 3 SELF-DISCOVER prompting on all 300 examples.
 - Preserve the raw reasoning outputs and add final-label columns for evaluation.
 - Save model-specific outputs, a combined output table, and a summary evaluation CSV.
+- Compare the base Phase 2 prompt with a trajectory-aware prompt variant that prioritizes final emotional trajectory in blended or shifting texts.
 
 Default Phase 2 reasoning configuration:
 
@@ -316,6 +319,13 @@ Default Phase 2 reasoning configuration:
 - Llama 2 final label: derived from the largest value in `LLaMA2_3`
 - Llama 3 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA3_Answer`
 - `prompts.py` upload is not required because the SELF-DISCOVER prompt templates are embedded in the notebook.
+
+Trajectory-aware prompt variant:
+
+- `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` is an experimental prompt-policy variant.
+- It keeps the same dataset, models, checkpoint/resume logic, and evaluation structure as the main Phase 2 notebook.
+- It adds explicit guidance for blended or emotionally shifting texts so the model does not default to Neutral solely because multiple emotional cues are present.
+- Separate output filenames are used for this variant to avoid overwriting the base prompt results.
 
 Current Phase 2 notebook assumption:
 
@@ -332,6 +342,7 @@ Colab execution note:
 Detailed Phase 2 reasoning notes are available in:
 
 - `docs/phase2_mixed_emotion_reasoning_colab_guide.md`
+- `docs/phase2_trajectory_prompt_experiment_plan_ko.md`
 
 Colab dependency note:
 
