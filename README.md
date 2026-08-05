@@ -113,9 +113,9 @@ Local CPU/Mac execution note:
 
 Dataset files:
 
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.jsonl`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.xlsx`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.jsonl`
 
 Script:
 
@@ -132,6 +132,7 @@ Purpose:
 - Include 300 examples, balanced across Depression, Neutral, and Happy proxy emotion labels.
 - Include five ambiguity scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory.
 - Use this dataset only for supplementary robustness evaluation, not for Phase 1 training, hyperparameter tuning, or confidence-threshold selection.
+- v2.3 clarifies final emotional trajectory and final takeaway cues while preserving the original class and scenario balance.
 
 ## Project Layout
 
@@ -167,6 +168,7 @@ confidence-guided-selective-llm-reasoning/
       mistral_confidence_threshold_wandb_colab.py
   scripts/
     generate_mixed_emotion_dataset.py
+    generate_mixed_emotion_dataset_v2_3.py
   docs/
   reports/figures/
   requirements.txt
@@ -269,18 +271,18 @@ Detailed Colab workflow notes are available in:
 
 ## Run Stage 3 / Inspect Mixed Emotion Dataset
 
-The supplementary Mixed Emotion Dataset v2.2 is committed because it is small and intended to support reproducible stress-test evaluation.
+The supplementary Mixed Emotion Dataset v2.3 is committed because it is small and intended to support reproducible stress-test evaluation. The previous v2.2 files are retained for traceability.
 
 Open the spreadsheet version directly:
 
 ```text
-data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx
+data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.xlsx
 ```
 
 Or regenerate the dataset from the project root:
 
 ```bash
-python scripts/generate_mixed_emotion_dataset.py
+python scripts/generate_mixed_emotion_dataset_v2_3.py
 ```
 
 Dataset design summary:
@@ -312,7 +314,7 @@ Purpose:
 
 Default Phase 2 reasoning configuration:
 
-- Dataset: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
+- Dataset: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv`
 - Default rows: `MAX_ROWS = 300`
 - Llama 2 model: `NousResearch/Llama-2-7b-chat-hf`
 - Llama 3 model: `NousResearch/Meta-Llama-3-8B-Instruct`

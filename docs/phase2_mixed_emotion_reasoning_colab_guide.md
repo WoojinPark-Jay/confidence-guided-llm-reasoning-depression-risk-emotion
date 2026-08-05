@@ -27,14 +27,14 @@ In Colab, the dataset is loaded directly from GitHub:
 url = (
     "https://raw.githubusercontent.com/WoojinPark-Jay/"
     "confidence-guided-llm-reasoning-depression-risk-emotion/"
-    "refs/heads/main/data/supplementary/mixed_emotion/"
-    "mixed_emotion_stress_test_v2_2_300.csv"
+    "refs/heads/feature/phase2-mixed-emotion-reasoning-colab/data/supplementary/mixed_emotion/"
+    "mixed_emotion_stress_test_v2_3_300.csv"
 )
 
 df = pd.read_csv(url)
 ```
 
-The dataset contains 300 examples:
+The current trajectory-aware prompt notebook uses the v2.3 dataset, which keeps 300 examples but clarifies final emotional trajectory cues. The dataset contains 300 examples:
 
 - Depression: 100
 - Neutral: 100
@@ -193,6 +193,6 @@ Detailed experiment rationale and comparison criteria are documented in `docs/ph
 
 The variant uses separate output files so results do not overwrite the main prompt run:
 
-- `mixed_emotion_llama2_cot_trajectory_prompt_results.csv`
-- `mixed_emotion_llama3_self_discover_trajectory_prompt_results.csv`
+- `mixed_emotion_llama2_cot_trajectory_prompt_v2_3_results.csv`
+- `mixed_emotion_llama3_self_discover_trajectory_prompt_v2_3_results.csv`
 

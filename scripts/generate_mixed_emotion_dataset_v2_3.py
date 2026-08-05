@@ -1,0 +1,411 @@
+from __future__ import annotations
+
+import csv
+import json
+from datetime import date
+from pathlib import Path
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = PROJECT_ROOT / "data" / "supplementary" / "mixed_emotion"
+OUTPUT_CSV = OUTPUT_DIR / "mixed_emotion_stress_test_v2_3_300.csv"
+OUTPUT_JSONL = OUTPUT_DIR / "mixed_emotion_stress_test_v2_3_300.jsonl"
+OUTPUT_XLSX = OUTPUT_DIR / "mixed_emotion_stress_test_v2_3_300.xlsx"
+OUTPUT_README = OUTPUT_DIR / "README.md"
+OUTPUT_APPENDIX = OUTPUT_DIR / "appendix_mixed_emotion_dataset_protocol.md"
+
+PROMPT_VERSION = "mixed-emotion-stress-test-v2.3"
+GENERATION_MODEL = "GPT-5 Codex, 2026-08-05"
+CLASSES = ["Depression", "Neutral", "Happy"]
+COUNT_PER_CLASS = 100
+
+
+CONTEXTS = [
+    ("a school day", "school"),
+    ("a workday", "work"),
+    ("spending time with my family", "family"),
+    ("a friendship issue", "friendship"),
+    ("moving to a new city", "relocation"),
+    ("recovering after a difficult week", "recovery"),
+    ("preparing for an exam", "exam preparation"),
+    ("starting a new job", "new job"),
+    ("taking care of the household", "household"),
+    ("joining a community event", "community event"),
+    ("waiting for important news", "waiting period"),
+    ("planning a small celebration", "celebration"),
+    ("managing a group project", "group project"),
+    ("returning from a break", "return from break"),
+    ("spending a quiet weekend at home", "quiet weekend"),
+    ("finishing a personal milestone", "personal milestone"),
+    ("navigating a disagreement", "disagreement"),
+    ("attending a reunion", "reunion"),
+    ("working through a creative project", "creative project"),
+    ("adjusting to a new routine", "new routine"),
+]
+
+POSITIVE_CUES = [
+    "a kind message from a friend",
+    "a brief feeling of accomplishment",
+    "laughter during a shared meal",
+    "encouraging feedback from someone I respect",
+    "a quiet moment of relief",
+    "a small success that I had been waiting for",
+    "warm support from people around me",
+    "a pleasant walk that helped me breathe",
+    "the comfort of finishing something difficult",
+    "a hopeful conversation near the end of the day",
+]
+
+NEUTRAL_CUES = [
+    "ordinary tasks still needed to be finished",
+    "most of the day was spent answering messages and organizing notes",
+    "the schedule continued as planned",
+    "there were practical details to handle",
+    "the conversation stayed mostly factual",
+    "I kept track of dates, forms, and reminders",
+    "the situation involved both routine decisions and small adjustments",
+    "nothing dramatic happened for long stretches",
+    "I tried to focus on the next concrete step",
+    "the day moved forward in a fairly ordinary way",
+]
+
+DISTRESS_CUES = [
+    "a heavy sadness returning in the background",
+    "an unusually empty feeling once the room became quiet",
+    "a sense of hopelessness that the good moments did not fully cover",
+    "the urge to withdraw even when people were trying to include me",
+    "a dull exhaustion that made everything seem harder",
+    "the thought that I was falling behind everyone else",
+    "a feeling of being alone and overwhelmed",
+    "a sharp drop in my mood once I had time to think",
+    "a sense of disconnection from the things that usually make me care",
+    "a tired, persistent sadness growing out of the worry",
+]
+
+REFLECTION_DETAILS = [
+    "I kept rereading the same message without knowing how to answer",
+    "I noticed how quickly my mood changed after the room became quiet",
+    "I tried to focus on the next hour instead of the whole week",
+    "I wrote down what happened so I could understand the day more clearly",
+    "I kept comparing the public version of the day with how it felt inside",
+    "I found myself paying attention to small gestures more than big events",
+    "I realized that the ending of the day mattered more than the beginning",
+    "I kept switching between wanting company and wanting silence",
+    "I tried to describe the day without making it sound simpler than it was",
+    "I noticed that one sentence from someone else stayed with me",
+    "I kept measuring whether the good part was strong enough to change the day",
+    "I tried to decide whether I felt calm, sad, or relieved",
+    "I found it hard to separate what happened from how I interpreted it",
+    "I kept returning to the same thought while doing ordinary tasks",
+    "I noticed that the practical details made the emotions feel less clear",
+    "I tried to hold both the difficult part and the hopeful part at once",
+    "I kept wondering which feeling would still be there tomorrow",
+    "I realized that the strongest feeling was not always the loudest one",
+    "I tried to explain the day to myself in a fair way",
+    "I noticed that the emotional tone changed depending on what I remembered first",
+    "I kept thinking about whether the moment was a turning point or just a pause",
+    "I tried to stay honest about the mixed nature of the experience",
+    "I noticed that the same event could feel supportive and stressful at once",
+    "I kept focusing on the part of the day that lingered longest",
+    "I tried to name the overall feeling without ignoring the smaller ones",
+]
+
+TIME_ANCHORS = [
+    "before breakfast",
+    "during the commute",
+    "while checking my calendar",
+    "after a short conversation",
+    "while cleaning my desk",
+    "during a quiet break",
+    "after reading an old message",
+    "while walking home",
+    "before opening my laptop",
+    "after the meeting ended",
+    "while making tea",
+    "before going to sleep",
+    "after finishing the main task",
+    "while waiting outside",
+    "during a pause in the afternoon",
+    "after everyone else left",
+    "while looking over my notes",
+    "before replying to anyone",
+    "after the room got quiet",
+    "while putting things away",
+    "during a slow part of the evening",
+    "after hearing someone laugh nearby",
+    "while reviewing what I had done",
+]
+
+DEP_CLOSINGS = [
+    "By the end, the positive parts felt brief, and the heavier sadness was still the feeling I carried with me.",
+    "The encouraging detail was real, but I ended the day feeling low, distant, and unable to shake the emptiness.",
+    "What stayed longest was not the good moment, but the sadness that returned and remained unresolved.",
+    "I could name a few good things, yet the post still ends around feeling withdrawn, tired, and emotionally low.",
+    "The final emotional weight leans clearly toward exhaustion and withdrawal rather than relief.",
+]
+
+HAPPY_CLOSINGS = [
+    "Even with the mixed parts, I ended the day feeling relieved, quietly happy, and more connected than before.",
+    "The difficult part mattered, but I left the day with a clear sense of relief, warmth, and cautious hope.",
+    "What stayed with me most was a hopeful sense that things could still move in a better direction.",
+    "The overall memory of the moment feels hopeful, lighter, and more reassuring than weighed down.",
+    "The day did not become perfect, but it ended with enough warmth and relief to shape the final feeling.",
+]
+
+NEUTRAL_CLOSINGS = [
+    "Neither emotion becomes the clear center of the post, which ends as a practical description of a mixed situation.",
+    "The post does not settle strongly into either sadness or happiness, and the final tone remains measured and descriptive.",
+    "Overall, the post remains a balanced account of circumstances rather than a clearly positive or depression-related expression.",
+    "The emotional cues are present, but the final purpose of the post is still to describe what happened.",
+    "The final tone remains observational, with no single emotion clearly taking over the whole account.",
+]
+
+
+def sentence_case(text: str) -> str:
+    return text[:1].upper() + text[1:] if text else text
+
+SCENARIO_TYPES = [
+    "blended_emotion_cooccurrence",
+    "positive_to_distress_shift",
+    "distress_to_recovery_shift",
+    "neutral_with_subtle_affect",
+    "conflicting_cues_dominant_trajectory",
+]
+
+
+def build_text(label: str, i: int) -> dict[str, str]:
+    context_phrase, context_tag = CONTEXTS[i % len(CONTEXTS)]
+    pos = POSITIVE_CUES[(i * 3) % len(POSITIVE_CUES)]
+    neu = NEUTRAL_CUES[(i * 5) % len(NEUTRAL_CUES)]
+    dis = DISTRESS_CUES[(i * 7) % len(DISTRESS_CUES)]
+    detail = REFLECTION_DETAILS[(i * 11) % len(REFLECTION_DETAILS)]
+    anchor = TIME_ANCHORS[(i * 13) % len(TIME_ANCHORS)]
+    scenario = SCENARIO_TYPES[i % len(SCENARIO_TYPES)]
+    dep_close = DEP_CLOSINGS[(i * 2) % len(DEP_CLOSINGS)]
+    happy_close = HAPPY_CLOSINGS[(i * 2) % len(HAPPY_CLOSINGS)]
+    neutral_close = NEUTRAL_CLOSINGS[(i * 2) % len(NEUTRAL_CLOSINGS)]
+
+    if label == "Depression":
+        if scenario == "positive_to_distress_shift":
+            text = (
+                f"At first, {context_phrase} felt manageable because there was {pos}. "
+                f"Still, {neu}, and as the day went on, there was {dis}. "
+                f"{detail}, especially {anchor}. "
+                + dep_close
+            )
+            trajectory = "positive cues are outweighed by a later depression-related emotional trajectory"
+        elif scenario == "distress_to_recovery_shift":
+            text = (
+                f"The day began with {dis} while I was dealing with {context_phrase}. "
+                f"There was {pos}, and I tried to focus on it, but {neu}. "
+                f"{detail}, especially {anchor}. "
+                + dep_close
+            )
+            trajectory = "brief recovery cue appears, but the dominant trajectory remains depression-related"
+        else:
+            text = (
+                f"During {context_phrase}, I noticed {pos}, and {neu}. "
+                f"Even with those ordinary or positive moments, there was {dis}. "
+                f"{detail}, especially {anchor}. "
+                + dep_close
+            )
+            trajectory = "mixed cues co-occur, but depression-related affect dominates"
+        rationale = (
+            "Although the text includes positive or neutral details, the final emotional trajectory remains sadness, emptiness, "
+            "withdrawal, unresolved distress, or hopelessness rather than relief or ordinary description."
+        )
+    elif label == "Happy":
+        if scenario == "positive_to_distress_shift":
+            text = (
+                f"During {context_phrase}, I had a moment when there was {dis}. "
+                f"But then there was {pos}, and I felt the day start to open up again. "
+                f"{sentence_case(neu)}. {detail}, especially {anchor}. "
+                + happy_close
+            )
+            trajectory = "distress appears early, but the final emotional takeaway is positive"
+        elif scenario == "distress_to_recovery_shift":
+            text = (
+                f"The start of {context_phrase} was difficult because of {dis}. "
+                f"Later, there was {pos}, which made the earlier heaviness feel less controlling. "
+                f"Even though {neu}, {detail}, especially {anchor}. "
+                + happy_close
+            )
+            trajectory = "negative cue shifts toward a positive dominant ending"
+        else:
+            text = (
+                f"While dealing with {context_phrase}, I could still feel {dis}. "
+                f"At the same time, there was {pos}, and {neu}. "
+                f"{detail}, especially {anchor}. "
+                + happy_close
+            )
+            trajectory = "mixed cues co-occur, but positive affect dominates"
+        rationale = (
+            "The text acknowledges stress or sadness, but the final emotional takeaway is relief, gratitude, accomplishment, "
+            "connection, cautious hope, or positive resolution."
+        )
+    else:
+        if scenario == "positive_to_distress_shift":
+            text = (
+                f"In relation to {context_phrase}, there was {pos}, followed by a moment when I noticed {dis}. "
+                f"However, {neu}. "
+                f"{detail}, especially {anchor}. "
+                + neutral_close
+            )
+            trajectory = "positive and distress cues are balanced by a factual, descriptive framing"
+        elif scenario == "distress_to_recovery_shift":
+            text = (
+                f"While thinking about {context_phrase}, I noticed {dis}, then later {pos}. "
+                f"{sentence_case(neu)}. "
+                f"{detail}, especially {anchor}. "
+                + neutral_close
+            )
+            trajectory = "emotional shift is present, but the dominant tone remains neutral and descriptive"
+        else:
+            text = (
+                f"The situation around {context_phrase} included {pos} and also {dis}. "
+                f"At the same time, {neu}. "
+                f"{detail}, especially {anchor}. "
+                + neutral_close
+            )
+            trajectory = "mixed cues co-occur, but the dominant framing is neutral"
+        rationale = (
+            "The text contains emotional cues, but the final framing remains descriptive, balanced, or informational, without a clear "
+            "positive or depression-related emotional trajectory."
+        )
+
+    return {
+        "scenario_type": scenario,
+        "primary_context": context_tag,
+        "dominant_trajectory": trajectory,
+        "text": text,
+        "brief_label_rationale": rationale,
+    }
+
+
+def write_xlsx(csv_path: Path, xlsx_path: Path) -> None:
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Alignment, Font, PatternFill
+    except ImportError:
+        return
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "mixed_emotion_v2_3"
+    with csv_path.open(newline="", encoding="utf-8") as f:
+        for row in csv.reader(f):
+            ws.append(row)
+
+    header_fill = PatternFill("solid", fgColor="D9EAF7")
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.fill = header_fill
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+    widths = {
+        "A": 16, "B": 14, "C": 28, "D": 20, "E": 38, "F": 72,
+        "G": 62, "H": 18, "I": 26, "J": 26, "K": 24, "L": 16,
+    }
+    for col, width in widths.items():
+        ws.column_dimensions[col].width = width
+    ws.freeze_panes = "A2"
+    ws.auto_filter.ref = ws.dimensions
+    wb.save(xlsx_path)
+
+
+def main() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for label in CLASSES:
+        for i in range(COUNT_PER_CLASS):
+            item = build_text(label, i)
+            rows.append(
+                {
+                    "example_id": f"MEV2_{label[:3].upper()}_{i+1:03d}",
+                    "target_label": label,
+                    "scenario_type": item["scenario_type"],
+                    "primary_context": item["primary_context"],
+                    "dominant_trajectory": item["dominant_trajectory"],
+                    "text": item["text"],
+                    "brief_label_rationale": item["brief_label_rationale"],
+                    "used_for_training": "no",
+                    "used_for_threshold_selection": "no",
+                    "prompt_version": PROMPT_VERSION,
+                    "generation_model": GENERATION_MODEL,
+                    "generated_date": str(date.today()),
+                }
+            )
+
+    fieldnames = list(rows[0].keys())
+    with OUTPUT_CSV.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    with OUTPUT_JSONL.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+    write_xlsx(OUTPUT_CSV, OUTPUT_XLSX)
+
+    label_counts = {label: sum(1 for r in rows if r["target_label"] == label) for label in CLASSES}
+    scenario_counts = {
+        scenario: sum(1 for r in rows if r["scenario_type"] == scenario) for scenario in SCENARIO_TYPES
+    }
+
+    OUTPUT_README.write_text(
+        f"""# Mixed Emotion Stress-Test Dataset v2.3
+
+This folder contains a controlled synthetic mixed-emotion stress-test dataset for supplementary evaluation.
+
+- Total examples: {len(rows)}
+- Class balance: {label_counts}
+- Scenario distribution: {scenario_counts}
+- Intended use: supplementary robustness/stress-test evaluation only
+- Not intended for: Phase 1 training, hyperparameter tuning, threshold selection, clinical validation, or diagnostic claims
+- Generation model: {GENERATION_MODEL}
+- Prompt version: {PROMPT_VERSION}
+
+Files:
+- `{OUTPUT_CSV.name}`: tabular CSV dataset
+- `{OUTPUT_JSONL.name}`: JSONL version
+- `{OUTPUT_XLSX.name}`: spreadsheet version for quick inspection
+- `{OUTPUT_APPENDIX.name}`: manuscript-ready appendix protocol text
+""",
+        encoding="utf-8",
+    )
+
+    OUTPUT_APPENDIX.write_text(
+        """Appendix A.X. Synthetic Mixed Emotion Dataset Generation Protocol
+
+The supplementary Mixed Emotion Dataset was constructed as a controlled synthetic stress-test set for evaluating model behavior under emotionally ambiguous conditions. The dataset was not used for model training, hyperparameter tuning, or confidence-threshold selection. Instead, it was used only for supplementary evaluation of cases in which positive, neutral, and depression-related cues co-occur or shift across the text.
+
+Generation Prompt
+
+Generate short social-media-style English posts for a three-class proxy emotion classification stress test. Each example must contain emotionally mixed or shifting cues while remaining realistic, non-diagnostic, and free of personally identifying information. Use one of the target labels: Depression, Neutral, or Happy. The target label must reflect the final emotional trajectory and overall takeaway of the post, not isolated phrases or a simple average of mixed cues. Generate examples across the following scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory. For each example, return the following fields: example_id, target_label, scenario_type, primary_context, dominant_trajectory, text, brief_label_rationale, used_for_training, used_for_threshold_selection, prompt_version, generation_model, and generated_date.
+
+Labeling Rules
+
+Depression examples were assigned when the final emotional trajectory centered on sadness, emptiness, withdrawal, hopelessness, unresolved distress, or persistent emotional burden, even if brief positive or neutral details were present. Happy examples were assigned when the final emotional trajectory ended in relief, gratitude, connection, accomplishment, cautious optimism, or positive resolution, even if stress or sadness appeared earlier. Neutral examples were assigned when emotional cues were present but the post remained primarily descriptive, balanced, or informational, without a clearly dominant positive or depression-related trajectory.
+
+Quality and Exclusion Criteria
+
+Examples were excluded from the intended design space if they contained explicit clinical diagnosis claims, treatment recommendations, self-harm instructions, personally identifying information, off-topic content, or insufficient emotional ambiguity. Because the dataset is synthetic and limited in scale, it should be interpreted only as a controlled robustness probe. It is not a substitute for expert-annotated or naturally occurring mixed-emotion data.
+""",
+        encoding="utf-8",
+    )
+
+    print(OUTPUT_CSV)
+    print(OUTPUT_JSONL)
+    print(OUTPUT_XLSX)
+    print(OUTPUT_README)
+    print(OUTPUT_APPENDIX)
+    print(label_counts)
+    print(scenario_counts)
+
+
+if __name__ == "__main__":
+    main()
