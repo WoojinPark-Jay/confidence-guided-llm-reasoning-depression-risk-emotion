@@ -1,6 +1,6 @@
 # Phase 2 Trajectory-Aware Prompt Experiment Plan
 
-이 문서는 Mixed Emotion Dataset에 대한 Phase 2 reasoning 실험에서 `trajectory-aware prompt variant`를 별도 노트북으로 분리한 이유와 실험 목적을 정리한다. 이 실험은 기존 Phase 2 reasoning prompt를 바로 대체하기 위한 것이 아니라, blended emotion 또는 emotionally shifting text에서 더 타당한 판단 기준을 제공하는지 비교 검증하기 위한 추가 실험이다.
+이 문서는 Mixed Emotion Dataset에 대한 Phase 2 reasoning 실험에서 `trajectory-aware prompt variant`를 별도 노트북으로 분리한 이유와 실험 목적을 정리한다. 현재 이 실험은 Mixed Emotion Dataset에 대한 최종 Phase 2 reasoning workflow로 사용한다. 기존 13번 notebook은 base/legacy 비교용으로 남기고, 최종 실행은 14번 trajectory-aware notebook을 기준으로 한다.
 
 ## 1. 실험을 새 파일로 분리한 이유
 
@@ -44,7 +44,7 @@ notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb
 
 ## 4. 핵심 prompt 변경점
 
-Trajectory-aware prompt variant는 기존 prompt 구조를 유지하면서 classification guideline만 강화한다.
+Trajectory-aware final prompt는 기존 prompt 구조를 유지하면서 classification guideline을 강화하고, Llama 2의 최종 출력도 percentage breakdown이 아니라 직접적인 `Final label:` 형식으로 정리한다.
 
 핵심 규칙은 다음과 같다.
 
@@ -59,6 +59,21 @@ For blended or emotionally shifting texts, classify the post according to the fi
 - distress에서 relief, accomplishment, positive resolution으로 이동하면 Happy로 판단할 수 있다.
 - neutral 또는 positive context에서 hopelessness, emotional exhaustion, unresolved distress로 이동하면 Depression으로 판단할 수 있다.
 - 최종 takeaway가 factual, balanced, emotionally mild이고 Depression/Happy 방향이 분명하지 않을 때만 Neutral로 판단한다.
+
+
+## 4.1 Llama 2 출력 구조 확정
+
+초기 Llama 2 CoT prompt는 세 번째 응답에서 Depression, Neutral, Happy 순서의 percentage breakdown을 출력하고, 가장 큰 값을 최종 Phase 2 label로 사용하는 구조였다. 그러나 v2.3 trajectory-aware 실험 결과를 점검한 결과, Llama 2의 첫 번째 reasoning 응답은 대부분 올바른 dominant emotion을 선택했지만 percentage breakdown 단계에서 Neutral 값이 가장 크게 나오면서 최종 label이 Neutral로 바뀌는 문제가 확인되었다.
+
+따라서 최종 workflow에서는 percentage breakdown을 최종 decision rule로 사용하지 않는다. Llama 2의 세 번째 응답은 최종 판단 근거를 간단히 제시하고 반드시 다음 형식으로 끝난다.
+
+```text
+Final label: Depression
+Final label: Neutral
+Final label: Happy
+```
+
+이 변경은 모델이 이미 수행한 reasoning을 숫자 평균 방식으로 덮어쓰지 않도록 하기 위한 output-design 수정이다. Llama 3 SELF-DISCOVER는 기존부터 `Final label:` 기반 파싱 구조를 사용하므로 같은 최종 label extraction policy를 유지한다.
 
 ## 5. 왜 치팅이 아닌가
 
@@ -83,7 +98,7 @@ Blended 또는 shifting emotion 텍스트는 원래 라벨 기준이 애매할 �
 | Condition | Notebook | Prompt policy | Output files |
 |---|---|---|---|
 | 기본 Phase 2 prompt | `13_phase2_mixed_emotion_reasoning_colab.ipynb` | Dominant emotion / overall sentiment 중심 | `mixed_emotion_llama2_cot_results.csv`, `mixed_emotion_llama3_self_discover_results.csv` |
-| Trajectory-aware prompt variant | `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` | Mixed/shifting text에서 final emotional trajectory와 final takeaway 우선 | `mixed_emotion_llama2_cot_trajectory_prompt_v2_3_results.csv`, `mixed_emotion_llama3_self_discover_trajectory_prompt_v2_3_results.csv` |
+| Final trajectory-aware prompt | `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` | Mixed/shifting text에서 final emotional trajectory와 final takeaway 우선, Llama 2도 `Final label:` 직접 출력 | `mixed_emotion_llama2_cot_trajectory_prompt_v2_3_final_label_results.csv`, `mixed_emotion_llama3_self_discover_trajectory_prompt_v2_3_results.csv` |
 
 두 노트북은 같은 dataset, 같은 model, 같은 checkpoint/resume 구조를 사용한다. 차이는 prompt policy와 output filename이다.
 
@@ -153,8 +168,8 @@ notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb
 
 ## 11. 주의사항
 
-- 이 variant는 아직 논문 최종 prompt로 확정된 것이 아니다.
-- 실험 결과를 본 뒤 논문 Appendix B/C에 반영할지 결정한다.
+- 14번 trajectory-aware notebook을 현재 Mixed Emotion Phase 2 reasoning 최종 workflow로 사용한다.
+- 논문 Appendix B/C에는 trajectory-aware policy와 `Final label:` 기반 출력 구조를 반영한다.
 - prompt를 바꿨다면 반드시 어떤 prompt로 얻은 결과인지 output filename과 문서에 명확히 남긴다.
 - Phase 1 routed prediction이 준비되면 `target_as_placeholder`가 아니라 `prediction_column` 모드로 다시 실행해야 한다.
 - 최종 논문 결과에는 prompt version, model version, dataset version을 함께 기록해야 한다.

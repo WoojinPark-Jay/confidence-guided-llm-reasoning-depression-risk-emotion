@@ -300,8 +300,8 @@ Dataset design summary:
 
 Colab notebooks:
 
-- `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
-- `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`
+- Final recommended workflow: `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`
+- Base/legacy comparison workflow: `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
 
 Purpose:
 
@@ -310,7 +310,7 @@ Purpose:
 - Run Appendix C-aligned Llama 3 SELF-DISCOVER prompting on all 300 examples.
 - Preserve the raw reasoning outputs and add final-label columns for evaluation.
 - Save model-specific outputs, a combined output table, and a summary evaluation CSV.
-- Compare the base Phase 2 prompt with a trajectory-aware prompt variant that prioritizes final emotional trajectory in blended or shifting texts.
+- Use the trajectory-aware Phase 2 prompt as the current final mixed-emotion reasoning workflow; the base prompt remains available only for comparison.
 
 Default Phase 2 reasoning configuration:
 
@@ -318,16 +318,17 @@ Default Phase 2 reasoning configuration:
 - Default rows: `MAX_ROWS = 300`
 - Llama 2 model: `NousResearch/Llama-2-7b-chat-hf`
 - Llama 3 model: `NousResearch/Meta-Llama-3-8B-Instruct`
-- Llama 2 final label: derived from the largest value in `LLaMA2_3`
+- Llama 2 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA2_3`; percentage breakdown is no longer used as the final decision rule
 - Llama 3 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA3_Answer`
 - `prompts.py` upload is not required because the SELF-DISCOVER prompt templates are embedded in the notebook.
 
-Trajectory-aware prompt variant:
+Current final Phase 2 mixed-emotion workflow:
 
-- `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` is an experimental prompt-policy variant.
-- It keeps the same dataset, models, checkpoint/resume logic, and evaluation structure as the main Phase 2 notebook.
-- It adds explicit guidance for blended or emotionally shifting texts so the model does not default to Neutral solely because multiple emotional cues are present.
-- Separate output filenames are used for this variant to avoid overwriting the base prompt results.
+- `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` is the current recommended notebook for Phase 2 mixed-emotion reasoning.
+- It keeps the same dataset, models, checkpoint/resume logic, and evaluation structure as the base Phase 2 notebook.
+- It adds explicit guidance for blended or emotionally shifting texts so the model prioritizes final emotional trajectory and does not default to Neutral solely because multiple emotional cues are present.
+- Llama 2 now writes a direct `Final label:` decision in `LLaMA2_3`; the earlier percentage-breakdown decision rule is no longer used for final labeling.
+- Separate output filenames are used to avoid overwriting base prompt or earlier percentage-breakdown runs.
 
 Current Phase 2 notebook assumption:
 
