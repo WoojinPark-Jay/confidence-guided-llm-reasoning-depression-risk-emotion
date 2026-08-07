@@ -60,6 +60,16 @@ Colab large-run notebooks:
 - `notebooks/colab/11_llama2_confidence_threshold_wandb_colab.ipynb`
 - `notebooks/colab/12_mistral_confidence_threshold_wandb_colab.ipynb`
 
+Final end-to-end Colab notebooks:
+
+- `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
+- `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
+- `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+
+Final workflow guide:
+
+- `docs/final_end_to_end_workflow_ko.md`
+
 Script helpers:
 
 - `src/modeling_data.py`
@@ -76,6 +86,7 @@ Purpose:
 - Export sampled train/validation/test files under `data/03_modeling_inputs/`.
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
 - For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
+- For the final paper workflow, use only the three notebooks under `notebooks/colab/final/`. These preserve the older exploratory notebooks while providing a cleaner end-to-end path from DistilBERT Phase 1 training to LLM Phase 2 reasoning and paper-ready Mixed Emotion evaluation outputs.
 
 Current local sample default:
 
@@ -158,6 +169,10 @@ confidence-guided-selective-llm-reasoning/
       12_mistral_confidence_threshold_wandb_colab.ipynb
       13_phase2_mixed_emotion_reasoning_colab.ipynb
       14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb
+      final/
+        01_distilbert_phase1_training_final_colab.ipynb
+        02_llm_phase2_reasoning_final_colab.ipynb
+        03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
@@ -170,6 +185,7 @@ confidence-guided-selective-llm-reasoning/
     generate_mixed_emotion_dataset.py
     generate_mixed_emotion_dataset_v2_3.py
   docs/
+    final_end_to_end_workflow_ko.md
   reports/figures/
   requirements.txt
 ```
