@@ -25,6 +25,8 @@
 | 2 | `02_llm_phase2_reasoning_final_colab.ipynb` | Phase 1에서 routed된 Mixed Emotion 샘플에 대해 Llama 2 CoT와 Llama 3 SELF-DISCOVER reasoning 실행 |
 | 3 | `03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb` | Phase 1 결과와 Phase 2 결과를 merge하고 최종 end-to-end metric, 표, 그림 생성 |
 
+중요한 점은 3번 노트북 하나만 돌린다고 전체가 자동으로 실행되는 구조가 아니라는 것이다. 3번은 이미 저장된 1번/2번 산출물을 읽어서 최종 평가와 논문용 표/그림을 만드는 오케스트레이션 파일이다. 따라서 최종 실험은 반드시 1번, 2번, 3번 순서로 실행한다.
+
 ## 3. 전체 실행 흐름
 
 ```text
@@ -87,13 +89,21 @@ notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb
 
 ### 5.1 입력
 
-기본 primary dataset 경로:
+기본 primary dataset 입력은 기존 DistilBERT Colab에서 사용하던 GitHub media URL이다.
+
+```text
+https://media.githubusercontent.com/media/Branden-Kang/LLaMA-2/main/data/final_preprocessed_df2.csv
+```
+
+따라서 동료 연구자가 별도로 primary CSV를 Google Drive에 업로드하지 않아도 기본 실행이 가능하도록 구성했다. Google Drive는 입력 저장소가 아니라 출력 저장소로 사용한다.
+
+다만 GitHub media URL이 일시적으로 느리거나 접근이 제한되는 경우를 대비해 Drive fallback 경로도 남겨두었다.
 
 ```text
 /content/drive/MyDrive/confidence_guided_llm_reasoning/data/final_preprocessed_df.csv
 ```
 
-이 파일은 약 338MB 수준의 큰 CSV이므로 GitHub raw URL로 직접 읽기보다 Google Drive에 올려두고 Colab에서 읽는 구조를 기본값으로 둔다.
+기본값에서는 GitHub media URL을 먼저 사용한다.
 
 Mixed Emotion Dataset은 작기 때문에 GitHub raw URL에서 직접 읽는다.
 
@@ -112,11 +122,39 @@ data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv
 | `CALIBRATION_RATIO` | temperature/threshold calibration split | `0.10` |
 | `TEST_RATIO` | final held-out test split | `0.10` |
 | `MAX_LENGTH` | token 최대 길이 | `256` |
-| `BATCH_SIZE` | train/eval batch size | `32` |
-| `EPOCHS` | 학습 epoch | `3` |
+| `USE_WANDB_SWEEP` | W&B hyperparameter sweep 실행 여부 | `True` |
+| `WANDB_SWEEP_COUNT` | sweep trial 수 | `4` |
 | `TARGET_SELECTIVE_RISK` | accepted set의 목표 selective risk | `0.05` |
 
 Smoke test에서는 `SAMPLES_PER_CLASS = 1000` 또는 `3000`으로 줄여도 된다. 최종 논문용 결과는 class별 40000개 기준으로 다시 실행한다.
+
+### 5.2.1 DistilBERT 최적화 구조
+
+01번 노트북은 단순히 고정 hyperparameter로 한 번 학습하는 구조가 아니라, W&B sweep으로 validation macro-F1 기준 best hyperparameter를 먼저 선택한다.
+
+실행 흐름은 다음과 같다.
+
+```text
+Primary Reddit dataset
+-> class별 balanced sampling
+-> train / validation / calibration / test split
+-> W&B sweep on validation macro-F1
+-> best hyperparameter 선택
+-> best hyperparameter로 final DistilBERT training
+-> best model 저장
+-> calibration split으로 temperature scaling
+-> calibration split으로 routing threshold 선택
+-> held-out Reddit test 평가
+-> Mixed Emotion 300개 전체에 Phase 1 inference
+```
+
+Mixed Emotion 300개는 여기서 학습, validation, calibration, threshold 선택에 사용하지 않는다. 완성된 DistilBERT 모델, temperature, threshold를 그대로 적용하는 외부 stress-test set이다.
+
+W&B를 쓰려면 Colab secret에 다음 이름으로 API key를 저장한다.
+
+```text
+WANDB_API_KEY
+```
 
 ### 5.3 출력
 
@@ -220,11 +258,15 @@ notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipyn
 
 ### 7.1 입력
 
+3번 노트북은 1번과 2번을 대신 실행하지 않는다. 아래 파일들이 이미 Google Drive에 있어야 한다.
+
 | 입력 파일 | 생성 노트북 |
 |---|---|
 | `phase1_mixed_emotion_predictions.csv` | 01 DistilBERT |
 | `llama2_cot_routed_mixed_emotion_results.csv` | 02 LLM reasoning |
 | `llama3_self_discover_routed_mixed_emotion_results.csv` | 02 LLM reasoning |
+
+즉 3번은 “실험 실행 파일”이라기보다 “결과 통합 및 논문용 산출물 생성 파일”이다.
 
 ### 7.2 최종 label 생성 규칙
 
@@ -271,7 +313,7 @@ else:
 
 최종 실행 순서는 다음과 같다.
 
-1. Google Drive에 `confidence_guided_llm_reasoning/data/final_preprocessed_df.csv`를 준비한다.
+1. Colab secret에 `WANDB_API_KEY`를 저장한다.
 2. Colab GPU에서 `01_distilbert_phase1_training_final_colab.ipynb`를 실행한다.
 3. `outputs_final/phase1_distilbert/phase1_mixed_emotion_predictions.csv`가 생성됐는지 확인한다.
 4. Colab GPU에서 `02_llm_phase2_reasoning_final_colab.ipynb`를 실행한다.
@@ -283,4 +325,3 @@ else:
 ## 10. 동료 연구자에게 설명할 한 줄 요약
 
 최종 실험은 `notebooks/colab/final/`의 3개 노트북만 순서대로 돌리면 된다. 1번은 DistilBERT Phase 1과 threshold를 만들고, 2번은 routed sample에 Llama reasoning을 적용하고, 3번은 두 결과를 합쳐 논문용 metric/table/figure를 만든다.
-
