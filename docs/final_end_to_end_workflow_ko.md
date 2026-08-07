@@ -247,6 +247,12 @@ outputs_final/phase1_distilbert/phase1_mixed_emotion_predictions.csv
 | `llama2_cot_routed_mixed_emotion_results.csv` | Llama 2 CoT 결과 |
 | `llama3_self_discover_routed_mixed_emotion_results.csv` | Llama 3 SELF-DISCOVER 결과 |
 | `phase2_llm_reasoning_summary.csv` | Phase 2 standalone metric |
+| `phase2_classification_reports.csv` | Llama 2/Llama 3 Phase 2 classification report |
+| `phase2_predicted_label_counts.csv` | Llama 2/Llama 3 최종 label 분포 |
+| `llama2_cot_confusion_matrix.csv/png` | Llama 2 Phase 2 confusion matrix |
+| `llama3_self_discover_confusion_matrix.csv/png` | Llama 3 Phase 2 confusion matrix |
+| `llama2_cot_parse_failures.csv` | Llama 2 final label parsing 실패 row |
+| `llama3_self_discover_parse_failures.csv` | Llama 3 final label parsing 실패 row |
 | `phase2_llm_reasoning_combined_outputs.csv` | Llama2/Llama3 결과를 합친 파일 |
 | `phase2_llm_reasoning_outputs.zip` | Phase 2 산출물 zip |
 
@@ -303,13 +309,21 @@ else:
 |---|---|
 | `mixed_emotion_end_to_end_results.csv` | sample별 Phase 1, Phase 2, final prediction 전체 |
 | `end_to_end_metrics_summary.csv` | Phase 1 only, routed only, end-to-end metric |
+| `end_to_end_classification_reports.csv` | Phase 1, routed-only, end-to-end classification report |
+| `end_to_end_confusion_matrices_long.csv` | 모든 confusion matrix를 long-format table로 정리한 파일 |
+| `prediction_label_distributions.csv` | 각 모델/단계별 predicted label 분포 |
 | `routing_coverage_table.csv` | accepted/routed count, coverage, routing rate |
 | `phase2_correction_analysis.csv` | Phase 2가 고친 오류와 새로 만든 오류 |
 | `paper_ready_tables.xlsx` | 논문 표로 옮기기 쉬운 Excel workbook |
 | `confusion_matrix_phase1.png` | Phase 1 confusion matrix |
 | `confusion_matrix_llama2_e2e.png` | Llama 2 end-to-end confusion matrix |
 | `confusion_matrix_llama3_e2e.png` | Llama 3 end-to-end confusion matrix |
+| `phase1_error_examples.csv` | Phase 1 오류 사례 |
+| `llama2_e2e_error_examples.csv` | Llama 2 end-to-end 오류 사례 |
+| `llama3_e2e_error_examples.csv` | Llama 3 end-to-end 오류 사례 |
 | `mixed_emotion_end_to_end_paper_outputs.zip` | 최종 산출물 zip |
+
+03번 노트북 마지막에는 `Final Paper Output Review` 섹션이 있다. 이 섹션은 저장된 파일을 직접 다시 열 필요 없이 Colab 화면에서 metric table, routing table, correction table, label distribution, classification report, confusion matrix table, confusion matrix image, error examples, output file list를 한 번에 확인하기 위한 최종 검토용 화면이다.
 
 ## 8. 논문에 들어갈 수 있는 결과
 
@@ -335,8 +349,9 @@ else:
 4. Colab GPU에서 `02_llm_phase2_reasoning_final_colab.ipynb`를 실행한다.
 5. Llama2/Llama3 routed 결과 CSV가 생성됐는지 확인한다.
 6. `03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`를 실행한다.
-7. `paper_ready_tables.xlsx`, confusion matrix PNG, summary CSV를 확인한다.
-8. 논문 Results, Appendix, Limitation에 최종 수치를 반영한다.
+7. `Final Paper Output Review` 섹션에서 metric, routing, correction, confusion matrix, 오류 사례를 화면에서 확인한다.
+8. `paper_ready_tables.xlsx`, confusion matrix PNG, summary CSV를 확인한다.
+9. 논문 Results, Appendix, Limitation에 최종 수치를 반영한다.
 
 ## 10. 최종 확인 체크리스트
 
