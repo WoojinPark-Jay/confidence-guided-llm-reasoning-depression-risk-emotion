@@ -65,6 +65,7 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
 - `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 - `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+- `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
 
 Final workflow guide:
 
@@ -75,8 +76,9 @@ Recommended final execution order:
 1. `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
 2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+4. `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
 
-The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports.
+The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. The fourth notebook uses the Reddit held-out test predictions from Final 01, sends only low-confidence routed Reddit test rows to Llama reasoning, and reconstructs the full Reddit held-out end-to-end result.
 
 Script helpers:
 
@@ -98,6 +100,7 @@ Purpose:
 - The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including calibration metrics, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
 - The final LLM reasoning notebook exports standalone Phase 2 evaluation artifacts, including classification reports, predicted-label distributions, parse-failure files, confusion matrix CSV files, and confusion matrix PNG files for both Llama 2 and Llama 3 when available.
 - The final orchestration notebook exports the complete paper-ready Mixed Emotion result package and displays a final review section with metrics, routing coverage, correction counts, label distributions, classification reports, confusion matrix tables, confusion matrix images, and representative error rows.
+- The final Reddit test notebook exports the primary held-out test two-phase result package, including routed-row Llama outputs, Reddit end-to-end metrics, correction analysis, routing coverage, confusion matrices, error examples, and a paper-ready workbook.
 - Final Colab outputs are written to Google Drive under `/content/drive/MyDrive/confidence_guided_llm_reasoning/outputs_final/` so long-running training and reasoning results are not lost when a runtime ends.
 
 Current local sample default:
@@ -185,6 +188,7 @@ confidence-guided-selective-llm-reasoning/
         01_distilbert_phase1_training_final_colab.ipynb
         02_llm_phase2_reasoning_final_colab.ipynb
         03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb
+        04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
