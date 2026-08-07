@@ -282,7 +282,7 @@ outputs_final/phase1_distilbert/phase1_mixed_emotion_predictions.csv
 | `phase2_llm_reasoning_combined_outputs.csv` | Llama2/Llama3 결과를 합친 파일 |
 | `phase2_llm_reasoning_outputs.zip` | Phase 2 산출물 zip |
 
-### 6.4 Row-level 저장과 resume
+### 6.4 Row-level 저장, resume, 자동 백업
 
 Llama reasoning은 시간이 오래 걸리므로 각 row가 끝날 때마다 CSV에 append 저장한다. Colab이 중간에 끊기면 같은 노트북을 다시 실행했을 때 기존 CSV의 `example_id`를 읽고 완료된 row는 skip한다.
 
@@ -295,6 +295,29 @@ Llama reasoning은 시간이 오래 걸리므로 각 row가 끝날 때마다 CSV
 -> pending row부터 이어서 실행
 -> row마다 CSV append
 ```
+
+또한 02번 노트북은 Final 01에서 생성된 `phase1_mixed_emotion_predictions.csv`의 fingerprint를 자동으로 계산한다. 현재 Phase 1 routed set이 기존 Phase 2 CSV와 같은 입력이면 그대로 resume하고, 입력이 달라졌으면 예전 CSV들을 자동으로 timestamped backup 폴더로 이동한 뒤 새 결과를 저장한다.
+
+즉 v2.4 Mixed Emotion 결과로 새로 돌릴 때 사용자가 직접 예전 CSV를 삭제하거나 백업할 필요는 없다. 02번을 위에서부터 실행하면 다음 중 하나가 자동으로 처리된다.
+
+```text
+같은 Phase 1 routed set -> 기존 Llama CSV에서 완료 row 확인 후 이어서 실행
+다른 Phase 1 routed set -> 기존 CSV 자동 백업 -> 새 Phase 2 run 시작
+```
+
+자동 백업 폴더 이름은 다음 형식으로 생성된다.
+
+```text
+outputs_final/phase2_llm_reasoning/backup_before_mixed_routed{N}_tau{threshold}_{hash}_{timestamp}/
+```
+
+현재 run 정보는 다음 파일에 저장된다.
+
+```text
+outputs_final/phase2_llm_reasoning/phase2_run_manifest.json
+```
+
+따라서 Final 02를 시작하기 전에 사용자가 해야 할 일은 없다. Final 01이 저장한 최신 `phase1_mixed_emotion_predictions.csv`가 Google Drive에 있으면, Final 02가 안전하게 현재 입력 기준으로 정리하고 실행한다.
 
 ## 7. 03 End-to-End Orchestration 노트북
 
