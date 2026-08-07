@@ -50,6 +50,17 @@ Final 01에서는 threshold 후보 범위를 기존 `[0.50, 1.00]` 중심에서 
 
 추가로 `phase1_threshold_grid_lower_bound_sensitivity.csv`를 저장하여 `[0.50, 0.60, 0.70, 0.75, 0.80]` lower-bound별 routing/coverage/risk 변화를 비교할 수 있게 했다.
 
+## 최종 v2.4 Neutral 구성
+
+최종 v2.4 Neutral subset은 너무 쉬운 완전 기술문만으로 구성하지 않고, 다음과 같이 나누었다.
+
+- `clear_neutral_technical_informational`: 75개
+- `neutral_mild_ambiguity_factual`: 25개
+
+`neutral_mild_ambiguity_factual` 예시는 일정 불일치, 양식 필드 차이, 문서 버전 차이, 누락된 절차 정보처럼 약간의 procedural ambiguity를 포함한다. 다만 sadness, happiness, depression, relief 같은 강한 정서 단서는 넣지 않았고, dominant label은 여전히 Neutral로 방어 가능하게 유지했다.
+
+이 구성의 목적은 Neutral을 사람이 봐도 명확하게 유지하되, Mixed Emotion stress-test가 지나치게 쉬운 sanity-check로만 보이지 않도록 일부 Neutral 예시에 낮은 수준의 난이도를 부여하는 것이다.
+
 ## 기대되는 확인 포인트
 
 v2.4를 사용한 뒤에는 다음을 다시 확인한다.
