@@ -12,7 +12,7 @@
 | 이유 | 설명 |
 |---|---|
 | 기존 코드 보존 | 이전 실험 노트북을 직접 수정하지 않아 과거 결과와 비교 가능 |
-| 협업 편의 | 동료 연구자가 어떤 파일을 어떤 순서로 실행해야 하는지 명확함 |
+| 실행 명확성 | 어떤 파일을 어떤 순서로 실행해야 하는지 명확함 |
 | 세션 안정성 | Colab 런타임 종료 후에도 결과가 Google Drive에 남도록 설계 |
 | 논문 결과 생성 | end-to-end 결과, confusion matrix, paper-ready table을 한 곳에서 생성 |
 | 리스크 감소 | Phase 1 학습, Phase 2 reasoning, 최종 평가를 분리해 중간 실패 시 재실행 범위가 작음 |
@@ -95,7 +95,7 @@ notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb
 https://media.githubusercontent.com/media/Branden-Kang/LLaMA-2/main/data/final_preprocessed_df2.csv
 ```
 
-따라서 동료 연구자가 별도로 primary CSV를 Google Drive에 업로드하지 않아도 기본 실행이 가능하도록 구성했다. Google Drive는 입력 저장소가 아니라 출력 저장소로 사용한다.
+따라서 별도로 primary CSV를 Google Drive에 업로드하지 않아도 기본 실행이 가능하도록 구성했다. Google Drive는 입력 저장소가 아니라 출력 저장소로 사용한다.
 
 다만 GitHub media URL이 일시적으로 느리거나 접근이 제한되는 경우를 대비해 Drive fallback 경로도 남겨두었다.
 
@@ -322,6 +322,16 @@ else:
 7. `paper_ready_tables.xlsx`, confusion matrix PNG, summary CSV를 확인한다.
 8. 논문 Results, Appendix, Limitation에 최종 수치를 반영한다.
 
-## 10. 동료 연구자에게 설명할 한 줄 요약
+## 10. 최종 확인 체크리스트
 
-최종 실험은 `notebooks/colab/final/`의 3개 노트북만 순서대로 돌리면 된다. 1번은 DistilBERT Phase 1과 threshold를 만들고, 2번은 routed sample에 Llama reasoning을 적용하고, 3번은 두 결과를 합쳐 논문용 metric/table/figure를 만든다.
+최종 실험을 논문 결과로 사용하기 전에 다음 항목을 확인한다.
+
+| 확인 항목 | 기준 |
+|---|---|
+| Colab secret | `WANDB_API_KEY`가 저장되어 있어야 함 |
+| Phase 1 완료 | `outputs_final/phase1_distilbert/phase1_mixed_emotion_predictions.csv` 생성 |
+| Phase 2 완료 | `outputs_final/phase2_llm_reasoning/`에 Llama 2와 Llama 3 reasoning CSV 생성 |
+| End-to-end 완료 | `outputs_final/end_to_end_orchestration/`에 metric/table/figure 산출물 생성 |
+| 논문 반영 | 최종 accuracy, routing coverage, correction analysis, confusion matrix 수치를 Results와 Appendix에 반영 |
+
+최종 실험은 `notebooks/colab/final/`의 3개 노트북을 1번, 2번, 3번 순서로 실행하는 구조이다. 1번은 DistilBERT Phase 1과 threshold를 만들고, 2번은 routed sample에 Llama reasoning을 적용하고, 3번은 두 결과를 합쳐 논문용 metric, table, figure를 생성한다.

@@ -2,7 +2,7 @@
 
 This repository organizes the code and data workflow for a Reddit-based depression-risk-related proxy emotion classification project.
 
-The project studies a confidence-guided two-phase framework for research-oriented proxy emotion classification in Reddit text. The codebase is being organized step by step so collaborators can reproduce the data preparation, preprocessing, and later modeling experiments.
+The project studies a confidence-guided two-phase framework for research-oriented proxy emotion classification in Reddit text. The codebase is organized step by step so the data preparation, preprocessing, modeling, and final end-to-end evaluation workflows can be reproduced.
 
 ## Pipeline Stages
 
@@ -70,6 +70,14 @@ Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
 
+Recommended final execution order:
+
+1. `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
+2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
+3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+
+The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed rows. The third notebook does not retrain models or rerun LLM inference; it merges the saved Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, and zip exports.
+
 Script helpers:
 
 - `src/modeling_data.py`
@@ -87,6 +95,7 @@ Purpose:
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
 - For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
 - For the final paper workflow, use only the three notebooks under `notebooks/colab/final/`. These preserve the older exploratory notebooks while providing a cleaner end-to-end path from DistilBERT Phase 1 training to LLM Phase 2 reasoning and paper-ready Mixed Emotion evaluation outputs.
+- Final Colab outputs are written to Google Drive under `/content/drive/MyDrive/confidence_guided_llm_reasoning/outputs_final/` so long-running training and reasoning results are not lost when a runtime ends.
 
 Current local sample default:
 
@@ -97,7 +106,7 @@ Current local sample default:
 - 1000 Depression, 1000 Neutral, and 1000 Happy records
 - 3000 total records before splitting
 - 2250 train records, 450 validation records, and 300 test records
-- These values are defined near the top of each modeling notebook so collaborators can change the run size and split ratios in one place.
+- These values are defined near the top of each modeling notebook so the run size and split ratios can be changed in one place.
 
 Current advanced Colab default:
 
@@ -116,7 +125,7 @@ Current advanced Colab default:
 Local CPU/Mac execution note:
 
 - The Llama and Mistral notebooks keep the original full-model workflow for GPU runs.
-- When CUDA is not available, they automatically switch to tiny debug checkpoints so collaborators can verify the notebook flow locally.
+- When CUDA is not available, they automatically switch to tiny debug checkpoints so the notebook flow can be verified locally.
 - To run the full Llama or Mistral checkpoints, use a CUDA GPU environment and disable the local tiny-model fallback only after confirming the environment can load the full model.
 
 
