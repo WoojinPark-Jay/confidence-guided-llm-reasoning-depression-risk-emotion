@@ -21,7 +21,7 @@
 
 | 순서 | 노트북 | 역할 |
 |---:|---|---|
-| 1 | `01_distilbert_phase1_training_final_colab.ipynb` | DistilBERT Phase 1 학습, temperature scaling, routing threshold 선택, Mixed Emotion Phase 1 prediction 생성 |
+| 1 | `01_distilbert_phase1_training_final_colab.ipynb` | DistilBERT Phase 1 학습, temperature scaling, routing threshold 선택, advanced confidence-threshold 분석, Mixed Emotion Phase 1 prediction 생성 |
 | 2 | `02_llm_phase2_reasoning_final_colab.ipynb` | Phase 1에서 routed된 Mixed Emotion 샘플에 대해 Llama 2 CoT와 Llama 3 SELF-DISCOVER reasoning 실행 |
 | 3 | `03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb` | Phase 1 결과와 Phase 2 결과를 merge하고 최종 end-to-end metric, 표, 그림 생성 |
 
@@ -37,6 +37,7 @@ Primary Reddit Dataset
         |
         |-- phase1_test_predictions.csv
         |-- phase1_threshold_calibration_table.csv
+        |-- advanced_confidence_threshold_analysis/
         |-- phase1_mixed_emotion_predictions.csv
         v
 Mixed Emotion routed rows
@@ -74,6 +75,7 @@ Mixed Emotion routed rows
 | 폴더 | 내용 |
 |---|---|
 | `outputs_final/phase1_distilbert/` | DistilBERT 모델, Phase 1 예측, calibration 결과 |
+| `outputs_final/phase1_distilbert/advanced_confidence_threshold_analysis/` | calibration metric, reliability diagram, risk-coverage curve, ablation, bootstrap, threshold stability 등 confidence-threshold 분석 결과 |
 | `outputs_final/phase2_llm_reasoning/` | Llama 2, Llama 3 routed sample reasoning 결과 |
 | `outputs_final/end_to_end_orchestration/` | 최종 end-to-end 평가 결과, 논문용 표/그림 |
 
@@ -150,6 +152,8 @@ Primary Reddit dataset
 
 Mixed Emotion 300개는 여기서 학습, validation, calibration, threshold 선택에 사용하지 않는다. 완성된 DistilBERT 모델, temperature, threshold를 그대로 적용하는 외부 stress-test set이다.
 
+또한 01번 노트북은 threshold 선택만 수행하는 것이 아니라, 선택된 confidence filtering 방법을 논문에서 방어하기 위한 advanced confidence-threshold 분석 산출물도 함께 생성한다. 이 산출물은 `advanced_confidence_threshold_analysis/` 하위 폴더에 저장된다.
+
 W&B를 쓰려면 Colab secret에 다음 이름으로 API key를 저장한다.
 
 ```text
@@ -170,6 +174,18 @@ WANDB_API_KEY
 | `phase1_selected_threshold.csv` | 최종 선택 threshold |
 | `phase1_test_predictions.csv` | held-out test prediction |
 | `distilbert_phase1_summary.csv` | Phase 1 핵심 metric |
+| `distilbert_phase1_advanced_summary.csv` | calibration, threshold, AURC 등 advanced confidence 분석 요약 |
+| `advanced_confidence_threshold_analysis/calibration_metric_summary.csv` | raw MSP와 temperature-scaled MSP의 ECE, adaptive ECE, Brier score, NLL |
+| `advanced_confidence_threshold_analysis/calibration_reliability_diagram.png` | raw MSP와 temperature-scaled MSP calibration reliability diagram |
+| `advanced_confidence_threshold_analysis/risk_coverage_curve.png` | calibration split의 risk-coverage curve |
+| `advanced_confidence_threshold_analysis/confidence_score_ablation.csv` | MSP, margin, negative entropy confidence score ablation |
+| `advanced_confidence_threshold_analysis/fixed_threshold_bootstrap_summary.csv` | 선택 threshold 기준 bootstrap confidence interval |
+| `advanced_confidence_threshold_analysis/threshold_bootstrap_stability.csv` | bootstrap 기반 threshold stability |
+| `advanced_confidence_threshold_analysis/high_confidence_accepted_errors.csv` | threshold 이상 accepted sample 중 high-confidence error 사례 |
+| `advanced_confidence_threshold_analysis/per_class_selective_metrics_test.csv` | class별 selective coverage/risk |
+| `advanced_confidence_threshold_analysis/class_conditional_thresholds.csv` | class-conditional threshold ablation |
+| `advanced_confidence_threshold_analysis/input_length_threshold_analysis.csv` | 입력 길이별 threshold 성능 분석 |
+| `advanced_confidence_threshold_analysis/threshold_provenance.json` | threshold 선택 재현성 metadata |
 | `phase1_mixed_emotion_predictions.csv` | Mixed Emotion 300개에 대한 Phase 1 prediction/confidence/routing 결과 |
 | `confusion_matrix_mixed_phase1_distilbert.png` | Mixed Emotion Phase 1 confusion matrix |
 | `mixed_phase1_confidence_distribution.png` | Mixed Emotion confidence 분포 |
@@ -306,7 +322,7 @@ else:
 | Results | `phase2_correction_analysis.csv` |
 | Results 또는 Appendix | confusion matrix PNG |
 | Appendix | `paper_ready_tables.xlsx`의 confusion matrix sheet |
-| Methodology | selected threshold, temperature |
+| Methodology | selected threshold, temperature, calibration metrics, risk-coverage curve, threshold provenance |
 | Mixed Emotion section | Phase 1 only vs Llama2/Llama3 end-to-end 비교 |
 
 ## 9. 실행 순서
