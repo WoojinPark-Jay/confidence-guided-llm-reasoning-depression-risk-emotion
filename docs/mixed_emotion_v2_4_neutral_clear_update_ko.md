@@ -4,7 +4,7 @@
 
 기존 Mixed Emotion v2.3 데이터셋은 Depression, Neutral, Happy 각 100개로 구성되어 있었지만, Neutral 예시 일부가 실제로는 긍정 단서, 우울 단서, 회복 단서, 감정 변화 단서를 함께 포함하고 있었다. 이 경우 사람이 봐도 Neutral로 판단하기 애매할 수 있고, DistilBERT가 Neutral을 Happy 또는 Depression으로 예측하는 것이 모델 오류라기보다 라벨 정의 문제처럼 보일 수 있다.
 
-따라서 v2.4에서는 Depression과 Happy stress-test 예시는 유지하고, Neutral 100개만 더 명확한 factual/routine neutral 문장으로 교체했다.
+따라서 v2.4에서는 Depression과 Happy stress-test 예시는 유지하고, Neutral 100개만 더 명확한 technical/informational neutral 문장으로 교체했다.
 
 ## 변경된 파일
 
@@ -20,9 +20,9 @@
 
 Neutral 예시는 다음 기준을 따르도록 수정했다.
 
-- 감정 강도가 낮은 factual/routine 문장으로 작성
+- 감정 강도가 낮은 technical/informational 문장으로 작성
 - 긍정 또는 우울 단서가 dominant trajectory로 해석되지 않도록 구성
-- 일정 확인, 문서 정리, 업무 목록, 예약 확인, 파일 정리 같은 실무적/정보적 행동 중심
+- Technology, datascience, AskScienceDiscussion, webdev 계열에 가까운 정보성 질문과 절차 설명 중심
 - sadness, hopelessness, relief, accomplishment 같은 강한 정서 단어는 Neutral 예시에서 최대한 제외
 - 사람이 읽어도 Neutral 라벨이 방어 가능한 문장으로 조정
 
@@ -62,7 +62,7 @@ v2.4를 사용한 뒤에는 다음을 다시 확인한다.
 
 ## 논문 반영 시 주의점
 
-v2.4는 Neutral 라벨 방어력을 높이기 위한 데이터셋 품질 개선이다. 논문에서는 Mixed Emotion Dataset을 primary benchmark로 과장하지 않고, emotionally complex or stress-test set으로 설명해야 한다.
+v2.4는 Neutral 라벨 방어력을 높이기 위한 데이터셋 품질 개선이며, Neutral subset은 Reddit primary dataset의 Neutral source에 더 가까운 technical/informational 스타일로 정제했다. 논문에서는 Mixed Emotion Dataset을 primary benchmark로 과장하지 않고, emotionally complex or stress-test set으로 설명해야 한다.
 
 권장 표현:
 
