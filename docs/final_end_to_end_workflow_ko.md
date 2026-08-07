@@ -122,11 +122,17 @@ https://media.githubusercontent.com/media/Branden-Kang/LLaMA-2/main/data/final_p
 
 기본값에서는 GitHub media URL을 먼저 사용한다.
 
-Mixed Emotion Dataset은 작기 때문에 GitHub raw URL에서 직접 읽는다.
+Mixed Emotion Dataset은 v2.4 neutral-clear 버전을 사용한다. 이 버전은 기존 Depression/Happy stress-test 예시는 유지하고, Neutral 100개를 더 명확한 factual/routine neutral 문장으로 교체한 버전이다.
+
+01번 노트북은 다음 순서로 Mixed Emotion 파일을 찾는다.
 
 ```text
-data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv
+/content/mixed_emotion_stress_test_v2_4_neutral_clear_300.csv
+/content/drive/MyDrive/confidence_guided_llm_reasoning/data/mixed_emotion_stress_test_v2_4_neutral_clear_300.csv
+GitHub raw URL: data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_4_neutral_clear_300.csv
 ```
+
+즉 Colab에서 로컬 업로드 파일이 있으면 그 파일을 먼저 읽고, 없으면 Drive 파일, 그것도 없으면 GitHub raw URL의 v2.4 파일을 읽는다.
 
 ### 5.2 주요 파라미터
 
@@ -142,6 +148,8 @@ data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv
 | `USE_WANDB_SWEEP` | W&B hyperparameter sweep 실행 여부 | `True` |
 | `WANDB_SWEEP_COUNT` | sweep trial 수 | `4` |
 | `TARGET_SELECTIVE_RISK` | accepted set의 목표 selective risk | `0.05` |
+| `THRESHOLD_GRID_MIN` | final operating policy의 threshold 후보 최소값 | `0.70` |
+| `THRESHOLD_GRID_MAX` | final operating policy의 threshold 후보 최대값 | `1.00` |
 
 Smoke test에서는 `SAMPLES_PER_CLASS = 1000` 또는 `3000`으로 줄여도 된다. 최종 논문용 결과는 class별 40000개 기준으로 다시 실행한다.
 
@@ -160,12 +168,14 @@ Primary Reddit dataset
 -> best hyperparameter로 final DistilBERT training
 -> best model 저장
 -> calibration split으로 temperature scaling
--> calibration split으로 routing threshold 선택
+-> calibration split으로 routing threshold 선택: conservative candidate range [0.70, 1.00]
 -> held-out Reddit test 평가
--> Mixed Emotion 300개 전체에 Phase 1 inference
+-> Mixed Emotion v2.4 300개 전체에 Phase 1 inference
 ```
 
 Mixed Emotion 300개는 여기서 학습, validation, calibration, threshold 선택에 사용하지 않는다. 완성된 DistilBERT 모델, temperature, threshold를 그대로 적용하는 외부 stress-test set이다.
+
+Threshold 후보 범위는 최종 운영 정책 기준 `[0.70, 1.00]`을 사용한다. 3-class softmax에서 0.50 근처 confidence는 약한 과반 confidence에 가까우므로, depression-risk-related emotion classification에서는 중간 confidence 예측을 Phase 2 reasoning으로 보내는 보수적 운영 정책이 더 방어 가능하다는 판단이다. 동시에 `phase1_threshold_grid_lower_bound_sensitivity.csv`를 저장하여 `[0.50, 0.60, 0.70, 0.75, 0.80]` lower-bound별 routing/coverage/risk 변화를 비교할 수 있게 한다.
 
 또한 01번 노트북은 threshold 선택만 수행하는 것이 아니라, 선택된 confidence filtering 방법을 논문에서 방어하기 위한 advanced confidence-threshold 분석 산출물도 함께 생성한다. 이 산출물은 `advanced_confidence_threshold_analysis/` 하위 폴더에 저장된다.
 
@@ -186,6 +196,7 @@ WANDB_API_KEY
 | `phase1_test_split.csv` | held-out test split |
 | `distilbert_best_model/` | 저장된 DistilBERT best model |
 | `phase1_threshold_calibration_table.csv` | threshold별 coverage/risk table |
+| `phase1_threshold_grid_lower_bound_sensitivity.csv` | threshold 후보 lower-bound별 routing/coverage/risk sensitivity table |
 | `phase1_selected_threshold.csv` | 최종 선택 threshold |
 | `phase1_test_predictions.csv` | held-out test prediction |
 | `distilbert_phase1_summary.csv` | Phase 1 핵심 metric |
