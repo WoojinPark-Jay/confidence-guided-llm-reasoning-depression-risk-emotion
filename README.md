@@ -70,6 +70,8 @@ Final end-to-end Colab notebooks:
 Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
+- `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
+- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
 
 Recommended final execution order:
 
@@ -202,6 +204,8 @@ confidence-guided-selective-llm-reasoning/
     generate_mixed_emotion_dataset_v2_3.py
   docs/
     final_end_to_end_workflow_ko.md
+    paper_update_and_current_results_meeting_notes_ko.md
+    high_confidence_accepted_error_analysis_plan_ko.md
   reports/figures/
   requirements.txt
 ```
