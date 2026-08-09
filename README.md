@@ -67,11 +67,17 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 - `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
 
+Prompt-policy comparison notebooks (keep baseline results unchanged):
+
+- `notebooks/colab/final/02_1_llm_phase2_reasoning_universal_prompt_final_colab.ipynb`
+- `notebooks/colab/final/04_1_reddit_test_routed_phase2_universal_prompt_final_colab.ipynb`
+
 Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
 - `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
+- `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 
 Recommended final execution order:
 
@@ -206,6 +212,7 @@ confidence-guided-selective-llm-reasoning/
     final_end_to_end_workflow_ko.md
     paper_update_and_current_results_meeting_notes_ko.md
     high_confidence_accepted_error_analysis_plan_ko.md
+    prompt_policy_v2_change_history_ko.md
   reports/figures/
   requirements.txt
 ```
