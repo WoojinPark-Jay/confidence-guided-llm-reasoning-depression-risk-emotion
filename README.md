@@ -2,7 +2,7 @@
 
 This repository organizes the code and data workflow for a Reddit-based depression-risk-related proxy emotion classification project.
 
-The project studies a confidence-guided two-phase framework for research-oriented proxy emotion classification in Reddit text. The codebase is being organized step by step so collaborators can reproduce the data preparation, preprocessing, and later modeling experiments.
+The project studies a confidence-guided two-phase framework for research-oriented proxy emotion classification in Reddit text. The codebase is organized step by step so the data preparation, preprocessing, modeling, and final end-to-end evaluation workflows can be reproduced.
 
 ## Pipeline Stages
 
@@ -60,6 +60,26 @@ Colab large-run notebooks:
 - `notebooks/colab/11_llama2_confidence_threshold_wandb_colab.ipynb`
 - `notebooks/colab/12_mistral_confidence_threshold_wandb_colab.ipynb`
 
+Final end-to-end Colab notebooks:
+
+- `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
+- `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
+- `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+- `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+
+Final workflow guide:
+
+- `docs/final_end_to_end_workflow_ko.md`
+
+Recommended final execution order:
+
+1. `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
+2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
+3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
+4. `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+
+The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. The fourth notebook uses the Reddit held-out test predictions from Final 01, sends only low-confidence routed Reddit test rows to Llama reasoning, and reconstructs the full Reddit held-out end-to-end result.
+
 Script helpers:
 
 - `src/modeling_data.py`
@@ -76,6 +96,12 @@ Purpose:
 - Export sampled train/validation/test files under `data/03_modeling_inputs/`.
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
 - For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
+- For the final paper workflow, use only the three notebooks under `notebooks/colab/final/`. These preserve the older exploratory notebooks while providing a cleaner end-to-end path from DistilBERT Phase 1 training to LLM Phase 2 reasoning and paper-ready Mixed Emotion evaluation outputs.
+- The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including calibration metrics, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
+- The final LLM reasoning notebook exports standalone Phase 2 evaluation artifacts, including classification reports, predicted-label distributions, parse-failure files, confusion matrix CSV files, and confusion matrix PNG files for both Llama 2 and Llama 3 when available.
+- The final orchestration notebook exports the complete paper-ready Mixed Emotion result package and displays a final review section with metrics, routing coverage, correction counts, label distributions, classification reports, confusion matrix tables, confusion matrix images, and representative error rows.
+- The final Reddit test notebook exports the primary held-out test two-phase result package, including routed-row Llama outputs, Reddit end-to-end metrics, correction analysis, routing coverage, confusion matrices, error examples, and a paper-ready workbook.
+- Final Colab outputs are written to Google Drive under `/content/drive/MyDrive/confidence_guided_llm_reasoning/outputs_final/` so long-running training and reasoning results are not lost when a runtime ends.
 
 Current local sample default:
 
@@ -86,7 +112,7 @@ Current local sample default:
 - 1000 Depression, 1000 Neutral, and 1000 Happy records
 - 3000 total records before splitting
 - 2250 train records, 450 validation records, and 300 test records
-- These values are defined near the top of each modeling notebook so collaborators can change the run size and split ratios in one place.
+- These values are defined near the top of each modeling notebook so the run size and split ratios can be changed in one place.
 
 Current advanced Colab default:
 
@@ -105,7 +131,7 @@ Current advanced Colab default:
 Local CPU/Mac execution note:
 
 - The Llama and Mistral notebooks keep the original full-model workflow for GPU runs.
-- When CUDA is not available, they automatically switch to tiny debug checkpoints so collaborators can verify the notebook flow locally.
+- When CUDA is not available, they automatically switch to tiny debug checkpoints so the notebook flow can be verified locally.
 - To run the full Llama or Mistral checkpoints, use a CUDA GPU environment and disable the local tiny-model fallback only after confirming the environment can load the full model.
 
 
@@ -113,9 +139,9 @@ Local CPU/Mac execution note:
 
 Dataset files:
 
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx`
-- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.jsonl`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.xlsx`
+- `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.jsonl`
 
 Script:
 
@@ -132,6 +158,7 @@ Purpose:
 - Include 300 examples, balanced across Depression, Neutral, and Happy proxy emotion labels.
 - Include five ambiguity scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory.
 - Use this dataset only for supplementary robustness evaluation, not for Phase 1 training, hyperparameter tuning, or confidence-threshold selection.
+- v2.3 clarifies final emotional trajectory and final takeaway cues while preserving the original class and scenario balance.
 
 ## Project Layout
 
@@ -156,6 +183,12 @@ confidence-guided-selective-llm-reasoning/
       11_llama2_confidence_threshold_wandb_colab.ipynb
       12_mistral_confidence_threshold_wandb_colab.ipynb
       13_phase2_mixed_emotion_reasoning_colab.ipynb
+      14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb
+      final/
+        01_distilbert_phase1_training_final_colab.ipynb
+        02_llm_phase2_reasoning_final_colab.ipynb
+        03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb
+        04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
@@ -166,7 +199,9 @@ confidence-guided-selective-llm-reasoning/
       mistral_confidence_threshold_wandb_colab.py
   scripts/
     generate_mixed_emotion_dataset.py
+    generate_mixed_emotion_dataset_v2_3.py
   docs/
+    final_end_to_end_workflow_ko.md
   reports/figures/
   requirements.txt
 ```
@@ -268,18 +303,18 @@ Detailed Colab workflow notes are available in:
 
 ## Run Stage 3 / Inspect Mixed Emotion Dataset
 
-The supplementary Mixed Emotion Dataset v2.2 is committed because it is small and intended to support reproducible stress-test evaluation.
+The supplementary Mixed Emotion Dataset v2.3 is committed because it is small and intended to support reproducible stress-test evaluation. The previous v2.2 files are retained for traceability.
 
 Open the spreadsheet version directly:
 
 ```text
-data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.xlsx
+data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.xlsx
 ```
 
 Or regenerate the dataset from the project root:
 
 ```bash
-python scripts/generate_mixed_emotion_dataset.py
+python scripts/generate_mixed_emotion_dataset_v2_3.py
 ```
 
 Dataset design summary:
@@ -295,9 +330,10 @@ Dataset design summary:
 
 ## Run Stage 4 / Phase 2 Reasoning on Mixed Emotion Dataset
 
-Colab notebook:
+Colab notebooks:
 
-- `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
+- Final recommended workflow: `notebooks/colab/14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb`
+- Base/legacy comparison workflow: `notebooks/colab/13_phase2_mixed_emotion_reasoning_colab.ipynb`
 
 Purpose:
 
@@ -306,16 +342,25 @@ Purpose:
 - Run Appendix C-aligned Llama 3 SELF-DISCOVER prompting on all 300 examples.
 - Preserve the raw reasoning outputs and add final-label columns for evaluation.
 - Save model-specific outputs, a combined output table, and a summary evaluation CSV.
+- Use the trajectory-aware Phase 2 prompt as the current final mixed-emotion reasoning workflow; the base prompt remains available only for comparison.
 
 Default Phase 2 reasoning configuration:
 
-- Dataset: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_2_300.csv`
+- Dataset: `data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.csv`
 - Default rows: `MAX_ROWS = 300`
 - Llama 2 model: `NousResearch/Llama-2-7b-chat-hf`
 - Llama 3 model: `NousResearch/Meta-Llama-3-8B-Instruct`
-- Llama 2 final label: derived from the largest value in `LLaMA2_3`
+- Llama 2 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA2_3`; percentage breakdown is no longer used as the final decision rule
 - Llama 3 final label: parsed from `Final label: Depression/Neutral/Happy` in `LLaMA3_Answer`
 - `prompts.py` upload is not required because the SELF-DISCOVER prompt templates are embedded in the notebook.
+
+Current final Phase 2 mixed-emotion workflow:
+
+- `14_phase2_mixed_emotion_reasoning_trajectory_prompt_colab.ipynb` is the current recommended notebook for Phase 2 mixed-emotion reasoning.
+- It keeps the same dataset, models, checkpoint/resume logic, and evaluation structure as the base Phase 2 notebook.
+- It adds explicit guidance for blended or emotionally shifting texts so the model prioritizes final emotional trajectory and does not default to Neutral solely because multiple emotional cues are present.
+- Llama 2 now writes a direct `Final label:` decision in `LLaMA2_3`; the earlier percentage-breakdown decision rule is no longer used for final labeling.
+- Separate output filenames are used to avoid overwriting base prompt or earlier percentage-breakdown runs.
 
 Current Phase 2 notebook assumption:
 
@@ -332,6 +377,13 @@ Colab execution note:
 Detailed Phase 2 reasoning notes are available in:
 
 - `docs/phase2_mixed_emotion_reasoning_colab_guide.md`
+- `docs/phase2_trajectory_prompt_experiment_plan_ko.md`
+
+Colab dependency note:
+
+- The Phase 2 reasoning notebook requires `bitsandbytes>=0.46.1` for 4-bit model loading.
+- Run the first setup cell before loading the models.
+- If Colab imported `transformers` or `bitsandbytes` before the install finished, restart the runtime once and rerun from the top.
 
 ## Important Git Note
 
