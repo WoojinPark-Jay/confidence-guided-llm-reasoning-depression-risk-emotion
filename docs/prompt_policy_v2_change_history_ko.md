@@ -98,3 +98,190 @@ SELF-DISCOVER의 `SELECT → ADAPT → IMPLEMENT → Answer` column 구조와 �
 - Mixed Emotion 결과만 보고 prompt를 선택하면 stress-test tuning으로 보일 수 있다. 따라서 Reddit routed test와 Mixed Emotion에서 같은 v2 policy를 함께 평가한다.
 - 최종 논문에는 선택된 policy의 성능뿐 아니라, baseline 대비 어떤 오류가 수정되었고 어떤 오류가 새로 생겼는지를 함께 보고한다.
 - 모든 해석은 proxy emotion classification과 supplementary stress-test 범위에 한정하며 clinical diagnosis claim으로 확장하지 않는다.
+
+## 부록 A. 실제 Prompt 전문: Llama 2 CoT
+
+아래는 노트북에 들어간 prompt instruction을 사람이 전후 비교할 수 있도록 정리한 전문이다. `{text}`와 `{phase1_label}`에는 각 sample 값이 삽입된다.
+
+### A.1 기존 trajectory-aware baseline
+
+```text
+You are an expert annotator for mental-health-related emotion classification.
+Assist in analyzing emotions in text data. This task is intended for text-based
+emotion classification, not clinical diagnosis.
+
+I will provide you with a piece of text along with an AI-generated emotional
+classification label. The text may contain one or more of the following
+emotions: Depression, Neutral, and Happy. Your task is to assess the emotional
+tone of the text and determine whether the AI's classification is accurate.
+Do not make a clinical diagnosis, infer a medical condition, or provide
+treatment advice.
+
+Objectively analyze the emotions expressed in the text and identify the
+dominant emotion that best represents the overall sentiment.
+
+Classification Guidelines:
+- Depression: ongoing sadness, hopelessness, emotional distress, emotional
+  exhaustion, self-devaluation, or a strongly negative emotional trajectory.
+- Neutral: mainly factual, balanced, informational, or emotionally mild, with
+  no clear Depression- or Happy-oriented trajectory.
+- Happy: happiness, accomplishment, relief, gratitude, fulfillment, or
+  positive resolution as the dominant sentiment.
+
+For blended or emotionally shifting texts, first identify the final emotional
+trajectory and overall takeaway, then classify based on that final takeaway
+rather than averaging isolated emotional cues. Do not default to Neutral merely
+because multiple emotions are present. If the text moves from distress toward
+relief, accomplishment, or positive resolution, classify it as Happy. If the
+text moves from neutral or positive content toward hopelessness, emotional
+exhaustion, or unresolved distress, classify it as Depression.
+
+Compare your emotional analysis with the AI's predicted label. If it does not
+match, determine the correct classification based on textual evidence,
+especially the final emotional trajectory and final takeaway.
+
+Provide the final Phase 2 classification label. Do not provide a percentage
+breakdown. End with exactly one final label: Depression, Neutral, or Happy.
+```
+
+### A.2 Universal Prompt Policy v2
+
+```text
+You are an expert annotator for research-oriented, non-clinical emotion
+classification. Assist in analyzing emotions in text data. Do not make a
+clinical diagnosis, infer a medical condition, or provide treatment advice.
+
+I will first provide a piece of text. Independently assess its emotional
+content before comparing it with a Phase 1 AI-generated label. The only
+permitted labels are Depression, Neutral, and Happy.
+
+Independently analyze the text using the classification policy below. State the
+dominant emotion and the textual evidence before considering the Phase 1 label.
+
+Classification Policy:
+- Depression: unresolved sadness, hopelessness, emotional distress, emotional
+  exhaustion, withdrawal, self-devaluation, or a clearly negative overall
+  trajectory is dominant.
+- Neutral: the text is mainly factual, routine, balanced, informational, or
+  emotionally mild, without a dominant positive or distress-related state.
+- Happy: happiness, relief, gratitude, accomplishment, fulfillment, or a
+  clearly positive resolution is dominant.
+
+Assess the dominant emotional meaning of the full text. Do not decide from
+isolated words, brief cues, or a simple average of positive and negative
+expressions. When the text contains multiple emotional cues or a clear temporal
+emotional shift, additionally consider the overall trajectory and final
+takeaway. Do not assume a trajectory when the text does not clearly support one.
+Do not select Neutral merely because multiple cues are present. A brief positive
+cue does not make the text Happy when unresolved distress remains dominant, and
+a brief negative cue does not make the text Depression when the text clearly
+resolves into sustained relief or positive resolution.
+
+The Phase 1 classifier predicted: {phase1_label}
+
+Compare that prediction with your independent assessment. Confirm it only when
+it is supported by the dominant emotional meaning of the full text. Otherwise,
+explain the correction using textual evidence only.
+
+Use only one exact label: Depression, Neutral, or Happy. Do not use synonyms
+or additional labels such as Sad, Positive, Mixed, Anxiety, or Other. Do not
+provide a percentage breakdown. End with exactly one line:
+Final label: [label]
+```
+
+Llama 2의 실제 v2 실행 순서는 `LLaMA2_1` 독립 판단 → `LLaMA2_2` Phase 1과 비교 → `LLaMA2_3` 최종 label 확정이다. 따라서 baseline과 달리 `LLaMA2_1`은 Phase 1 label을 보기 전 판단을 기록한다.
+
+## 부록 B. 실제 Prompt 전문: Llama 3 SELF-DISCOVER Task Definition
+
+Llama 3의 `SELECT → ADAPT → IMPLEMENT → Answer` 구조, reasoning module 목록, 모델과 generation setting은 기존과 동일하다. 아래 task definition과 fixed reasoning policy만 변경한다.
+
+### B.1 기존 trajectory-aware baseline
+
+```text
+You are an expert annotator for mental-health-related emotion classification.
+Your task is to analyze the emotional content of text data using structured
+reasoning. This task is intended for research-oriented text classification,
+not clinical diagnosis.
+
+I will provide you with text data and an AI-generated emotional classification
+label. Determine the dominant emotion that best represents the overall sentiment
+of the text. The text may contain multiple emotions, but determine the most
+representative emotion that captures the overall tone and final emotional
+trajectory. Do not make a clinical diagnosis, infer a medical condition, or
+provide treatment advice.
+
+data: {data}
+result: {label}
+
+1. Identify the dominant emotion by considering overall sentiment, final
+   emotional trajectory, and final takeaway.
+2. Compare that analysis with the AI label.
+3. Use textual evidence to confirm or correct the AI label.
+4. Select one final label from Depression, Neutral, and Happy.
+
+For blended or emotionally shifting texts, first identify the final emotional
+trajectory and final takeaway, then classify based on that final takeaway rather
+than averaging isolated emotional cues. Do not classify a text as Neutral merely
+because it contains mixed cues. A distress-to-relief shift is Happy; a
+positive-to-unresolved-distress shift is Depression.
+
+Do not create labels outside the options. End with exactly one final label:
+Final label: Depression, Final label: Neutral, or Final label: Happy.
+```
+
+### B.2 Universal Prompt Policy v2
+
+```text
+You are an expert annotator for research-oriented, non-clinical emotion
+classification. Your task is to analyze the emotional content of text data
+using structured reasoning. Do not make a clinical diagnosis, infer a medical
+condition, or provide treatment advice.
+
+data: {data}
+phase_1_label: {label}
+
+1. Before considering the Phase 1 label, independently analyze the given text.
+   Identify the dominant emotional meaning of the full text and cite relevant
+   textual evidence.
+2. Determine whether the text contains multiple emotional cues or a clear
+   temporal emotional shift. Apply trajectory reasoning only when the text
+   supports such a shift; otherwise do not invent one.
+3. Compare the Phase 1 label with your independent assessment. Confirm it only
+   if supported by the text; otherwise correct it using textual evidence only.
+4. Select exactly one final label from Depression, Neutral, and Happy.
+
+Classification Policy:
+- Depression: unresolved sadness, hopelessness, emotional distress, emotional
+  exhaustion, withdrawal, self-devaluation, or a clearly negative overall
+  trajectory is dominant.
+- Neutral: factual, routine, balanced, informational, or emotionally mild,
+  without a dominant positive or distress-related state.
+- Happy: happiness, relief, gratitude, accomplishment, fulfillment, or a
+  clearly positive resolution is dominant.
+
+Mixed and Shifting Emotion Rule:
+- Assess dominant emotional meaning of the full text; do not classify from
+  isolated phrases, brief cues, or a simple average of emotional words.
+- Use overall trajectory and final takeaway only when multiple cues or a clear
+  temporal shift is present.
+- Do not select Neutral merely because multiple cues are present.
+- Do not select Happy from a brief positive cue when unresolved distress
+  remains dominant.
+- Do not select Depression from a brief negative cue when the text clearly
+  resolves into sustained relief or positive resolution.
+
+Use only Depression, Neutral, or Happy. Do not output Sad, Positive, Mixed,
+Anxiety, Other, or any label outside the three-class space. Base the
+justification on textual evidence rather than clinical assumptions. End with:
+Final label: [label]
+```
+
+## 부록 C. 문장별 핵심 변경 이유
+
+| v2 문장 또는 규칙 | 변경 이유 | 비교할 결과 |
+|---|---|---|
+| `clear temporal emotional shift` | 실제 전환이 있는 경우에만 trajectory rule 적용 | Reddit 일반 문장에서 과도한 trajectory inference가 줄어드는지 |
+| `Do not assume a trajectory` | 모델이 text에 없는 시간 흐름을 만들지 못하게 제한 | Neutral/factual sample의 불필요한 correction 감소 여부 |
+| `before considering the Phase 1 label` | Phase 1 label anchoring을 약화 | Llama 2 독립 판단과 최종 판단의 차이, correction quality |
+| `Do not use synonyms ... Sad` | 실제 baseline의 parser 불일치 대응 | parse failure와 manual repair 필요 여부 |
+| `brief positive/negative cue` rule | 단기 cue를 dominant emotion으로 오인하는 오류 완화 | Depression-Happy 간 corrected/introduced error 변화 |
