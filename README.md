@@ -78,6 +78,7 @@ Final workflow guide:
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
 - `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
+- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
 
 Recommended final execution order:
 
@@ -85,6 +86,11 @@ Recommended final execution order:
 2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 4. `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+
+Final model-specific prompt-policy notebooks (use these for the final matched reruns; earlier notebooks remain immutable experiment records):
+
+- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: Llama 2 CoT v2 and established Llama 3 SELF-DISCOVER.
+- `notebooks/colab/final/04_3_reddit_test_routed_phase2_model_specific_prompt_final_colab.ipynb` - Reddit routed test: the same final model-specific combination.
 
 The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. The fourth notebook uses the Reddit held-out test predictions from Final 01, sends only low-confidence routed Reddit test rows to Llama reasoning, and reconstructs the full Reddit held-out end-to-end result.
 
