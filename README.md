@@ -77,6 +77,7 @@ Final workflow guide:
 - `docs/final_end_to_end_workflow_ko.md`
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
 - `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
+- `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 - `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
 

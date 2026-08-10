@@ -21,7 +21,7 @@
 - routing threshold 후보는 $0.70, 0.71, \ldots, 1.00$이다.
 - 각 후보에서 accepted set의 one-sided Clopper--Pearson selective-risk upper bound가 5% 이하인지를 확인한다.
 - 위험 조건을 통과한 후보 중 coverage가 가장 큰 threshold를 선택한다. 즉, 정해진 위험 기준을 넘지 않는 범위에서 LLM으로 보내는 비율을 최소화하는 정책이다.
-- 현재 선택된 운영 threshold는 $\tau^*=0.70$이다. 이 값은 임의로 결과를 보고 고른 값이 아니라, 사전에 정한 후보 범위 안에서 calibration data의 risk--coverage 조건으로 선택된 값이다.
+- 현재 선택된 운영 threshold는 $\tau^*=0.70$이다. 이 값은 임의로 결과를 보고 고른 값이 아니라, 사전에 정한 0.70--1.00 후보 범위 안에서 calibration data의 risk--coverage 조건으로 선택된 값이다. 현재 $\alpha=5\%$는 candidate의 안전성 통과 여부를 판단하는 feasibility condition이며, 0.70은 통과 후보 중 coverage가 가장 높은 가장 낮은 candidate다. 자세한 audit은 `routing_threshold_policy_audit_ko.md`를 따른다.
 
 ### 1.3 Phase 2 reasoning protocol
 
@@ -110,6 +110,7 @@ Mixed Emotion Phase 1 routed subset은 44/300 (14.67%)이며, 이 subset 안의 
 
 - [최종 End-to-End Colab Workflow](final_end_to_end_workflow_ko.md)
 - [High-Confidence Accepted-Error Analysis 계획](high_confidence_accepted_error_analysis_plan_ko.md)
+- [Routing threshold policy audit](routing_threshold_policy_audit_ko.md)
 - [Trajectory-aware Phase 2 prompt 실험 계획](phase2_trajectory_prompt_experiment_plan_ko.md)
 - [Reference 업데이트 반영 보고서](reference_update_completion_report_ko.md)
 - [Final 01: DistilBERT Phase 1 training](https://colab.research.google.com/github/WoojinPark-Jay/confidence-guided-llm-reasoning-depression-risk-emotion/blob/feature/phase2-mixed-emotion-reasoning-colab/notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb)
