@@ -67,9 +67,20 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 - `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
 
+Prompt-policy comparison notebooks (keep baseline results unchanged):
+
+- `notebooks/colab/final/02_1_llm_phase2_reasoning_universal_prompt_final_colab.ipynb`
+- `notebooks/colab/final/04_1_reddit_test_routed_phase2_universal_prompt_final_colab.ipynb`
+
 Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
+- `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
+- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
+- `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
+- `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
+- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
+- `docs/reddit_risk_budget_policy_comparison_ko.md` - calibration-defined alpha=5% versus alpha=2.5% Reddit routing-policy comparison
 
 Recommended final execution order:
 
@@ -77,6 +88,12 @@ Recommended final execution order:
 2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 4. `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+
+Final model-specific prompt-policy notebooks (use these for the final matched reruns; earlier notebooks remain immutable experiment records):
+
+- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: Llama 2 CoT v2 and established Llama 3 SELF-DISCOVER.
+- `notebooks/colab/final/04_3_reddit_test_routed_phase2_model_specific_prompt_final_colab.ipynb` - Reddit routed test: the same final model-specific combination.
+- `notebooks/colab/final/04_4_reddit_test_alpha_policy_comparison_final_colab.ipynb` - Reddit calibration-policy comparison: reasons once over the confidence `< 0.80` union, then derives alpha=5% and alpha=2.5% results.
 
 The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. The fourth notebook uses the Reddit held-out test predictions from Final 01, sends only low-confidence routed Reddit test rows to Llama reasoning, and reconstructs the full Reddit held-out end-to-end result.
 
@@ -202,6 +219,9 @@ confidence-guided-selective-llm-reasoning/
     generate_mixed_emotion_dataset_v2_3.py
   docs/
     final_end_to_end_workflow_ko.md
+    paper_update_and_current_results_meeting_notes_ko.md
+    high_confidence_accepted_error_analysis_plan_ko.md
+    prompt_policy_v2_change_history_ko.md
   reports/figures/
   requirements.txt
 ```
