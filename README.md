@@ -75,6 +75,7 @@ Prompt-policy comparison notebooks (keep baseline results unchanged):
 Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
+- `docs/ieee_access_submission_readiness_checklist_ko.md` - 현재 완료 결과와 IEEE Access 제출 전 필수·권장 작업을 공동 점검하는 최종 체크리스트
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
 - `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
