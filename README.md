@@ -82,6 +82,13 @@ Final workflow guide:
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 - `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
 - `docs/reddit_risk_budget_policy_comparison_ko.md` - calibration-defined alpha=5% versus alpha=2.5% Reddit routing-policy comparison
+- `docs/paired_end_to_end_statistical_analysis_ko.md` - Phase 1 대비 end-to-end paired bootstrap, exact McNemar, Holm 보정 결과와 논문 해석
+
+Paired statistical analysis artifacts:
+
+- `scripts/paired_end_to_end_analysis.py` - sample-level paired statistical analysis reproduction script
+- `reports/statistics/paired_end_to_end_statistics.csv` - manuscript-ready statistical results
+- `reports/statistics/paired_end_to_end_statistics.json` - analysis metadata and machine-readable results
 
 Recommended final execution order:
 
