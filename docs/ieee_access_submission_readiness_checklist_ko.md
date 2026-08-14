@@ -12,7 +12,7 @@
 - Mixed Emotion 300건 Phase 1 정확도: 81.33%; routed 44건(14.67%)
 - Mixed Emotion end-to-end Llama 2 CoT v2: 85.33%, net correction +12
 - Mixed Emotion end-to-end Llama 3 SELF-DISCOVER: 87.33%, net correction +18
-- Risk-budget sensitivity: alpha 5%, threshold 0.70 정책이 alpha 2.5%, threshold 0.80 정책보다 효율성과 최종 결과에서 우수함
+- Primary routing policy: 사전 정의한 alpha 5% 위험예산과 calibration-selected threshold 0.70을 고정해 held-out 및 Phase 2 결과를 평가함
 
 ## 2. 제출 전 필수 작업
 

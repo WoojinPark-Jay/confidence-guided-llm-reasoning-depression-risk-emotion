@@ -85,7 +85,6 @@ Final workflow guide:
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 - `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
-- `docs/reddit_risk_budget_policy_comparison_ko.md` - calibration-defined alpha=5% versus alpha=2.5% Reddit routing-policy comparison
 - `docs/paired_end_to_end_statistical_analysis_ko.md` - Phase 1 대비 end-to-end paired bootstrap, exact McNemar, Holm 보정 결과와 논문 해석
 
 Paired statistical analysis artifacts:
@@ -107,7 +106,6 @@ Final model-specific prompt-policy notebooks (use these for the final matched re
 
 - `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: Llama 2 CoT v2 and established Llama 3 SELF-DISCOVER.
 - `notebooks/colab/final/04_3_reddit_test_routed_phase2_model_specific_prompt_final_colab.ipynb` - Reddit routed test: the same final model-specific combination.
-- `notebooks/colab/final/04_4_reddit_test_alpha_policy_comparison_final_colab.ipynb` - Reddit calibration-policy comparison: reasons once over the confidence `< 0.80` union, then derives alpha=5% and alpha=2.5% results.
 - `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final corrected Reddit run: frozen primary `tau=0.70` routed IDs, original `title + selftext` input, 171/171 linkage checks, and separate resumable Llama 2/Llama 3 outputs.
 
 The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. Final 04.5 uses the frozen primary Reddit routing policy, links all 171 routed IDs to minimally sanitized original title and selftext, runs both LLMs with row-level resume, and reconstructs the balanced 12,000-example held-out end-to-end result.

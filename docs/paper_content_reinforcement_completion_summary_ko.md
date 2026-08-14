@@ -53,7 +53,7 @@
 - Calibration set에서 `0.70, 0.71, ..., 1.00` 후보를 평가하였다.
 - Primary policy는 `alpha=0.05` risk constraint를 만족하면서 coverage가 가장 높은 threshold를 선택하도록 고정하였다.
 - 최종 primary threshold는 `tau=0.70`이다.
-- `alpha=0.025` sensitivity 정책을 별도 분석하여 threshold를 test/Phase 2 결과에 맞춰 사후 선택하지 않았음을 명확히 하였다.
+- 최종 원고에는 사전 정의한 `alpha=0.05`, calibration-selected `tau=0.70` 정책만 보고하고, Phase 2 결과를 이용한 사후 threshold 재선택은 하지 않았음을 명확히 하였다.
 
 ### 3.6 Advanced confidence-threshold 분석 보강
 
