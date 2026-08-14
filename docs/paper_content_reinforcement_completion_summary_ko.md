@@ -68,7 +68,7 @@
 - Routed subset에는 Phase 1 오류 87건이 포함되었고 routed-only Phase 1 accuracy는 49.12%였다.
 - Routed 171건 전부를 retained original `title + selftext`에 exact matching했고, conflicting original은 0건이었다.
 - Phase 2 입력은 URL과 직접 username 패턴만 최소 마스킹하고, 부정어, 문장부호, 문장 순서, 감정 전환을 보존하였다.
-- Llama 2 CoT v2는 47건을 수정하고 50건의 오류를 새로 만들어 net correction -3, end-to-end accuracy 96.67%를 기록하였다.
+- Llama 2 CoT는 47건을 수정하고 50건의 오류를 새로 만들어 net correction -3, end-to-end accuracy 96.67%를 기록하였다.
 - Llama 3 SELF-DISCOVER는 42건을 수정하고 12건의 오류를 새로 만들어 net correction +30, end-to-end accuracy 96.94%를 기록하였다.
 - Llama 3의 +0.25 percentage-point 변화는 paired bootstrap 95% CI `[0.13, 0.38]`, exact McNemar `p < 0.0001`, Holm-adjusted `p=0.0002`로 양의 paired effect가 확인되었다.
 - Routing 성공과 reasoning 성공을 분리하여, low-confidence subset을 잘 찾는 것만으로 최종 정확도 향상이 보장되지는 않는다고 해석하였다.
@@ -78,14 +78,14 @@
 - Synthetic Mixed Emotion v2.4는 300건, class별 100건으로 고정하였다.
 - 이 데이터는 training, hyperparameter tuning, temperature fitting, threshold selection에 사용하지 않고 supplementary stress test로만 사용하였다.
 - Phase 1 baseline accuracy는 81.33%이며 44건(14.67%)이 routed되었다.
-- Llama 2 CoT v2는 18건 수정, 6건 도입 오류로 85.33%(+4.00 pp)를 기록하였다.
+- Llama 2 CoT는 18건 수정, 6건 도입 오류로 85.33%(+4.00 pp)를 기록하였다.
 - Llama 3 SELF-DISCOVER는 18건 수정, 0건 도입 오류로 87.33%(+6.00 pp)를 기록하였다.
 - Synthetic stress-test 결과를 자연 발생 데이터의 prevalence 또는 임상적 일반화 증거로 과장하지 않도록 서술 범위를 제한하였다.
 
 ### 3.9 Prompt policy 및 SELF-DISCOVER 설명 보강
 
 - Llama 2 CoT와 Llama 3 SELF-DISCOVER의 prompt/output contract를 Appendix에 정리하였다.
-- Llama 2는 independent assessment, Phase 1 comparison, canonical terminal label 구조를 갖는 CoT v2를 최종 정책으로 고정하였다.
+- Llama 2는 independent assessment, Phase 1 comparison, canonical terminal label 구조를 갖는 CoT prompt를 최종 정책으로 고정하였다. 내부 버전 식별자는 논문 표기에서 제거하였다.
 - Llama 3는 universal prompt variant가 아니라 기존 SELF-DISCOVER policy를 최종 구성으로 유지하였다.
 - SELECT, ADAPT, IMPLEMENT, Answer 필드가 실제 output에서 어떤 역할을 하는지 설명하였다.
 - 모듈 번호만 나열하던 예시를 실제 processing 단계와 독자가 이해할 수 있는 기능 설명으로 보강하였다.

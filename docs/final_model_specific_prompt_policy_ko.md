@@ -1,5 +1,7 @@
 # 최종 모델별 Prompt Policy 확정 기록
 
+> 표기 원칙: `v2`, `v2.1`은 프롬프트 개발 과정에서 사용한 내부 실험 식별자다. 최종 논문과 독자용 결과표에서는 각각 `Llama 2 CoT`, `Llama 3 SELF-DISCOVER`라는 방법명만 사용한다. 아래 버전명은 어떤 개발 실험을 채택하거나 기각했는지 재현하기 위해 이 문서에만 보존한다.
+
 ## 1. 최종 결론
 
 최종 Phase 2 구성은 하나의 공통 프롬프트를 두 모델에 강제하지 않는다.
@@ -38,3 +40,15 @@ Llama 2 CoT와 Llama 3 SELF-DISCOVER는 원래 중간 추론 형식과 출력 �
 - Report the existing Llama 3 Mixed Emotion result (81.33% to 87.33%) as completed.
 - Do not relabel the earlier Llama 2 Mixed Emotion trajectory-aware result as a CoT v2 result. Run Final 02.2 first, then refresh the corresponding table.
 - Keep universal v2 and error-aware v2.1 as controlled ablations, not the final operating policy.
+
+## 6. 최종 original-text 확인 결과
+
+위 표는 cleaned-input prompt-development 진단이며 최종 논문 성능표가 아니다. 최종 Reddit Phase 2는 동일한 `tau=0.70`의 171개 routed row에 minimally sanitized original `title + selftext`를 입력해 다시 실행했다.
+
+| System | Full Reddit E2E accuracy | Corrected | Introduced | Net |
+|---|---:|---:|---:|---:|
+| DistilBERT Phase 1 | 96.69% | - | - | 0 |
+| Llama 2 CoT | 96.67% | 47 | 50 | -3 |
+| Llama 3 SELF-DISCOVER | 96.94% | 42 | 12 | +30 |
+
+따라서 최종 결과를 인용할 때는 이 표를 사용하고, Section 3의 내부 버전 비교값을 최종 성능으로 재사용하지 않는다.

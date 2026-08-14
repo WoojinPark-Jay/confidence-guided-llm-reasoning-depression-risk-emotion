@@ -7,10 +7,10 @@
 - Reddit Phase 1 DistilBERT 정확도: 96.69%
 - Reddit primary routing policy: temperature 1.7706, threshold 0.70, routed 171건(1.42%)
 - Reddit routed subset Phase 1 정확도: 49.12%; routed Phase 1 error 87건
-- Reddit end-to-end Llama 2 CoT v2: 96.60%, net correction -11
-- Reddit end-to-end Llama 3 SELF-DISCOVER: 96.74%, net correction +6
+- Reddit end-to-end Llama 2 CoT: 96.67%, net correction -3
+- Reddit end-to-end Llama 3 SELF-DISCOVER: 96.94%, net correction +30
 - Mixed Emotion 300건 Phase 1 정확도: 81.33%; routed 44건(14.67%)
-- Mixed Emotion end-to-end Llama 2 CoT v2: 85.33%, net correction +12
+- Mixed Emotion end-to-end Llama 2 CoT: 85.33%, net correction +12
 - Mixed Emotion end-to-end Llama 3 SELF-DISCOVER: 87.33%, net correction +18
 - Primary routing policy: 사전 정의한 alpha 5% 위험예산과 calibration-selected threshold 0.70을 고정해 held-out 및 Phase 2 결과를 평가함
 
@@ -76,7 +76,7 @@
 
 ### [ ] 3.3 최종 prompt 독립 확인
 
-- Llama 2 CoT v2와 established Llama 3 SELF-DISCOVER prompt를 더 이상 수정하지 않고 고정한다.
+- 논문에 보고하는 Llama 2 CoT와 Llama 3 SELF-DISCOVER prompt를 더 이상 수정하지 않고 고정한다. 내부 실험 버전명은 재현 이력에서만 사용한다.
 - 가능하면 prompt 수정에 사용하지 않은 별도 routed subset에서 방향성이 유지되는지 확인한다.
 - 현재 Reddit prompt-policy 비교는 탐색적 분석으로 구분하고, 독립 확인 결과가 있을 때만 일반적 우월성을 주장한다.
 
@@ -136,4 +136,4 @@
 7. 모든 수치, 표, Appendix, References 최종 검수
 8. Overleaf 최종 PDF 페이지별 검토 후 제출
 
-통계적 유의성 검정은 현재 원고의 필수 작업으로 두지 않는다. 본 연구의 핵심 평가는 정확도, macro F1, calibration quality, coverage/routing rate, routed-subset difficulty, corrected/introduced/net corrections 및 end-to-end 결과를 중심으로 유지한다.
+Paired exact McNemar test, paired bootstrap 95% confidence interval, Holm 보정은 완료되어 원고에 반영되었다. 해석은 p-value만으로 결정하지 않고 accuracy change, corrected/introduced/net corrections, confidence interval, 입력 regime을 함께 본다.

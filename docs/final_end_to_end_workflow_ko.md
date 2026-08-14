@@ -34,10 +34,10 @@
 ### 2.1 완료된 최종 결과
 
 - Reddit 12,000건 Phase 1: 96.69%, 171건 routed
-- Reddit + Llama 2 CoT v2: 96.67%, 47 corrected, 50 introduced, net -3
+- Reddit + Llama 2 CoT: 96.67%, 47 corrected, 50 introduced, net -3
 - Reddit + Llama 3 SELF-DISCOVER: 96.94%, 42 corrected, 12 introduced, net +30
 - Mixed Emotion 300건 Phase 1: 81.33%, 44건 routed
-- Mixed Emotion + Llama 2 CoT v2: 85.33%, net +12
+- Mixed Emotion + Llama 2 CoT: 85.33%, net +12
 - Mixed Emotion + Llama 3 SELF-DISCOVER: 87.33%, net +18
 
 Reddit 최종 결과는 04.5의 원문-input 산출물을 사용한다. 과거 cleaned-input 04/04.3 결과는 prompt/input 개발 이력으로만 남기며 최종 논문 수치로 사용하지 않는다.
@@ -217,6 +217,8 @@ WANDB_API_KEY
 | `distilbert_phase1_summary.csv` | Phase 1 핵심 metric |
 | `distilbert_phase1_advanced_summary.csv` | calibration, threshold, AURC 등 advanced confidence 분석 요약 |
 | `advanced_confidence_threshold_analysis/calibration_metric_summary.csv` | raw MSP와 temperature-scaled MSP의 ECE, adaptive ECE, Brier score, NLL |
+| `advanced_confidence_threshold_analysis/adaptive_calibration_reliability_raw_msp.csv` | raw MSP의 equal-mass bin별 adaptive ECE 근거 |
+| `advanced_confidence_threshold_analysis/adaptive_calibration_reliability_temperature_scaled_msp.csv` | temperature-scaled MSP의 equal-mass bin별 adaptive ECE 근거 |
 | `advanced_confidence_threshold_analysis/calibration_reliability_diagram.png` | raw MSP와 temperature-scaled MSP calibration reliability diagram |
 | `advanced_confidence_threshold_analysis/risk_coverage_curve.png` | calibration split의 risk-coverage curve |
 | `advanced_confidence_threshold_analysis/confidence_score_ablation.csv` | MSP, margin, negative entropy confidence score ablation |

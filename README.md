@@ -84,7 +84,7 @@ Final workflow guide:
 - `docs/high_confidence_accepted_error_audit_results_ko.md` - completed 12,000-row accepted-error audit, confidence-band analysis, and six representative cases
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
-- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
+- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy and the internal prompt-development history; the paper-facing names are Llama 2 CoT and Llama 3 SELF-DISCOVER
 - `docs/paired_end_to_end_statistical_analysis_ko.md` - Phase 1 대비 end-to-end paired bootstrap, exact McNemar, Holm 보정 결과와 논문 해석
 
 Paired statistical analysis artifacts:
@@ -104,7 +104,7 @@ Recommended final execution order:
 
 Final model-specific prompt-policy notebooks (use these for the final matched reruns; earlier notebooks remain immutable experiment records):
 
-- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: Llama 2 CoT v2 and established Llama 3 SELF-DISCOVER.
+- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: the frozen Llama 2 CoT and Llama 3 SELF-DISCOVER policies.
 - `notebooks/colab/final/04_3_reddit_test_routed_phase2_model_specific_prompt_final_colab.ipynb` - Reddit routed test: the same final model-specific combination.
 - `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final corrected Reddit run: frozen primary `tau=0.70` routed IDs, original `title + selftext` input, 171/171 linkage checks, and separate resumable Llama 2/Llama 3 outputs.
 
@@ -127,7 +127,7 @@ Purpose:
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
 - For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
 - For the final paper workflow, use only the three notebooks under `notebooks/colab/final/`. These preserve the older exploratory notebooks while providing a cleaner end-to-end path from DistilBERT Phase 1 training to LLM Phase 2 reasoning and paper-ready Mixed Emotion evaluation outputs.
-- The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including calibration metrics, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
+- The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including NLL, Brier score, fixed-bin ECE, adaptive ECE for both raw and temperature-scaled MSP, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
 - The final LLM reasoning notebook exports standalone Phase 2 evaluation artifacts, including classification reports, predicted-label distributions, parse-failure files, confusion matrix CSV files, and confusion matrix PNG files for both Llama 2 and Llama 3 when available.
 - The final orchestration notebook exports the complete paper-ready Mixed Emotion result package and displays a final review section with metrics, routing coverage, correction counts, label distributions, classification reports, confusion matrix tables, confusion matrix images, and representative error rows.
 - The final Reddit test notebook exports the primary held-out test two-phase result package, including routed-row Llama outputs, Reddit end-to-end metrics, correction analysis, routing coverage, confusion matrices, error examples, and a paper-ready workbook.

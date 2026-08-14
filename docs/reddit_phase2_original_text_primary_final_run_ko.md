@@ -19,8 +19,8 @@
 | target risk budget | `alpha=0.05` |
 | held-out test | 클래스당 4,000건, 총 12,000건 |
 | routed sample | 171건 |
-| Llama 2 | 최종 CoT v2 prompt |
-| Llama 3 | established SELF-DISCOVER prompt |
+| Llama 2 | 최종 CoT prompt |
+| Llama 3 | 최종 SELF-DISCOVER prompt |
 | 비교 단위 | 동일한 171개 routed ID |
 
 기존 Final 01 산출물에는 fractional split rounding으로 Happy가 4,001건 포함되어 총 12,001행이 저장되어 있다. 최종 노트북은 예측 결과를 기준으로 행을 선택하지 않는다. 기존 파일 순서에서 각 target class의 첫 4,000건만 유지하여 문서화된 balanced 12,000건으로 자동 정규화한다. 제외되는 1행은 별도 CSV로 기록되며 routed 171건은 변하지 않는다.
@@ -87,7 +87,7 @@ reddit_test_phase2_reasoning_original_text_primary_tau070_final/
 | 시스템 | Full-test accuracy | Routed-only accuracy | Corrected | Introduced | Net correction |
 |---|---:|---:|---:|---:|---:|
 | DistilBERT Phase 1 | 96.69% | 49.12% | - | - | 0 |
-| DistilBERT + Llama 2 CoT v2 | 96.67% | 47.37% | 47 | 50 | -3 |
+| DistilBERT + Llama 2 CoT | 96.67% | 47.37% | 47 | 50 | -3 |
 | DistilBERT + Llama 3 SELF-DISCOVER | 96.94% | 66.67% | 42 | 12 | +30 |
 
 Llama 2의 변화는 -0.03 percentage points로 Phase 1과 통계적으로 구분되지 않았다. Llama 3는 +0.25 percentage points였고, paired bootstrap 95% CI `[0.13, 0.38]`, exact McNemar `p < 0.0001`, 네 비교에 대한 Holm-adjusted `p = 0.0002`로 양의 paired effect가 확인되었다.

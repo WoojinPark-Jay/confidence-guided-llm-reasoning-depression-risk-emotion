@@ -2,7 +2,9 @@
 
 ## 목적
 
-Reddit held-out test에서 동일한 DistilBERT, 동일한 temperature scaling, 동일한 Llama 2 CoT v2 및 Llama 3 SELF-DISCOVER를 사용하면서, calibration risk budget에 따른 two-phase routing 정책을 비교한다.
+Reddit held-out test에서 동일한 DistilBERT, 동일한 temperature scaling, 동일한 Llama 2 CoT 및 Llama 3 SELF-DISCOVER를 사용하면서, calibration risk budget에 따른 two-phase routing 정책을 비교한다.
+
+이 문서는 민감도 실험의 재현 기록이다. 최종 논문의 primary policy는 사전 지정한 `alpha=0.05`, `tau=0.70` 하나이며, held-out LLM 결과를 보고 threshold를 다시 선택하지 않는다.
 
 이 실험은 모델을 다시 학습하지 않는다. Final 01이 저장한 `phase1_test_predictions.csv`와 calibration threshold table을 입력으로 사용한다.
 
@@ -29,7 +31,7 @@ Reddit held-out test에서 동일한 DistilBERT, 동일한 temperature scaling, 
 
 이 노트북은 먼저 `phase1_confidence < 0.80`인 Reddit held-out test union을 한 번만 Llama reasoning으로 처리한다. 따라서 동일한 Llama 출력에서 nested subset을 재사용할 수 있다.
 
-| Threshold | Routed rows (current test artifact, n=12,001) |
+| Threshold | Routed rows (legacy split artifact; final paper normalizes to n=12,000) |
 |---:|---:|
 | 0.70 | 171 |
 | 0.75 | 233 |
