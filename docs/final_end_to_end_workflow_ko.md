@@ -31,6 +31,17 @@
 
 자세한 검증 규칙과 저장 파일은 `docs/reddit_phase2_original_text_primary_final_run_ko.md`에 정리되어 있다.
 
+### 2.1 완료된 최종 결과
+
+- Reddit 12,000건 Phase 1: 96.69%, 171건 routed
+- Reddit + Llama 2 CoT v2: 96.67%, 47 corrected, 50 introduced, net -3
+- Reddit + Llama 3 SELF-DISCOVER: 96.94%, 42 corrected, 12 introduced, net +30
+- Mixed Emotion 300건 Phase 1: 81.33%, 44건 routed
+- Mixed Emotion + Llama 2 CoT v2: 85.33%, net +12
+- Mixed Emotion + Llama 3 SELF-DISCOVER: 87.33%, net +18
+
+Reddit 최종 결과는 04.5의 원문-input 산출물을 사용한다. 과거 cleaned-input 04/04.3 결과는 prompt/input 개발 이력으로만 남기며 최종 논문 수치로 사용하지 않는다.
+
 ## 3. 전체 실행 흐름
 
 ```text

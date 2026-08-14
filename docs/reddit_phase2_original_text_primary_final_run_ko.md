@@ -80,7 +80,21 @@ reddit_test_phase2_reasoning_original_text_primary_tau070_final/
 | `reddit_test_paper_ready_tables.xlsx` | 논문용 표 모음 |
 | `reddit_test_phase2_original_text_primary_tau070_outputs.zip` | 전체 산출물 다운로드용 압축 파일 |
 
-## 6. 결과 확정 후 논문 반영
+## 6. 최종 완료 결과
+
+원문 입력 재실험은 2026-08-14에 171개 routed row 모두 완료되었다. 원문 연결 감사 결과는 exact match 171건, conflicting original 0건이었으며, 6,000자 제한으로 head+tail 보존 처리가 적용된 사례는 1건이었다.
+
+| 시스템 | Full-test accuracy | Routed-only accuracy | Corrected | Introduced | Net correction |
+|---|---:|---:|---:|---:|---:|
+| DistilBERT Phase 1 | 96.69% | 49.12% | - | - | 0 |
+| DistilBERT + Llama 2 CoT v2 | 96.67% | 47.37% | 47 | 50 | -3 |
+| DistilBERT + Llama 3 SELF-DISCOVER | 96.94% | 66.67% | 42 | 12 | +30 |
+
+Llama 2의 변화는 -0.03 percentage points로 Phase 1과 통계적으로 구분되지 않았다. Llama 3는 +0.25 percentage points였고, paired bootstrap 95% CI `[0.13, 0.38]`, exact McNemar `p < 0.0001`, 네 비교에 대한 Holm-adjusted `p = 0.0002`로 양의 paired effect가 확인되었다.
+
+이 결과는 routing 자체와 reasoning model의 성능을 분리해 해석해야 함을 보여준다. 동일한 171건에서 Llama 2는 순개선이 없었지만 Llama 3는 30건의 순수정을 만들었다. 따라서 본 논문의 최종 Reddit 주장은 “LLM reasoning이 항상 개선한다”가 아니라, calibration 기반 routing이 어려운 subset을 집중시키고 원문 증거를 보존한 Llama 3 re-evaluation이 그 subset에서 유의한 양의 효과를 보였다는 것이다.
+
+## 7. 논문 반영 완료 항목
 
 결과가 완료되면 cleaned-text Reddit Phase 2 수치는 최종 결과로 사용하지 않는다. 원문 입력 결과를 기준으로 다음 항목을 갱신한다.
 
@@ -92,4 +106,4 @@ reddit_test_phase2_reasoning_original_text_primary_tau070_final/
 - Methods의 Phase 2 input policy와 비식별 처리 설명
 - 재현성 문서와 결과 provenance
 
-Mixed Emotion 결과는 원래부터 자연어 원문을 사용했으므로 그대로 유지한다. 이번 재실험은 Reddit과 Mixed Emotion의 Phase 2 입력 조건을 일관되게 맞추는 최종 파이프라인 수정이다.
+Mixed Emotion 결과는 원래부터 자연어 원문을 사용했으므로 그대로 유지한다. 이번 재실험은 Reddit과 Mixed Emotion의 Phase 2 입력 조건을 일관되게 맞추는 최종 파이프라인 수정이다. 최종 원고에는 위 수치, paired statistics, 원문 입력 정책, 원문 연결 감사, 실제 Reddit Llama 3 correction 사례가 반영되었다.

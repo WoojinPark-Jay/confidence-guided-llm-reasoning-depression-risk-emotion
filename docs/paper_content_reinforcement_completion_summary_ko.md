@@ -8,8 +8,8 @@
 
 ## 2. 현재 상태 요약
 
-- 논문 내용 및 논리 구조: 약 90% 완료
-- 완료된 주요 보강 작업: 12개 묶음
+- 논문 내용 및 논리 구조: 약 95% 완료
+- 완료된 주요 보강 작업: 13개 묶음
 - 제출 전 필수 잔여 작업: 3개
 - 추가 권장 작업: 2개
 - 현재 가장 큰 미완료 항목: Mistral 7B 및 Llama 2 7B의 matched Phase 1 classifier 실험
@@ -62,12 +62,15 @@
 - Per-class selective metrics, bootstrap stability, threshold provenance, high-confidence errors를 재현 산출물로 남겼다.
 - Threshold 선택 결과와 sensitivity 결과를 본문 주 결과와 보조 분석으로 구분하였다.
 
-### 3.7 Reddit Phase 2 end-to-end 결과 확정
+### 3.7 Reddit Phase 2 원문-input end-to-end 결과 확정
 
 - Primary policy에서 12,000건 중 171건(1.42%)이 routed되었다.
 - Routed subset에는 Phase 1 오류 87건이 포함되었고 routed-only Phase 1 accuracy는 49.12%였다.
-- Llama 2 CoT v2는 38건을 수정하고 49건의 오류를 새로 만들어 net correction -11, end-to-end accuracy 96.60%를 기록하였다.
-- Llama 3 SELF-DISCOVER는 13건을 수정하고 7건의 오류를 새로 만들어 net correction +6, end-to-end accuracy 96.74%를 기록하였다.
+- Routed 171건 전부를 retained original `title + selftext`에 exact matching했고, conflicting original은 0건이었다.
+- Phase 2 입력은 URL과 직접 username 패턴만 최소 마스킹하고, 부정어, 문장부호, 문장 순서, 감정 전환을 보존하였다.
+- Llama 2 CoT v2는 47건을 수정하고 50건의 오류를 새로 만들어 net correction -3, end-to-end accuracy 96.67%를 기록하였다.
+- Llama 3 SELF-DISCOVER는 42건을 수정하고 12건의 오류를 새로 만들어 net correction +30, end-to-end accuracy 96.94%를 기록하였다.
+- Llama 3의 +0.25 percentage-point 변화는 paired bootstrap 95% CI `[0.13, 0.38]`, exact McNemar `p < 0.0001`, Holm-adjusted `p=0.0002`로 양의 paired effect가 확인되었다.
 - Routing 성공과 reasoning 성공을 분리하여, low-confidence subset을 잘 찾는 것만으로 최종 정확도 향상이 보장되지는 않는다고 해석하였다.
 
 ### 3.8 Mixed Emotion stress-test 결과 확정
@@ -111,6 +114,14 @@
 - 원문 검토는 reference label이나 평가 지표를 사후 변경하는 용도가 아니라 residual-risk transparency를 위한 audit로 한정하였다.
 - 민감한 Reddit 원문 전체 310건은 GitHub에 게시하지 않고 로컬 제한 산출물로 관리한다.
 
+### 3.13 최종 원고 및 Overleaf 패키지 검증
+
+- Abstract, Methods, Results, Discussion, Limitations, Conclusion을 최종 원문-input 결과에 맞춰 갱신하였다.
+- Reddit, Mixed Emotion, paired statistics, routing policy, calibration 결과를 본문 표에 일관되게 반영하였다.
+- Appendix에는 실제 Llama 2/Llama 3 correction output, canonical SELF-DISCOVER module pool, observed Reddit original-text correction, high-confidence accepted-error 원문 사례를 포함하였다.
+- 최종 PDF 25페이지를 페이지별 렌더링하여 표 잘림, 텍스트 겹침, horizontal overflow, undefined reference가 없음을 확인하였다.
+- 논문 LaTeX/PDF 원본은 GitHub에 게시하지 않고 로컬 Overleaf package로 관리하며, GitHub에는 공개 가능한 방법·집계 결과·재현 문서만 유지한다.
+
 ## 4. 현재 남은 제출 전 필수 작업 3개
 
 ### [ ] 4.1 Mistral 7B 및 Llama 2 7B Phase 1 classifier matched run
@@ -127,12 +138,12 @@
 - 핵심 confusion matrix/end-to-end comparison figure
 - 그림 번호, caption, 본문 cross-reference를 고정한다.
 
-### [ ] 4.3 IEEE Access 제출 전 최종 대조 검수
+### [~] 4.3 IEEE Access 제출 전 최종 대조 검수
 
 - 저자명, 소속, 교신저자 정보를 확정한다.
-- 본문, 표, Appendix, CSV의 모든 수치를 대조한다.
-- 표·그림·수식·알고리즘·참고문헌 번호를 최종 검수한다.
-- PDF의 overflow, 빈 페이지, 부자연스러운 page break를 페이지별로 확인한다.
+- 본문, 표, Appendix, CSV의 현재 완료 수치를 대조하였다. 남은 Phase 1 comparison 결과가 추가되면 다시 대조한다.
+- 현재 표·수식·알고리즘·참고문헌 번호를 검수하였다. 그림 삽입 후 최종 번호를 다시 고정한다.
+- 현재 25페이지 PDF의 overflow, 표 잘림, 겹침, 부자연스러운 page break를 페이지별로 확인하였다.
 - 제출 파일에 임시 문구, 내부 메모, 추정값이 없는지 확인한다.
 
 ## 5. 추가 권장 작업 2개
