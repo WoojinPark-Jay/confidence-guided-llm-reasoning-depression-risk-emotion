@@ -58,12 +58,14 @@
 
 ## 3. 강하게 권장하는 보강 작업
 
-### [ ] 3.1 High-confidence accepted error audit
+### [x] 3.1 High-confidence accepted error audit
 
 - Phase 1이 accept했지만 틀린 Reddit 사례를 confidence 구간과 class별로 정리한다.
 - 실제 Depression을 Neutral 또는 Happy로 예측한 false negative를 별도로 점검한다.
 - 대표 성공 사례뿐 아니라 라우팅이 포착하지 못한 오류 사례도 Appendix 또는 한계에 반영한다.
-- 상세 설계는 `docs/high_confidence_accepted_error_analysis_plan_ko.md`를 따른다.
+- 정확한 12,000-row held-out protocol에서 accepted error 310건, accepted selective risk 2.62%, accepted Depression false negative 125건(3.17%)을 확인했다.
+- Confidence 0.98 이상에서도 accepted error 34건이 남았으며, 실제 사례 6건을 유형화했다.
+- 상세 결과는 `docs/high_confidence_accepted_error_audit_results_ko.md`에 정리했다.
 
 ### [ ] 3.2 Phase 2 비용 및 처리 효율 기록
 
@@ -129,7 +131,7 @@
 2. Reddit held-out test를 정확히 12,000건으로 고정하고 최종 산출물 재생성
 3. Final workflow 재현 산출물 고정
 4. 핵심 도식 제작 및 삽입
-5. High-confidence accepted error audit
+5. High-confidence accepted error audit 완료 결과를 원고와 supplementary artifact에 동기화
 6. 비용·처리 효율 정리
 7. 모든 수치, 표, Appendix, References 최종 검수
 8. Overleaf 최종 PDF 페이지별 검토 후 제출

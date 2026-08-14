@@ -1,0 +1,18 @@
+{
+  "held_out_rows": 12000,
+  "routing_threshold": 0.7,
+  "temperature": 1.770559838305081,
+  "accepted_count": 11829,
+  "routed_count": 171,
+  "total_phase1_errors": 397,
+  "accepted_errors": 310,
+  "accepted_selective_risk": 0.02620677994758644,
+  "routed_errors": 87,
+  "error_capture_rate": 0.21914357682619648,
+  "routing_precision": 0.5087719298245614,
+  "accepted_depression_count": 3939,
+  "accepted_depression_false_negatives": 125,
+  "accepted_depression_false_negative_risk": 0.031733942625031736,
+  "accepted_errors_at_or_above_0_98": 34,
+  "depression_false_negatives_at_or_above_0_98": 16
+}

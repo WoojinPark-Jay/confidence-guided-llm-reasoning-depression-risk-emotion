@@ -75,9 +75,11 @@ Prompt-policy comparison notebooks (keep baseline results unchanged):
 Final workflow guide:
 
 - `docs/final_end_to_end_workflow_ko.md`
+- `docs/paper_content_reinforcement_completion_summary_ko.md` - completed manuscript reinforcements, fixed experimental results, and the remaining 3 required plus 2 recommended submission tasks
 - `docs/ieee_access_submission_readiness_checklist_ko.md` - 현재 완료 결과와 IEEE Access 제출 전 필수·권장 작업을 공동 점검하는 최종 체크리스트
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
-- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
+- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - original analysis protocol retained for provenance
+- `docs/high_confidence_accepted_error_audit_results_ko.md` - completed 12,000-row accepted-error audit, confidence-band analysis, and six representative cases
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 - `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
@@ -89,6 +91,8 @@ Paired statistical analysis artifacts:
 - `scripts/paired_end_to_end_analysis.py` - sample-level paired statistical analysis reproduction script
 - `reports/statistics/paired_end_to_end_statistics.csv` - manuscript-ready statistical results
 - `reports/statistics/paired_end_to_end_statistics.json` - analysis metadata and machine-readable results
+- `scripts/high_confidence_accepted_error_audit.py` - reproducible audit of accepted high-confidence Reddit errors
+- `reports/high_confidence_accepted_error_audit/` - accepted-error summaries, transitions, confidence bands, and representative cases
 
 Recommended final execution order:
 

@@ -1,0 +1,4 @@
+reference_proxy_label,accepted_count,accepted_errors,accepted_risk
+Depression,3939,125,0.031733942625031736
+Happy,3912,144,0.03680981595092025
+Neutral,3978,41,0.010306686777275012
