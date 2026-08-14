@@ -17,7 +17,7 @@
 | 논문 결과 생성 | end-to-end 결과, confusion matrix, paper-ready table을 한 곳에서 생성 |
 | 리스크 감소 | Phase 1 학습, Phase 2 reasoning, 최종 평가를 분리해 중간 실패 시 재실행 범위가 작음 |
 
-## 2. 최종 노트북 4개
+## 2. 최종 노트북
 
 | 순서 | 노트북 | 역할 |
 |---:|---|---|
@@ -25,8 +25,11 @@
 | 2 | `02_llm_phase2_reasoning_final_colab.ipynb` | Phase 1에서 routed된 Mixed Emotion 샘플에 대해 Llama 2 CoT와 Llama 3 SELF-DISCOVER reasoning 실행 |
 | 3 | `03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb` | Phase 1 결과와 Phase 2 결과를 merge하고 최종 end-to-end metric, 표, 그림 생성 |
 | 4 | `04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb` | Reddit held-out test에서 routed된 샘플만 Phase 2 reasoning에 태우고 Reddit test 전체 기준 end-to-end 결과 생성 |
+| 4.5 | `04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` | **최종 Reddit 재실험**: primary `tau=0.70`의 171건을 원문 `title + selftext`로 복원해 Llama 2와 Llama 3를 실행하고 12,000건 end-to-end 결과 생성 |
 
-중요한 점은 3번 노트북 하나만 돌린다고 전체가 자동으로 실행되는 구조가 아니라는 것이다. 3번은 이미 저장된 1번/2번 산출물을 읽어서 Mixed Emotion 최종 평가와 논문용 표/그림을 만드는 오케스트레이션 파일이다. 4번은 1번에서 저장된 Reddit held-out test prediction을 읽어서 routed row만 Phase 2 reasoning에 태우고, primary Reddit test 기준 end-to-end 결과를 만든다.
+중요한 점은 3번 노트북 하나만 돌린다고 전체가 자동으로 실행되는 구조가 아니라는 것이다. 3번은 이미 저장된 1번/2번 산출물을 읽어서 Mixed Emotion 최종 평가와 논문용 표/그림을 만드는 오케스트레이션 파일이다. Reddit 최종 논문 결과에는 기존 cleaned-text 4번 계열 대신 4.5를 사용한다. 4.5는 Phase 1 모델과 routed ID를 바꾸지 않고, Phase 2 입력만 최소 비식별 처리된 원문 `title + selftext`로 바로잡는다.
+
+자세한 검증 규칙과 저장 파일은 `docs/reddit_phase2_original_text_primary_final_run_ko.md`에 정리되어 있다.
 
 ## 3. 전체 실행 흐름
 
@@ -61,10 +64,10 @@ Mixed Emotion routed rows
 Reddit held-out test routed rows
         |
         v
-04 Reddit Test Routed Phase 2 + End-to-End
+04.5 Reddit Test Original-Text Routed Phase 2 + End-to-End
         |
-        |-- reddit_test_llama2_cot_routed_results.csv
-        |-- reddit_test_llama3_self_discover_routed_results.csv
+        |-- reddit_test_llama2_cot_original_text_tau070_results.csv
+        |-- reddit_test_llama3_self_discover_original_text_tau070_results.csv
         |-- reddit_test_end_to_end_results.csv
         |-- reddit_test_end_to_end_metrics_summary.csv
         |-- reddit_test_phase2_correction_analysis.csv
@@ -93,6 +96,7 @@ Reddit held-out test routed rows
 | `outputs_final/phase2_llm_reasoning/` | Llama 2, Llama 3 routed sample reasoning 결과 |
 | `outputs_final/end_to_end_orchestration/` | 최종 end-to-end 평가 결과, 논문용 표/그림 |
 | `outputs_final/reddit_test_phase2_reasoning/` | Reddit held-out test routed Phase 2 reasoning 및 Reddit test end-to-end 평가 결과 |
+| `outputs_final/reddit_test_phase2_reasoning_original_text_primary_tau070_final/` | 최종 Reddit 원문-input primary-policy Phase 2 및 12,000건 end-to-end 결과 |
 
 각 노트북 마지막에는 zip export 셀이 있다. 이 셀은 해당 단계에서 생성된 CSV, JSON, PNG, XLSX 파일을 하나의 zip으로 묶고 브라우저 다운로드를 시도한다. 따라서 Drive 저장이 1차 안전장치이고, zip 다운로드가 2차 안전장치이다.
 
@@ -391,21 +395,21 @@ else:
 | Primary Reddit Results | `reddit_test_routing_coverage_table.csv` |
 | Primary Reddit Results | `reddit_test_phase2_correction_analysis.csv` |
 
-## 8.1 04 Reddit Test Routed Phase 2 노트북
+## 8.1 04.5 Reddit 원문-input Routed Phase 2 노트북
 
 파일:
 
 ```text
-notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb
+notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb
 ```
 
-04번 노트북은 Mixed Emotion이 아니라 primary Reddit held-out test set에 대한 two-phase framework 평가를 만든다. 입력은 01번에서 저장한 다음 파일이다.
+04.5 노트북은 Mixed Emotion이 아니라 primary Reddit held-out test set에 대한 최종 two-phase framework 평가를 만든다. 입력은 01번에서 저장한 다음 파일이다.
 
 ```text
 outputs_final/phase1_distilbert/phase1_test_predictions.csv
 ```
 
-이 파일에는 held-out Reddit test set 전체에 대한 DistilBERT Phase 1 prediction, calibrated confidence, accepted/routed 여부가 들어 있다. 04번은 여기서 `phase1_routed=True`인 row만 골라서 Llama 2 CoT와 Llama 3 SELF-DISCOVER reasoning에 태운다. `phase1_accepted=True`인 row는 Phase 2로 보내지 않고 Phase 1 label을 그대로 최종 label로 사용한다.
+이 파일에는 held-out Reddit test set 전체에 대한 DistilBERT Phase 1 prediction, calibrated confidence, accepted/routed 여부가 들어 있다. 04.5는 문서화된 클래스당 4,000건으로 test set을 정규화하고, primary `tau=0.70`에서 `phase1_routed=True`인 171건을 고정한다. 그 후 동일 source의 원문 `title + selftext`를 복원하여 Llama 2 CoT와 Llama 3 SELF-DISCOVER에 전달한다. `phase1_accepted=True`인 row는 Phase 2로 보내지 않고 Phase 1 label을 그대로 최종 label로 사용한다.
 
 최종 label 생성 규칙은 다음과 같다.
 
@@ -420,9 +424,10 @@ else:
 
 | 출력 파일 | 설명 |
 |---|---|
-| `reddit_test_routed_input_rows.csv` | Phase 2로 실제 들어간 Reddit held-out routed rows |
-| `reddit_test_llama2_cot_routed_results.csv` | Reddit routed rows에 대한 Llama 2 CoT 결과 |
-| `reddit_test_llama3_self_discover_routed_results.csv` | Reddit routed rows에 대한 Llama 3 SELF-DISCOVER 결과 |
+| `reddit_test_primary_tau070_original_text_input_rows.csv` | Phase 2로 실제 들어간 원문-input Reddit 171건 |
+| `reddit_test_primary_routed_original_text_mapping_audit.csv` | cleaned field와 원문 연결 감사 결과 |
+| `reddit_test_llama2_cot_original_text_tau070_results.csv` | Reddit routed rows에 대한 Llama 2 CoT 결과 |
+| `reddit_test_llama3_self_discover_original_text_tau070_results.csv` | Reddit routed rows에 대한 Llama 3 SELF-DISCOVER 결과 |
 | `reddit_test_end_to_end_results.csv` | Reddit test 전체에 대한 Phase 1, Phase 2, final prediction |
 | `reddit_test_end_to_end_metrics_summary.csv` | Phase 1 only, routed-only, Reddit end-to-end metric |
 | `reddit_test_phase2_correction_analysis.csv` | routed rows에서 Phase 2가 고친 오류와 새로 만든 오류 |
@@ -431,7 +436,7 @@ else:
 | `reddit_test_confusion_matrix_phase1.png` | Reddit test Phase 1 confusion matrix |
 | `reddit_test_confusion_matrix_llama2_e2e.png` | Reddit test Llama 2 end-to-end confusion matrix |
 | `reddit_test_confusion_matrix_llama3_e2e.png` | Reddit test Llama 3 end-to-end confusion matrix |
-| `reddit_test_phase2_end_to_end_outputs.zip` | Reddit test Phase 2 및 end-to-end 산출물 zip |
+| `reddit_test_phase2_original_text_primary_tau070_outputs.zip` | Reddit test Phase 2 및 end-to-end 산출물 zip |
 
 ## 9. 실행 순서
 
@@ -444,7 +449,7 @@ else:
 5. Llama2/Llama3 routed 결과 CSV가 생성됐는지 확인한다.
 6. `03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`를 실행한다.
 7. `Final Paper Output Review` 섹션에서 metric, routing, correction, confusion matrix, 오류 사례를 화면에서 확인한다.
-8. primary Reddit held-out test에서도 two-phase end-to-end 결과가 필요하면 `04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`를 실행한다.
+8. primary Reddit held-out test의 최종 two-phase 결과는 `04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb`를 실행한다.
 9. `paper_ready_tables.xlsx`, confusion matrix PNG, summary CSV를 확인한다.
 10. 논문 Results, Appendix, Limitation에 최종 수치를 반영한다.
 
@@ -458,7 +463,7 @@ else:
 | Phase 1 완료 | `outputs_final/phase1_distilbert/phase1_mixed_emotion_predictions.csv` 생성 |
 | Phase 2 완료 | `outputs_final/phase2_llm_reasoning/`에 Llama 2와 Llama 3 reasoning CSV 생성 |
 | End-to-end 완료 | `outputs_final/end_to_end_orchestration/`에 metric/table/figure 산출물 생성 |
-| Reddit test end-to-end 완료 | `outputs_final/reddit_test_phase2_reasoning/`에 Reddit test routed reasoning 및 end-to-end 산출물 생성 |
+| Reddit test end-to-end 완료 | `outputs_final/reddit_test_phase2_reasoning_original_text_primary_tau070_final/`에 원문-input Reddit reasoning 및 end-to-end 산출물 생성 |
 | 논문 반영 | 최종 accuracy, routing coverage, correction analysis, confusion matrix 수치를 Results와 Appendix에 반영 |
 
-최종 실험은 `notebooks/colab/final/`의 노트북을 순서대로 실행하는 구조이다. 1번은 DistilBERT Phase 1과 threshold를 만들고, 2번은 Mixed Emotion routed sample에 Llama reasoning을 적용하고, 3번은 Mixed Emotion 결과를 합쳐 논문용 metric, table, figure를 생성한다. 4번은 Reddit held-out test routed sample에 Llama reasoning을 적용하고 primary Reddit test 기준 two-phase end-to-end 결과를 생성한다.
+최종 실험은 `notebooks/colab/final/`의 노트북을 순서대로 실행하는 구조이다. 1번은 DistilBERT Phase 1과 threshold를 만들고, 2번은 Mixed Emotion routed sample에 Llama reasoning을 적용하고, 3번은 Mixed Emotion 결과를 합쳐 논문용 metric, table, figure를 생성한다. 4.5는 Reddit held-out test의 171개 routed sample을 원문으로 복원해 Llama reasoning을 적용하고 primary Reddit test 기준 최종 two-phase end-to-end 결과를 생성한다.
