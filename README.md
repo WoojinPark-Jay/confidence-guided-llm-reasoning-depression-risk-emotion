@@ -75,7 +75,7 @@ Prompt-policy comparison notebooks (keep baseline results unchanged):
 
 Final workflow guide:
 
-- `docs/final_research_status_and_remaining_work_ko.md` - 완료된 실험·확정 수치·동결 항목·제출 전 필수 및 권장 작업을 한 문서로 정리한 최종 현황판
+- **`docs/final_research_status_and_remaining_work_ko.md` - 오늘 회의에서 먼저 볼 단일 기준 문서. 완료 결과, 확정 수치, 동결 항목, 남은 결정과 제출 순서를 통합한 최종 현황판**
 - `docs/final_end_to_end_workflow_ko.md`
 - `docs/reddit_phase2_original_text_primary_final_run_ko.md` - final 171-row original-text linkage, execution, persistence, and manuscript-update protocol
 - `docs/paper_content_reinforcement_completion_summary_ko.md` - completed manuscript reinforcements, fixed experimental results, and the remaining 3 required plus 2 recommended submission tasks
