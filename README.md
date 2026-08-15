@@ -87,6 +87,7 @@ Final workflow guide:
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
 - `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy and the internal prompt-development history; the paper-facing names are Llama 2 CoT and Llama 3 SELF-DISCOVER
 - `docs/paired_end_to_end_statistical_analysis_ko.md` - Phase 1 대비 end-to-end paired bootstrap, exact McNemar, Holm 보정 결과와 논문 해석
+- `docs/routing_concentration_and_correction_opportunity_update_ko.md` - routed-error enrichment, routed-only accuracy, conditional oracle, 이번 본문/Appendix 보강과 남은 작업
 
 Paired statistical analysis artifacts:
 

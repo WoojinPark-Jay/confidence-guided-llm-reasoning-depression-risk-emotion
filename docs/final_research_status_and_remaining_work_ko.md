@@ -23,15 +23,16 @@
 - Phase 1 only 대비 full-set end-to-end 결과, corrected/introduced/net correction 분석 완료
 - Paired bootstrap, exact McNemar, Holm correction 완료
 - High-confidence accepted error 310건 감사와 실제 원문 대표 사례 6건 분석 완료
+- Routing 오류 농축, routed-only accuracy, conditional correction opportunity 분석 완료
 - 최종 논문 초안, Appendix, 재현 코드, 결과 CSV/JSON, Overleaf ZIP 정리 완료
 
 ### 1.2 현재 핵심 결론
 
 1. DistilBERT는 Reddit held-out test에서 `96.69%` 정확도를 기록했다.
 2. Primary routing policy는 `alpha=0.05`, `tau=0.70`이며 Reddit 12,000건 중 171건(1.42%)을 Phase 2로 보냈다.
-3. Routed Reddit subset의 Phase 1 정확도는 `49.12%`로, routing이 실제로 더 어려운 표본을 집중시켰다.
-4. Reddit에서 Llama 2는 Phase 1 대비 실질적인 개선이 없었지만, Llama 3는 `96.69% -> 96.94%`, net correction `+30`을 기록했다.
-5. Mixed Emotion에서는 Llama 2가 `81.33% -> 85.33%`, Llama 3가 `81.33% -> 87.33%`로 향상되었다.
+3. Routed Reddit subset의 오류율은 `50.88%`로 전체 오류율 `3.31%`보다 약 `15.38배` 높았다. Routing이 적은 샘플 안에 오류를 실제로 집중시켰다.
+4. Reddit routed-only 정확도는 Phase 1 `49.12%`, Llama 2 `47.37%`, Llama 3 `66.67%`였다. Full-set에서는 Llama 3가 `96.69% -> 96.94%`, net correction `+30`을 기록했다.
+5. Mixed Emotion의 routed-only 정확도는 Phase 1 `52.27%`, Llama 2 `79.55%`, Llama 3 `93.18%`였으며 full-set 정확도는 각각 `81.33%`, `85.33%`, `87.33%`였다.
 6. 따라서 최종 주장은 “LLM이 항상 성능을 높인다”가 아니다. **Calibration 기반 routing은 어려운 표본을 선별하며, 원문을 보존한 selective re-evaluation의 효과는 reasoner와 input regime에 따라 달라진다**는 것이 핵심 결론이다.
 
 ### 1.3 현재 가장 중요한 남은 작업
@@ -51,8 +52,9 @@
 | 연구 질문 | 현재 근거 | 현재 답변 |
 |---|---|---|
 | Phase 1 classifier의 confidence를 믿을 수 있는가? | NLL, Brier, ECE, Adaptive ECE가 temperature scaling 후 모두 감소 | Raw softmax보다 calibrated MSP가 routing에 더 적합함 |
-| Routing이 실제 어려운 표본을 찾는가? | Reddit routed subset Phase 1 정확도 49.12%, 397개 전체 오류 중 87개 포착 | 전체의 1.42%만 보내면서 Phase 1 오류의 21.91%를 집중시킴 |
+| Routing이 실제 어려운 표본을 찾는가? | Reddit routed 오류율 50.88%, 전체 오류율 3.31%, error enrichment 15.38배 | 전체의 1.42%만 보내면서 Phase 1 오류의 21.91%를 집중시킴 |
 | Phase 2가 전체 정확도를 높이는가? | Reddit/Mixed full-set end-to-end 결과 | Llama 3는 두 입력 regime에서 개선, Llama 2는 Mixed에서만 개선 |
+| Reasoner가 routed correction opportunity를 활용하는가? | Reddit Llama 3 34.48%, Mixed Llama 3 85.71%의 conditional opportunity 실현 | Router가 만든 기회를 활용하는 정도는 reasoner와 dataset에 따라 다름 |
 | Mixed/trajectory 사례에 reasoning이 유효한가? | Mixed Emotion Llama 2 +4.00 pp, Llama 3 +6.00 pp | Controlled stress-test에서는 명확한 개선이 관찰됨 |
 | 모든 accepted prediction이 안전한가? | Accepted error 310건, selective risk 2.62%, 대표 원문 6건 | 아님. High-confidence 오류가 남으며 한계와 감사 결과를 함께 보고해야 함 |
 | 임상 진단 모델로 주장할 수 있는가? | Subreddit-derived proxy labels와 synthetic stress test 사용 | 불가. 연구 범위는 proxy emotion classification과 selective re-evaluation임 |
@@ -76,6 +78,8 @@
 | Routed Phase 1 accuracy | 49.12% |
 | Routed Phase 1 errors | 87 |
 | 전체 Phase 1 error capture | 21.91% |
+| Full / routed error rate | 3.31% / 50.88% |
+| Routed-error enrichment | 15.38x |
 | Accepted examples | 11,829 |
 | Accepted errors / selective risk | 310 / 2.62% |
 
@@ -91,6 +95,8 @@
 - Llama 3 paired bootstrap 95% CI는 `[0.13, 0.38]` pp다.
 - Llama 3 exact McNemar p-value는 약 `0.000052`, Holm-adjusted p-value는 약 `0.000156`이다.
 - Llama 3의 절대 향상 폭은 작지만, 동일 표본 paired comparison에서 양의 효과가 확인되었다.
+- Routed-only accuracy는 Phase 1 `49.12%`, Llama 2 `47.37%`, Llama 3 `66.67%`다.
+- Fixed routing oracle은 97.42%이며 Llama 3는 routed error correction opportunity의 34.48%를 순개선으로 실현했다.
 
 ### 3.3 Mixed Emotion end-to-end
 
@@ -101,6 +107,9 @@
 | DistilBERT + Llama 3 SELF-DISCOVER | 87.33% | +6.00 pp | 18 | 0 | +18 |
 
 - 300건 중 44건(14.67%)이 routed되었다.
+- Routed error rate는 47.73%로 전체 error rate 18.67%보다 2.56배 높다.
+- Routed-only accuracy는 Phase 1 `52.27%`, Llama 2 `79.55%`, Llama 3 `93.18%`다.
+- Fixed routing oracle은 88.33%이며 Llama 3는 correction opportunity의 85.71%를 순개선으로 실현했다.
 - Mixed Emotion은 real-world prevalence dataset이 아니라 mixed cue와 trajectory shift를 통제해 평가하는 supplementary stress test다.
 - Scenario별 결과와 실제 reasoning output 예시는 Appendix에 반영되어 있다.
 
@@ -155,6 +164,9 @@
 - 내부 prompt version과 최종 방법명 분리
 - 모든 25페이지 렌더링 후 표 잘림, 겹침, cross-reference, horizontal overflow 검수
 - Paired statistics와 high-confidence audit 재현 스크립트 및 CSV/JSON 저장
+- Main Results에 Reddit/Mixed routed-error enrichment와 routed-only accuracy 반영
+- Appendix Table A4g에 conditional oracle과 correction-opportunity 계산식 및 결과 반영
+- Reddit 98.58%, Mixed Emotion 85.33%의 all-input 대비 LLM invocation avoidance를 실제 runtime 절감과 구분해 서술
 
 ## 5. 동결된 설계와 다시 돌리지 않을 실험
 
@@ -222,8 +234,8 @@
 
 - Frozen prompt를 독립 routed subset 또는 outer fold에서 한 번 확인
 - Mixed Emotion 및 대표 Reddit 사례에 대한 복수 연구자 또는 전문가 검토
-- GPU, 모델별 실행시간, routed rows, 생성 호출 수 기록
-- 전체 입력을 LLM에 보내는 방식 대비 호출 감소량 정리
+- GPU, 모델별 실행시간, 생성 token, 실제 wall-clock time 기록
+- 현재 보고된 호출 감소량을 실제 계산시간 또는 비용 측정과 연결
 
 이 권장 작업을 수행하지 못하면 해당 부분을 감추지 않고 현재 Limitations의 탐색적 prompt-development, proxy label, 비임상적 rationale 제한을 유지한다.
 
@@ -285,6 +297,7 @@
 - `docs/paired_end_to_end_statistical_analysis_ko.md`: Bootstrap, McNemar, Holm 결과
 - `docs/high_confidence_accepted_error_audit_results_ko.md`: Accepted high-confidence error 감사
 - `docs/final_model_specific_prompt_policy_ko.md`: 최종 model-specific prompt와 내부 개발 이력
+- `docs/routing_concentration_and_correction_opportunity_update_ko.md`: 이번 오류 농축, routed-only, conditional oracle 분석과 원고 반영 위치
 
 ### 과거 이력으로만 유지하는 문서와 노트북
 
