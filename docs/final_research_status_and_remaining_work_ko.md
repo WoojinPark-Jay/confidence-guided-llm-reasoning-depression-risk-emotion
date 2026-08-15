@@ -165,6 +165,7 @@
 - 모든 25페이지 렌더링 후 표 잘림, 겹침, cross-reference, horizontal overflow 검수
 - Paired statistics와 high-confidence audit 재현 스크립트 및 CSV/JSON 저장
 - Main Results에 Reddit/Mixed routed-error enrichment와 routed-only accuracy 반영
+- Main Table III에 error enrichment, Table V와 VI에 routed-only accuracy 열 추가
 - Appendix Table A4g에 conditional oracle과 correction-opportunity 계산식 및 결과 반영
 - Reddit 98.58%, Mixed Emotion 85.33%의 all-input 대비 LLM invocation avoidance를 실제 runtime 절감과 구분해 서술
 

@@ -94,9 +94,11 @@ Mixed Emotion에서도 전체 오류율 18.67% 대비 routed 오류율이 47.73%
 
 ### Main Results
 
+- Table III: Reddit `Error enrichment = 15.38x` 열 추가
+- Reddit end-to-end Table V: routed-only `49.12% / 47.37% / 66.67%` 열 추가
+- Mixed Emotion Table VI: routed-only `52.27% / 79.55% / 93.18%` 열 추가
 - Routing policy 결과 문단: Reddit 15.38배 오류 농축 및 random-size expectation 설명
-- Reddit end-to-end 문단: routed-only `49.12% -> 47.37% / 66.67%`
-- Mixed Emotion 문단: 2.56배 오류 농축 및 routed-only `52.27% -> 79.55% / 93.18%`
+- Mixed Emotion 문단: 2.56배 오류 농축 설명
 - Interpretation 문단: 호출 감소와 conditional oracle 해석
 
 ### Appendix
