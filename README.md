@@ -66,6 +66,7 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 - `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 - `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+- `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final Reddit primary-policy rerun with minimally sanitized original `title + selftext`
 
 Prompt-policy comparison notebooks (keep baseline results unchanged):
 
@@ -74,36 +75,42 @@ Prompt-policy comparison notebooks (keep baseline results unchanged):
 
 Final workflow guide:
 
+- **`docs/final_research_status_and_remaining_work_ko.md` - 오늘 회의에서 먼저 볼 단일 기준 문서. 완료 결과, 확정 수치, 동결 항목, 남은 결정과 제출 순서를 통합한 최종 현황판**
 - `docs/final_end_to_end_workflow_ko.md`
+- `docs/reddit_phase2_original_text_primary_final_run_ko.md` - final 171-row original-text linkage, execution, persistence, and manuscript-update protocol
+- `docs/paper_content_reinforcement_completion_summary_ko.md` - completed manuscript reinforcements, fixed experimental results, and the remaining 3 required plus 2 recommended submission tasks
 - `docs/ieee_access_submission_readiness_checklist_ko.md` - 현재 완료 결과와 IEEE Access 제출 전 필수·권장 작업을 공동 점검하는 최종 체크리스트
 - `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
-- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - planned audit for accepted high-confidence errors
+- `docs/high_confidence_accepted_error_analysis_plan_ko.md` - original analysis protocol retained for provenance
+- `docs/high_confidence_accepted_error_audit_results_ko.md` - completed 12,000-row accepted-error audit, confidence-band analysis, and six representative cases
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
 - `docs/prompt_policy_v2_change_history_ko.md` - trajectory-aware baseline versus universal prompt-policy v2 comparison
-- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy: Llama 2 CoT v2 plus the established Llama 3 SELF-DISCOVER protocol
-- `docs/reddit_risk_budget_policy_comparison_ko.md` - calibration-defined alpha=5% versus alpha=2.5% Reddit routing-policy comparison
+- `docs/final_model_specific_prompt_policy_ko.md` - frozen final policy and the internal prompt-development history; the paper-facing names are Llama 2 CoT and Llama 3 SELF-DISCOVER
 - `docs/paired_end_to_end_statistical_analysis_ko.md` - Phase 1 대비 end-to-end paired bootstrap, exact McNemar, Holm 보정 결과와 논문 해석
+- `docs/routing_concentration_and_correction_opportunity_update_ko.md` - routed-error enrichment, routed-only accuracy, conditional oracle, 이번 본문/Appendix 보강과 남은 작업
 
 Paired statistical analysis artifacts:
 
 - `scripts/paired_end_to_end_analysis.py` - sample-level paired statistical analysis reproduction script
 - `reports/statistics/paired_end_to_end_statistics.csv` - manuscript-ready statistical results
 - `reports/statistics/paired_end_to_end_statistics.json` - analysis metadata and machine-readable results
+- `scripts/high_confidence_accepted_error_audit.py` - reproducible audit of accepted high-confidence Reddit errors
+- `reports/high_confidence_accepted_error_audit/` - accepted-error summaries, transitions, confidence bands, and representative cases
 
 Recommended final execution order:
 
 1. `notebooks/colab/final/01_distilbert_phase1_training_final_colab.ipynb`
 2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
-4. `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
+4. `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb`
 
 Final model-specific prompt-policy notebooks (use these for the final matched reruns; earlier notebooks remain immutable experiment records):
 
-- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: Llama 2 CoT v2 and established Llama 3 SELF-DISCOVER.
+- `notebooks/colab/final/02_2_llm_phase2_reasoning_model_specific_prompt_final_colab.ipynb` - Mixed Emotion: the frozen Llama 2 CoT and Llama 3 SELF-DISCOVER policies.
 - `notebooks/colab/final/04_3_reddit_test_routed_phase2_model_specific_prompt_final_colab.ipynb` - Reddit routed test: the same final model-specific combination.
-- `notebooks/colab/final/04_4_reddit_test_alpha_policy_comparison_final_colab.ipynb` - Reddit calibration-policy comparison: reasons once over the confidence `< 0.80` union, then derives alpha=5% and alpha=2.5% results.
+- `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final corrected Reddit run: frozen primary `tau=0.70` routed IDs, original `title + selftext` input, 171/171 linkage checks, and separate resumable Llama 2/Llama 3 outputs.
 
-The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. The fourth notebook uses the Reddit held-out test predictions from Final 01, sends only low-confidence routed Reddit test rows to Llama reasoning, and reconstructs the full Reddit held-out end-to-end result.
+The first notebook trains and calibrates the DistilBERT Phase 1 model, saves the best model and threshold outputs, runs advanced confidence-threshold analysis, and runs Phase 1 inference on the 300-example Mixed Emotion stress-test set. The second notebook reads the saved Phase 1 Mixed Emotion predictions and applies Llama 2 CoT and Llama 3 SELF-DISCOVER only to routed Mixed Emotion rows while saving row-level resumable outputs, Phase 2 classification reports, label counts, and confusion matrices. The third notebook does not retrain models or rerun LLM inference; it merges the saved Mixed Emotion Phase 1 and Phase 2 outputs and generates paper-ready metrics, tables, figures, error examples, visual review displays, and zip exports. Final 04.5 uses the frozen primary Reddit routing policy, links all 171 routed IDs to minimally sanitized original title and selftext, runs both LLMs with row-level resume, and reconstructs the balanced 12,000-example held-out end-to-end result.
 
 Script helpers:
 
@@ -122,7 +129,7 @@ Purpose:
 - Report both standard metrics and direct prediction counts, for example `Correct predictions: 267 / 300`.
 - For the advanced Colab workflow, run W&B macro-F1 sweeps, final training, temperature scaling, risk-coverage threshold selection, held-out test evaluation, and confidence/error analysis.
 - For the final paper workflow, use only the three notebooks under `notebooks/colab/final/`. These preserve the older exploratory notebooks while providing a cleaner end-to-end path from DistilBERT Phase 1 training to LLM Phase 2 reasoning and paper-ready Mixed Emotion evaluation outputs.
-- The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including calibration metrics, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
+- The final DistilBERT notebook also exports paper-defense confidence analysis artifacts, including NLL, Brier score, fixed-bin ECE, adaptive ECE for both raw and temperature-scaled MSP, reliability diagrams, risk-coverage curves, score ablations, bootstrap confidence intervals, threshold stability, per-class selective risk, high-confidence errors, and threshold provenance metadata.
 - The final LLM reasoning notebook exports standalone Phase 2 evaluation artifacts, including classification reports, predicted-label distributions, parse-failure files, confusion matrix CSV files, and confusion matrix PNG files for both Llama 2 and Llama 3 when available.
 - The final orchestration notebook exports the complete paper-ready Mixed Emotion result package and displays a final review section with metrics, routing coverage, correction counts, label distributions, classification reports, confusion matrix tables, confusion matrix images, and representative error rows.
 - The final Reddit test notebook exports the primary held-out test two-phase result package, including routed-row Llama outputs, Reddit end-to-end metrics, correction analysis, routing coverage, confusion matrices, error examples, and a paper-ready workbook.
@@ -214,6 +221,7 @@ confidence-guided-selective-llm-reasoning/
         02_llm_phase2_reasoning_final_colab.ipynb
         03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb
         04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb
+        04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb
   src/
     prepare_subreddit_data.py
     preprocess_reddit.py
@@ -227,6 +235,7 @@ confidence-guided-selective-llm-reasoning/
     generate_mixed_emotion_dataset_v2_3.py
   docs/
     final_end_to_end_workflow_ko.md
+    reddit_phase2_original_text_primary_final_run_ko.md
     paper_update_and_current_results_meeting_notes_ko.md
     high_confidence_accepted_error_analysis_plan_ko.md
     prompt_policy_v2_change_history_ko.md

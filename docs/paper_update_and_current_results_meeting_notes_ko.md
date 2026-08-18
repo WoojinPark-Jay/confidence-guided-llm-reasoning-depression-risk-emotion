@@ -95,7 +95,7 @@ Mixed Emotion Phase 1 routed subset은 44/300 (14.67%)이며, 이 subset 안의 
 2. **Reddit routed Phase 2 end-to-end**: 171개 routed Reddit held-out sample만 Llama 2/Llama 3에 보내서 primary test 전체 기준 Phase 1 only 대비 two-phase 성능을 계산한다.
 3. **Llama 2 parser canonicalization**: Llama 2가 `Sad`처럼 predefined label space 밖의 표현을 낸 사례가 있어 final-label canonicalization을 재검증한다. 현재 +1.00 pp는 working result로만 취급한다.
 4. **Mistral 7B / Llama 2 7B Phase 1 classifier comparison**: full-scale classifier 실험이 완료되면 Table I--IV의 Pending을 실제 값으로 교체한다.
-5. **High-confidence accepted-error audit**: threshold 이상인데도 틀린 sample을 별도로 정량/정성 분석한다. 이는 routing이 놓친 위험 사례와 proxy-label 한계를 투명하게 보여주기 위한 보강 실험이다.
+5. **High-confidence accepted-error audit 완료**: 정확한 12,000-row held-out protocol에서 accepted error 310건과 accepted selective risk 2.62%를 확인했다. Accepted reference-Depression 3,939건 중 Happy/Neutral false negative는 125건(3.17%)이었고, confidence 0.98 이상에서도 error 34건이 남았다. 실제 대표 사례 6건은 model error, proxy-label/content mismatch, mixed trajectory, topic-term shortcut 관점으로 유형화했다.
 6. **최종 원고 수치 갱신**: 위 실험이 완료된 뒤 Results, table, figure, Appendix representative case의 수치를 final artifact 기준으로 동기화한다.
 
 ## 5. 다음 미팅에서 확인할 결정 사항
@@ -103,13 +103,14 @@ Mixed Emotion Phase 1 routed subset은 44/300 (14.67%)이며, 이 subset 안의 
 - 현재 confidence policy ($\tau$ candidate range 0.70--1.00, upper-bound risk target 5%)를 본 실험의 운영 정책으로 유지할지, 그리고 threshold sensitivity 결과를 본문/appendix 중 어디에 둘지.
 - Llama 3 SELF-DISCOVER를 Phase 2 주 결과로 보고하고, Llama 2 CoT는 비교 또는 ablation으로 둘지.
 - Mixed Emotion v2.4를 supplementary controlled stress-test로만 보고하는 현재 서술 범위를 유지할지.
-- Reddit routed Phase 2 결과와 high-confidence accepted-error audit을 완료한 뒤 최종 저널/학회 제출용 결과 표를 확정할지.
+- 완료된 Reddit routed Phase 2 결과와 high-confidence accepted-error audit을 최종 저널/학회 제출용 본문·Appendix에 어느 수준까지 유지할지.
 - 제목은 clinical risk/diagnosis 과장을 피하는 방향을 유지할지. 현재 제목의 `Depression-Risk-Related` 표현은 `Depression-Related Emotion Classification`으로 단순화하는 안을 검토할 수 있다.
 
 ## 6. 관련 문서 및 실행 링크
 
 - [최종 End-to-End Colab Workflow](final_end_to_end_workflow_ko.md)
 - [High-Confidence Accepted-Error Analysis 계획](high_confidence_accepted_error_analysis_plan_ko.md)
+- [High-Confidence Accepted-Error Audit 완료 결과](high_confidence_accepted_error_audit_results_ko.md)
 - [Routing threshold policy audit](routing_threshold_policy_audit_ko.md)
 - [Trajectory-aware Phase 2 prompt 실험 계획](phase2_trajectory_prompt_experiment_plan_ko.md)
 - [Reference 업데이트 반영 보고서](reference_update_completion_report_ko.md)

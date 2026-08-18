@@ -1,0 +1,7 @@
+reference_proxy_label,phase1_label,error_count,mean_confidence,median_confidence,median_word_count
+Depression,Happy,115,0.8831292449565218,0.90280116,45.0
+Depression,Neutral,10,0.9331719209999999,0.97173698,22.0
+Happy,Depression,112,0.8848103669642857,0.907022615,63.0
+Happy,Neutral,32,0.9045923478125,0.92645375,29.5
+Neutral,Depression,17,0.9049465094117647,0.9519203,43.0
+Neutral,Happy,24,0.9140540762499999,0.9388776999999999,41.0

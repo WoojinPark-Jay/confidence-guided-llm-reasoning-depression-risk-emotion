@@ -107,7 +107,7 @@ def build_pairs(args: argparse.Namespace):
     return [
         (
             "Reddit held-out",
-            "Llama 2 CoT v2",
+            "Llama 2 CoT",
             reddit["is_correct_phase1"].to_numpy(dtype=bool),
             reddit["is_correct_llama2_e2e"].to_numpy(dtype=bool),
         ),
@@ -119,7 +119,7 @@ def build_pairs(args: argparse.Namespace):
         ),
         (
             "Mixed Emotion",
-            "Llama 2 CoT v2",
+            "Llama 2 CoT",
             (mixed["target_label"] == mixed["phase1_label"]).to_numpy(),
             (mixed["target_label"] == mixed["LLaMA2_final_label"]).to_numpy(),
         ),

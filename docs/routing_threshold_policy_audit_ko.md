@@ -104,4 +104,4 @@ outputs_final/phase1_distilbert/phase1_test_predictions.csv
 outputs_final/phase1_distilbert/advanced_confidence_threshold_analysis/threshold_provenance.json
 ```
 
-현재 수치는 2026-08-07/08-10에 저장한 12,000 calibration row 및 12,001 held-out test row artifact를 기준으로 한다. 최종 논문 표는 정확히 12,000 held-out test row를 사용한 재실행 artifact로 동기화해야 한다.
+Calibration split은 12,000 rows로 고정되었다. 과거 held-out artifact의 fractional split 반올림으로 남은 12,001 rows는 label별 4,000 rows의 deterministic balanced view로 정규화했으며, 최종 논문과 통계 분석은 정확히 12,000 held-out rows를 사용한다.

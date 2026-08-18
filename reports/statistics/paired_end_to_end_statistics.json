@@ -5,37 +5,37 @@
   "results": [
     {
       "dataset": "Reddit held-out",
-      "reasoner": "Llama 2 CoT v2",
+      "reasoner": "Llama 2 CoT",
       "n": 12000,
       "phase1_accuracy": 0.9669166666666666,
-      "end_to_end_accuracy": 0.966,
-      "accuracy_change_pp": -0.09166666666666767,
-      "corrected": 38,
-      "introduced": 49,
-      "net_corrections": -11,
-      "bootstrap_95_ci_lower_pp": -0.24166666666666667,
-      "bootstrap_95_ci_upper_pp": 0.05833333333333334,
-      "mcnemar_exact_p": 0.2836071084054854,
-      "holm_adjusted_p": 0.5263519287109375
+      "end_to_end_accuracy": 0.9666666666666667,
+      "accuracy_change_pp": -0.024999999999997247,
+      "corrected": 47,
+      "introduced": 50,
+      "net_corrections": -3,
+      "bootstrap_95_ci_lower_pp": -0.18333333333333332,
+      "bootstrap_95_ci_upper_pp": 0.13333333333333333,
+      "mcnemar_exact_p": 0.8392136618440833,
+      "holm_adjusted_p": 0.8392136618440833
     },
     {
       "dataset": "Reddit held-out",
       "reasoner": "Llama 3 SELF-DISCOVER",
       "n": 12000,
       "phase1_accuracy": 0.9669166666666666,
-      "end_to_end_accuracy": 0.9674166666666667,
-      "accuracy_change_pp": 0.050000000000005596,
-      "corrected": 13,
-      "introduced": 7,
-      "net_corrections": 6,
-      "bootstrap_95_ci_lower_pp": -0.025,
-      "bootstrap_95_ci_upper_pp": 0.125,
-      "mcnemar_exact_p": 0.26317596435546875,
-      "holm_adjusted_p": 0.5263519287109375
+      "end_to_end_accuracy": 0.9694166666666667,
+      "accuracy_change_pp": 0.2500000000000058,
+      "corrected": 42,
+      "introduced": 12,
+      "net_corrections": 30,
+      "bootstrap_95_ci_lower_pp": 0.13333333333333333,
+      "bootstrap_95_ci_upper_pp": 0.375,
+      "mcnemar_exact_p": 5.2094472007935266e-05,
+      "holm_adjusted_p": 0.0001562834160238058
     },
     {
       "dataset": "Mixed Emotion",
-      "reasoner": "Llama 2 CoT v2",
+      "reasoner": "Llama 2 CoT",
       "n": 300,
       "phase1_accuracy": 0.8133333333333334,
       "end_to_end_accuracy": 0.8533333333333334,
@@ -46,7 +46,7 @@
       "bootstrap_95_ci_lower_pp": 1.0,
       "bootstrap_95_ci_upper_pp": 7.333333333333333,
       "mcnemar_exact_p": 0.022655844688415527,
-      "holm_adjusted_p": 0.06796753406524658
+      "holm_adjusted_p": 0.045311689376831055
     },
     {
       "dataset": "Mixed Emotion",

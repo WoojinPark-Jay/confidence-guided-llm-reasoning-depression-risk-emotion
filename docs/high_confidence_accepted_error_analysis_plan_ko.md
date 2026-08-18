@@ -1,4 +1,6 @@
-# High-Confidence Accepted-Error Analysis 계획
+# High-Confidence Accepted-Error Analysis 계획 및 완료 상태
+
+> 상태: 완료. 확정 결과와 대표 사례는 [`high_confidence_accepted_error_audit_results_ko.md`](high_confidence_accepted_error_audit_results_ko.md), 재현 스크립트는 `scripts/high_confidence_accepted_error_audit.py`에 정리하였다. 이 문서는 사전 분석 설계 기록으로 유지한다.
 
 ## 1. 목적
 

@@ -28,9 +28,9 @@
 
 다음 네 개의 사전 지정 비교를 함께 보고하므로 family-wise error를 통제한다.
 
-1. Reddit held-out / Llama 2 CoT v2
+1. Reddit held-out / Llama 2 CoT
 2. Reddit held-out / Llama 3 SELF-DISCOVER
-3. Mixed Emotion / Llama 2 CoT v2
+3. Mixed Emotion / Llama 2 CoT
 4. Mixed Emotion / Llama 3 SELF-DISCOVER
 
 Holm 보정은 여러 검정을 동시에 수행할 때 우연히 작은 p-value가 발생할 가능성을 줄인다. 난수 시드는 `20260813`로 고정하였다.
@@ -39,26 +39,24 @@ Holm 보정은 여러 검정을 동시에 수행할 때 우연히 작은 p-value
 
 | Dataset | Reasoner | Phase 1 | End-to-end | Change | Corrected | Introduced | Paired 95% CI | Exact p | Holm p |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Reddit held-out | Llama 2 CoT v2 | 96.69% | 96.60% | -0.09 pp | 38 | 49 | [-0.24, 0.06] pp | 0.284 | 0.526 |
-| Reddit held-out | Llama 3 SELF-DISCOVER | 96.69% | 96.74% | +0.05 pp | 13 | 7 | [-0.02, 0.12] pp | 0.263 | 0.526 |
-| Mixed Emotion | Llama 2 CoT v2 | 81.33% | 85.33% | +4.00 pp | 18 | 6 | [1.00, 7.33] pp | 0.0227 | 0.0680 |
-| Mixed Emotion | Llama 3 SELF-DISCOVER | 81.33% | 87.33% | +6.00 pp | 18 | 0 | [3.33, 8.67] pp | <0.0001 | <0.0001 |
+| Reddit held-out | Llama 2 CoT | 96.69% | 96.67% | -0.03 pp | 47 | 50 | [-0.18, 0.13] pp | 0.8392 | 0.8392 |
+| Reddit held-out | Llama 3 SELF-DISCOVER | 96.69% | 96.94% | +0.25 pp | 42 | 12 | [0.13, 0.38] pp | 0.000052 | 0.000156 |
+| Mixed Emotion | Llama 2 CoT | 81.33% | 85.33% | +4.00 pp | 18 | 6 | [1.00, 7.33] pp | 0.0227 | 0.0453 |
+| Mixed Emotion | Llama 3 SELF-DISCOVER | 81.33% | 87.33% | +6.00 pp | 18 | 0 | [3.33, 8.67] pp | 0.0000076 | 0.000031 |
 
 ## 4. 결과 해석
 
-1. Reddit에서는 Llama 2와 Llama 3의 변화량이 매우 작고 두 paired 95% confidence interval이 0을 포함한다. 따라서 일반 Reddit held-out sample에서 큰 accuracy improvement가 확인되었다고 주장하지 않는다.
-2. Mixed Emotion에서는 두 reasoner 모두 양의 변화량을 보였고 paired 95% confidence interval이 0보다 크다.
-3. 네 비교를 Holm 보정하면 Llama 3의 Mixed Emotion 개선만 0.05 기준에서 명확히 유지된다.
-4. Llama 2의 Mixed Emotion 결과는 effect size가 `+4.00 pp`로 긍정적이지만 Holm-adjusted p-value가 `0.068`이므로 confirmatory evidence가 아니라 exploratory evidence로 해석한다.
-5. 최종 논문 주장은 “Phase 2가 모든 입력에서 accuracy를 크게 높인다”가 아니라, “confidence routing은 어려운 sample을 집중시키며, Phase 2의 실제 효과는 reasoner와 input regime에 따라 달라진다”로 제한한다.
+1. Reddit에서 Llama 2의 변화량은 작고 paired 95% confidence interval이 0을 포함하므로 Phase 1과 구분되는 향상 또는 저하를 주장하지 않는다.
+2. Reddit에서 Llama 3는 `+0.25 pp`이며 paired interval 전체가 0보다 크고 Holm 보정 후에도 유의하다. 다만 절대 변화량은 작으므로 대규모 일반 성능 향상으로 과장하지 않는다.
+3. Mixed Emotion에서는 두 reasoner 모두 양의 변화량을 보였고 paired 95% confidence interval이 0보다 크다. 두 결과 모두 Holm 보정 후 0.05 기준을 만족한다.
+4. 최종 논문 주장은 “Phase 2가 모든 입력에서 accuracy를 크게 높인다”가 아니라, “confidence routing은 어려운 sample을 집중시키며, 원문을 보존한 Phase 2의 효과는 reasoner와 input regime에 따라 달라진다”로 제한한다.
 
 ## 5. 논문에서의 보고 원칙
 
 - accuracy change만 제시하지 않고 `corrected`, `introduced`, `net corrections`를 함께 보고한다.
-- Reddit 결과는 작은 효과와 불확실성을 그대로 기술한다.
+- Reddit Llama 2의 불확실성과 Llama 3의 작지만 양의 paired effect를 구분해 기술한다.
 - Mixed Emotion은 controlled stress-test 결과이며 일반 Reddit 분포 전체에 대한 동일한 개선을 의미하지 않는다.
-- Llama 3 Mixed Emotion 결과를 가장 강한 paired evidence로 보고한다.
-- Llama 2 Mixed Emotion 결과는 긍정적이지만 Holm 보정 후 0.05를 넘으므로 탐색적으로 기술한다.
+- Mixed Emotion 두 결과와 Reddit Llama 3 결과가 Holm 보정 후 유지됨을 보고하되, controlled stress test와 일반 Reddit 분포를 구분한다.
 
 ## 6. 재현 방법
 
@@ -76,4 +74,4 @@ python3 scripts/paired_end_to_end_analysis.py \
 - `paired_end_to_end_statistics.csv`
 - `paired_end_to_end_statistics.json`
 
-Reddit 입력 파일에 12,001 rows가 있는 경우 스크립트는 논문의 정확한 12,000-row protocol과 맞추기 위해 class별 4,000 rows를 deterministic하게 선택한다.
+Reddit 입력 파일에 과거 split 반올림으로 12,001 rows가 남아 있는 경우 스크립트는 논문의 정확한 12,000-row protocol과 맞추기 위해 class별 4,000 rows를 deterministic하게 선택한다. 최종 보고 수치는 minimally sanitized original `title + selftext`를 사용한 Phase 2 결과다.
