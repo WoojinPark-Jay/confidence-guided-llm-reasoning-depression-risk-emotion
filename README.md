@@ -80,7 +80,7 @@ Final workflow guide:
 - `docs/reddit_phase2_original_text_primary_final_run_ko.md` - final 171-row original-text linkage, execution, persistence, and manuscript-update protocol
 - `docs/paper_content_reinforcement_completion_summary_ko.md` - completed manuscript reinforcements, fixed experimental results, and the remaining 3 required plus 2 recommended submission tasks
 - `docs/ieee_access_submission_readiness_checklist_ko.md` - 현재 완료 결과와 IEEE Access 제출 전 필수·권장 작업을 공동 점검하는 최종 체크리스트
-- `docs/paper_update_and_current_results_meeting_notes_ko.md` - current paper updates, observed results, and next meeting discussion items
+- `docs/paper_update_and_current_results_meeting_notes_ko.md` - **latest research checkpoint**: completed results, manuscript status, remaining mandatory work, and meeting decisions
 - `docs/high_confidence_accepted_error_analysis_plan_ko.md` - original analysis protocol retained for provenance
 - `docs/high_confidence_accepted_error_audit_results_ko.md` - completed 12,000-row accepted-error audit, confidence-band analysis, and six representative cases
 - `docs/routing_threshold_policy_audit_ko.md` - Korean audit of the pre-specified 0.70--1.00 routing grid, the alpha=0.05 feasibility constraint, and calibration/test routing diagnostics
@@ -188,9 +188,9 @@ Purpose:
 
 - Provide a controlled synthetic stress-test set for emotionally ambiguous examples.
 - Include 300 examples, balanced across Depression, Neutral, and Happy proxy emotion labels.
-- Include five ambiguity scenario types: blended emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, and conflicting cues with a dominant trajectory.
+- Include seven controlled scenario groups: blended-emotion co-occurrence, positive-to-distress shift, distress-to-recovery shift, neutral framing with subtle affect, conflicting cues with a dominant trajectory, clear technical/informational Neutral examples, and mildly ambiguous factual/procedural Neutral examples.
 - Use this dataset only for supplementary robustness evaluation, not for Phase 1 training, hyperparameter tuning, or confidence-threshold selection.
-- v2.3 clarifies final emotional trajectory and final takeaway cues while preserving the original class and scenario balance.
+- v2.4 (`mixed_emotion_stress_test_v2_4_neutral_clear_300.csv`) is the current final stress-test input. It preserves the Depression/Happy trajectory cases and replaces ambiguous Neutral examples with clearer factual/routine cases while retaining 300 balanced examples.
 
 ## Project Layout
 
@@ -340,12 +340,12 @@ Detailed Colab workflow notes are available in:
 
 ## Run Stage 3 / Inspect Mixed Emotion Dataset
 
-The supplementary Mixed Emotion Dataset v2.3 is committed because it is small and intended to support reproducible stress-test evaluation. The previous v2.2 files are retained for traceability.
+The supplementary Mixed Emotion Dataset v2.4 is the current Colab input. The v2.2/v2.3 files are retained for traceability and prior prompt experiments; they should not be substituted silently when reproducing the final v2.4 result.
 
-Open the spreadsheet version directly:
+Open the current CSV input directly:
 
 ```text
-data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_3_300.xlsx
+data/supplementary/mixed_emotion/mixed_emotion_stress_test_v2_4_neutral_clear_300.csv
 ```
 
 Or regenerate the dataset from the project root:
