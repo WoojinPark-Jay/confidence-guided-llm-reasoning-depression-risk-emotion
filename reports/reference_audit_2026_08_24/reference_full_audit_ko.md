@@ -4,13 +4,35 @@
 - 대상 원고: `Paper_260620_overleaf_original_text_phase2_final_self_discover_figure/main.tex`
 - 대상 참고문헌: 46개 전부
 - 감사 범위: 실재 여부, 서지정보, 링크/DOI, 원문 접근 수준, 본문 인용 문맥, 주장과 출처 내용의 일치 여부
-- 원고 수정 여부: **수정하지 않음**. 이 폴더는 감사 결과와 확보 자료만 보관한다.
+- 감사 당시 원고 수정 여부: **수정하지 않음**. 이 폴더는 감사 결과와 확보 자료를 보관한다.
+- 후속 조치일: 2026-08-24~25
+- 후속 조치 상태: **감사에서 발견된 원고 수정 9건을 교정 원고에 모두 반영하고 독립 재컴파일 및 29페이지 전체 렌더링 검수를 완료함**
+
+## 0. 후속 조치 및 현재 상태
+
+이 보고서의 문제 설명은 감사 당시 원고를 기준으로 한 발견 기록이다. 이후 교정 원고
+`CGSLR_IEEE_Access_2026_Full_Paper_Reference_Audited_Overleaf.zip`에 아래 수정 사항을 모두 반영했다.
+따라서 아래 3~4절에 적힌 문제는 미해결 목록이 아니라, 무엇을 발견하고 어떻게 고쳤는지를 보존하는 감사 추적 기록이다.
+
+| Ref./위치 | 감사에서 발견된 문제 | 교정 원고의 조치 | 상태 |
+|---|---|---|---|
+| [32] | eRisk overview가 아닌 `invited_paper_5.pdf`로 연결 | 올바른 `invited_paper_1.pdf`로 URL 교체 | 완료 |
+| [36] | 공식 저자 목록과 불일치 | 공식 6인 저자 목록으로 교체 | 완료 |
+| [44] | 공식 ACL 제목과 불일치 | *Depression Detection on Social Media with Large Language Models*로 교체 | 완료 |
+| Related Work의 [31] | transformer 확산의 직접 근거로 부적절 | 해당 문맥에서 [31]을 제거하고 [8], [33], [34]로 교체 | 완료 |
+| [8] 본문 | MentalBERT 출판연도를 2021로 표기 | `Ji et al. (2022)`로 수정 | 완료 |
+| [18] | arXiv-only 서지 | NeurIPS 2024 정식 venue와 DOI로 갱신 | 완료 |
+| [20] 본문 | 확보 근거보다 넓은 linguistic-marker 주장 | 공식 초록으로 확인된 first-person singular pronouns와 negative-emotion words만 남김 | 완료 |
+| [41] | TextBlob 홈페이지 수준의 넓은 URL | polarity 범위를 직접 설명하는 sentiment-analysis 문서로 교체 | 완료 |
+| [46] | publisher HTML/PDF 간 제목 충돌 | version-of-record PDF의 *Mental Illness Detection* 제목으로 통일하고 충돌 사실은 감사 기록에 유지 | 완료(외부 메타데이터 충돌 기록 유지) |
+
+교정 원고는 46개 참고문헌 번호 체계를 유지한다. 위 수정으로 현재 확인된 잘못된 URL, 저자, 제목, 연도 및 인용-주장 불일치는 모두 해소됐다. 남은 사항은 아래 5절의 접근 제한 논문에 대한 전문 확인 완결성 보강이며, 현재 원고에서 새로 확인된 필수 서지 오류는 아니다.
 
 ## 1. 최종 결론
 
-참고문헌 46개는 모두 실재하는 출처로 확인됐다. 완전히 존재하지 않거나 조작된 참고문헌은 발견되지 않았다. 다만 제출 전에 반드시 고쳐야 할 추적성·서지·인용 문제가 있다.
+참고문헌 46개는 모두 실재하는 출처로 확인됐다. 완전히 존재하지 않거나 조작된 참고문헌은 발견되지 않았다. 감사 당시 제출 전에 고쳐야 할 추적성·서지·인용 문제를 발견했으며, 해당 문제는 위 0절과 같이 교정 원고에 반영했다.
 
-가장 심각한 문제는 **참고문헌 [32]의 URL이 전혀 다른 논문을 가리킨다는 것**이다. 현재 원고의 `invited_paper_5.pdf`는 eRisk 2018 overview가 아니라 CENTRE@CLEF replicability task 논문이다. 올바른 eRisk 2018 overview는 `invited_paper_1.pdf`이다.
+가장 심각한 문제는 **참고문헌 [32]의 URL이 전혀 다른 논문을 가리킨다는 것**이었다. 감사 당시 원고의 `invited_paper_5.pdf`는 eRisk 2018 overview가 아니라 CENTRE@CLEF replicability task 논문이었다. 올바른 eRisk 2018 overview는 `invited_paper_1.pdf`이며, 교정 원고에는 이를 반영했다.
 
 추가로 [36]의 저자 목록, [44]의 제목이 공식 원문과 다르며, 본문의 MentalBERT 연도와 [31]의 transformer 근거 사용도 수정이 필요하다. [18]은 내용상 정확하지만 arXiv-only 서지를 NeurIPS 2024 정식 출판정보로 바꾸는 편이 적절하다.
 
@@ -26,9 +48,9 @@
 
 따라서 46개 모두를 감사했지만, **내용 전문까지 확인한 항목은 39개(84.8%)**다. 나머지 7개는 접근 제한을 숨기지 않고 아래에 명시했다. 초록·서지만 확인한 논문에 대해서는 전문을 읽은 것처럼 단정하지 않았다.
 
-## 3. 즉시 수정할 사항
+## 3. 감사 당시 발견한 즉시 수정 사항
 
-### P0: 제출 전 반드시 수정
+### P0: 제출 전 반드시 수정 (교정 원고 반영 완료)
 
 #### [32] 잘못 연결된 PDF
 
@@ -37,7 +59,7 @@
 - 올바른 파일: [Overview of eRisk 2018: Early Risk Prediction on the Internet](https://ceur-ws.org/Vol-2125/invited_paper_1.pdf)
 - 영향: 참고문헌 제목은 맞지만 독자가 링크를 열면 다른 논문이 나온다. 단순 형식 오류가 아니라 source traceability 오류다.
 
-### P1: 중요한 서지·인용 수정
+### P1: 중요한 서지·인용 수정 (교정 원고 반영 완료)
 
 #### [36] 공식 저자 목록과 불일치
 
@@ -50,11 +72,11 @@
 5. Maritza Bustos-López
 6. José Luis Sánchez-Cervantes
 
-현재 원고에는 실제 논문에 없는 저자가 포함되고 실제 저자 3명이 누락되어 있다. 제목, journal, year, DOI 및 본문 인용 취지는 맞다. [MDPI 공식 페이지](https://www.mdpi.com/2227-9032/10/2/291)
+감사 당시 원고에는 실제 논문에 없는 저자가 포함되고 실제 저자 3명이 누락되어 있었다. 제목, journal, year, DOI 및 본문 인용 취지는 맞았다. [MDPI 공식 페이지](https://www.mdpi.com/2227-9032/10/2/291)
 
 #### [44] 공식 제목과 불일치
 
-- 현재 원고: *Medical knowledge-guided depression detection on social media with large language models*
+- 감사 당시 원고: *Medical knowledge-guided depression detection on social media with large language models*
 - 공식 제목: *Depression Detection on Social Media with Large Language Models*
 
 본문에서 medical criteria, temporal mood courses, interpretability를 설명한 내용은 실제 논문과 일치한다. 제목만 공식 ACL 표기로 교체해야 한다. [ACL Anthology](https://aclanthology.org/2025.emnlp-industry.151/)
@@ -63,7 +85,7 @@
 
 [31]은 2019년 Reddit depression-post detection 연구이며 transformer adoption의 직접 근거가 아니다. 데이터셋과 Reddit classification 문단에서의 [31]은 적절하지만, “more recent work has increasingly adopted transformer-based architectures” 문장의 [31]은 [33], [34], [8] 등 실제 transformer 논문으로 교체해야 한다. [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/8681445)
 
-## 4. 그 밖의 수정 권고
+## 4. 감사 당시 발견한 추가 수정 권고
 
 ### [8] 본문 연도
 
@@ -71,23 +93,23 @@ MentalBERT의 참고문헌은 LREC 2022이며 실제 출판연도도 2022다. �
 
 ### [18] 정식 venue로 업그레이드
 
-현재 arXiv 인용도 가짜이거나 틀린 것은 아니지만, SELF-DISCOVER는 NeurIPS 2024 정식 논문으로 출판됐다. `Advances in Neural Information Processing Systems 37 (2024)`, DOI `10.52202/079017-4004`를 사용하는 것이 제출본에 더 적합하다. SELECT/ADAPT/IMPLEMENT와 atomic reasoning-module 설명은 원문과 부합한다. [NeurIPS 공식 페이지](https://proceedings.neurips.cc/paper_files/paper/2024/hash/e41efb03e20ca3c231940a3c6917ef6f-Abstract-Conference.html)
+감사 당시 arXiv 인용도 가짜이거나 틀린 것은 아니었지만, SELF-DISCOVER는 NeurIPS 2024 정식 논문으로 출판됐다. `Advances in Neural Information Processing Systems 37 (2024)`, DOI `10.52202/079017-4004`를 사용하는 것이 제출본에 더 적합하다. SELECT/ADAPT/IMPLEMENT와 atomic reasoning-module 설명은 원문과 부합한다. [NeurIPS 공식 페이지](https://proceedings.neurips.cc/paper_files/paper/2024/hash/e41efb03e20ca3c231940a3c6917ef6f-Abstract-Conference.html)
 
 ### [20] 확보한 근거보다 조금 넓은 문장
 
-공식 초록에서는 depressed participants가 negative emotion words와 `I`를 더 많이 사용했다는 점은 확인했다. 그러나 현재 문장의 “fewer references to others”까지는 확보한 공식 초록만으로 독립 검증하지 못했다. 전문을 추가 확보하거나, 문장을 직접 확인된 두 특징으로 좁히는 것이 안전하다.
+공식 초록에서는 depressed participants가 negative emotion words와 `I`를 더 많이 사용했다는 점은 확인했다. 그러나 감사 당시 문장의 “fewer references to others”까지는 확보한 공식 초록만으로 독립 검증하지 못했다. 교정 원고는 문장을 직접 확인된 두 특징으로 좁혔다.
 
 ### [41] 더 직접적인 문서 링크
 
-TextBlob polarity가 `[-1.0, 1.0]`이라는 주장은 공식 문서와 정확히 일치한다. 다만 현재 homepage보다 [Sentiment Analysis quickstart](https://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis)를 직접 연결하면 검증성이 높아진다.
+TextBlob polarity가 `[-1.0, 1.0]`이라는 주장은 공식 문서와 정확히 일치한다. 감사 당시 homepage 링크보다 [Sentiment Analysis quickstart](https://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis)를 직접 연결하는 편이 검증성이 높아 교정 원고에서 교체했다.
 
 ### [46] publisher 내부 제목 충돌
 
-DOI landing metadata는 *Machine Learning Approaches for Depression Detection on Social Media...*라고 표시하지만, 공식 publisher PDF의 제목은 *Machine Learning Approaches for Mental Illness Detection on Social Media...*이다. 본문 내용은 47개 연구를 대상으로 platform, sampling, language, preprocessing, reporting bias를 다룬다는 점에서 현재 인용과 부합한다. 제출 전 publisher에 문의하거나 version-of-record PDF 제목을 우선해 통일하는 것이 좋다. [Publisher DOI](https://doi.org/10.35566/jbds/caoyc)
+DOI landing metadata는 *Machine Learning Approaches for Depression Detection on Social Media...*라고 표시하지만, 공식 publisher PDF의 제목은 *Machine Learning Approaches for Mental Illness Detection on Social Media...*이다. 본문 내용은 47개 연구를 대상으로 platform, sampling, language, preprocessing, reporting bias를 다룬다는 점에서 인용 취지와 부합한다. 교정 원고는 version-of-record PDF 제목을 우선해 통일했으며, 외부 메타데이터 충돌 자체는 감사 기록에 남긴다. [Publisher DOI](https://doi.org/10.35566/jbds/caoyc)
 
 ## 5. 다운로드하지 못한 출처
 
-아래 7개는 원문 PDF를 직접 확보하지 못했다. 이 사실은 감사 CSV에도 그대로 표시했다.
+아래 7개는 원문 PDF를 직접 확보하지 못했다. 이 사실은 감사 CSV에도 그대로 표시했다. 이 7개를 모두 확보하면 전문 확인률을 84.8%에서 100%로 높일 수 있지만, **7개 모두가 현재 원고의 필수 오류 수정 조건이라는 뜻은 아니다.** [20]과 [31]은 확보 범위를 넘던 문맥을 이미 수정했으며, [9], [27], [38], [45]는 현재 원고에서 공식 초록이 직접 뒷받침하는 일반적 배경 주장에만 사용한다. 방법 세부를 더 강하게 검증하려면 [22]와 [31]의 전문 확보를 우선하고, 그다음 [9], [20], [27], [38], [45]를 보완하는 순서가 효율적이다.
 
 | Ref. | 출처 | 확보 수준 | 이유 | 현재 판정 |
 |---:|---|---|---|---|
@@ -165,7 +187,7 @@ DOI landing metadata는 *Machine Learning Approaches for Depression Detection on
 
 이번 감사에서 핵심 방법론인 temperature scaling, selective classification, CoT, SELF-DISCOVER, DistilBERT/Mistral/Llama architecture에 사용된 기술적 근거는 원문과 대체로 정확하게 일치했다. 사회적 필요성, mental-health NLP 배경, construct-validity 및 ethics 근거도 대부분 적합했다.
 
-따라서 참고문헌 체계를 전면 교체할 필요는 없다. 다만 [32], [36], [44]는 제출 전 반드시 고치고, [31]의 transformer 문맥과 [8]의 연도도 함께 수정해야 한다. 접근 제한 7개는 이 보고서에 명시된 상태로 남기되, 최종 제출 직전 기관 구독 또는 저자 manuscript를 통해 [20], [22], [31]을 우선 보완 확인하는 것이 가장 효율적이다.
+따라서 참고문헌 체계를 전면 교체할 필요는 없다. [32], [36], [44], [31], [8]을 포함해 감사에서 확인된 원고 수정 사항은 교정 원고에 모두 반영했다. 접근 제한 7개는 전문 확인 완결성의 한계로 이 보고서에 계속 명시한다. 추가 전문을 확보할 수 있다면 방법 세부 검증 가치가 큰 [22]와 [31]을 먼저 확인하고, 나머지 5개를 순차적으로 보완하는 것이 가장 효율적이다.
 
 ## 8. 산출물 안내
 
