@@ -1,6 +1,6 @@
 # 최종 연구 진행 현황 및 남은 작업
 
-작성일: 2026-08-15
+최종 갱신: 2026-08-29
 
 용도: 공동연구자 회의 및 IEEE Access 제출 준비
 
@@ -24,6 +24,8 @@
 - Paired bootstrap, exact McNemar, Holm correction 완료
 - High-confidence accepted error 310건 감사와 실제 원문 대표 사례 6건 분석 완료
 - Routing 오류 농축, routed-only accuracy, conditional correction opportunity 분석 완료
+- 최종 confidence-guided two-phase architecture 도식 완성 및 원고 삽입 완료
+- 편집 가능한 Draw.io 원본, publication-ready 벡터 PDF, 재현 안내를 GitHub `main`에 보존 완료
 - 최종 논문 초안, Appendix, 재현 코드, 결과 CSV/JSON, Overleaf ZIP 정리 완료
 
 ### 1.2 현재 핵심 결론
@@ -41,7 +43,8 @@
 |---|---|---|
 | 필수 | Mistral 7B supervised Phase 1 classifier | Table I의 Mistral `Pending` 해소 |
 | 필수 | Llama 2 7B supervised Phase 1 classifier | Table I의 Llama 2 classifier `Pending` 해소 |
-| 필수 | Architecture 및 workflow 도식 | 방법론 전달력과 제출 완성도 보강 |
+| 필수 | 두 classifier 실측치의 표·그림·본문 반영 | 모든 `TBD`/planning estimate 제거 |
+| 필수 | 최신 원고와 아키텍처를 공식 IEEE Access 패키지에 최종 동기화 | 제출 소스와 교수 검토본의 내용 일치 |
 | 필수 | 저자·소속·funding·availability 확정 | 실제 투고 메타데이터 완성 |
 | 권장 | Frozen prompt 독립 확인 | Prompt 개발과 최종 평가의 분리 강화 |
 | 권장 | 복수 연구자 또는 전문가 사례 검토 | Proxy label과 rationale 신뢰성 보강 |
@@ -214,15 +217,23 @@
 - Conclusion의 classifier 선택 근거
 - Supplementary CSV/JSON과 run manifest
 
-### 6.4 필수: 최종 도식
+### 6.4 완료: 최종 도식과 재현 원본
 
-- 전체 selective two-phase architecture
-- Reddit split, calibration, threshold selection 흐름
-- Accepted sample은 Phase 1 label 유지, routed sample은 Phase 2 label로 교체하는 구조
-- 필요 시 reliability 또는 risk-coverage 핵심 그림
-- 모든 그림의 sample 수와 threshold를 본문 표와 대조
+- 전체 selective two-phase architecture를 완성하고 원고에 삽입했다.
+- Reddit split, calibration, fixed threshold, accepted/routed 경로, Phase 2 re-evaluation, 최종 label selection 및 audit artifact 흐름을 하나의 도식에 연결했다.
+- 편집 가능한 Draw.io 원본과 publication-ready 벡터 PDF를 다음 위치에 공개했다.
+  - `docs/figures/architecture/confidence_guided_two_phase_architecture.drawio`
+  - `docs/figures/architecture/confidence_guided_two_phase_architecture.pdf`
+  - `docs/figures/architecture/README.md`
+- GitHub `main` 반영 커밋: `5096c47` (`Add final editable architecture figure`)
 
-### 6.5 필수: 투고 메타데이터
+### 6.5 필수: 공식 IEEE Access 패키지 최종 동기화
+
+- 공식 `ieeeaccess.cls` 기반 패키지에 최신 본문, 표, Appendix, 최종 architecture PDF를 동기화한다.
+- 교수 검토용 최신 원고와 공식 제출용 소스 사이에 수치, 그림 번호, caption, reference 차이가 없는지 확인한다.
+- Overleaf에서 pdfLaTeX clean compile 후 전 페이지를 다시 검수한다.
+
+### 6.6 필수: 투고 메타데이터
 
 - 저자 순서와 affiliation
 - Corresponding author
@@ -231,7 +242,7 @@
 - Data/code availability
 - Keywords와 cover letter
 
-### 6.6 권장 보강
+### 6.7 권장 보강
 
 - Frozen prompt를 독립 routed subset 또는 outer fold에서 한 번 확인
 - Mixed Emotion 및 대표 Reddit 사례에 대한 복수 연구자 또는 전문가 검토
@@ -246,7 +257,7 @@
 2. Llama 2 7B Phase 1 classifier 실행
 3. 두 모델의 calibration 및 routing 결과 생성
 4. Main Table I과 관련 본문 갱신
-5. Architecture/data-flow 도식 삽입
+5. 최신 원고와 architecture를 공식 IEEE Access 패키지에 동기화
 6. 저자·소속·availability·윤리·funding 확정
 7. 원고 숫자와 prediction-level artifact 최종 대조
 8. Overleaf clean compile 및 전 페이지 시각 검수
@@ -259,7 +270,7 @@
 |---:|---|---|
 | 1 | Mistral 7B와 Llama 2 7B Phase 1 실행 일정 | 동일 split과 평가 산출물을 만들 수 있는 GPU 일정 |
 | 2 | 두 classifier를 반드시 본문 baseline으로 완료할지 | IEEE Access 제출 시 Table I의 비교 완결성 |
-| 3 | 최종 architecture figure 구성 | 전체 pipeline, calibration, routing, recomposition 중 포함 범위 |
+| 3 | 공식 IEEE Access 패키지 최종 동기화 일정 | 최신 원고·아키텍처·Appendix를 제출 패키지에 반영할 일정 |
 | 4 | Independent prompt confirmation 포함 여부 | 일정 대비 prompt-selection bias 방어 효과 |
 | 5 | 복수 연구자 또는 전문가 검토 범위 | Mixed 300건 전체 또는 층화 표본 검토 |
 | 6 | 코드와 Mixed Emotion dataset 공개 범위 | 익명화, 라이선스, release 시점 |
@@ -272,7 +283,7 @@
 - Llama 2 7B Phase 1: 실행 / 제외 / 보류
 - Independent prompt confirmation: 포함 / 후속 연구
 - Human/expert review: 범위 확정 / 후속 연구
-- Figure 구성 및 마감일
+- 공식 IEEE Access 패키지 동기화 담당과 마감일
 - 투고 목표일
 
 연구자별 역할은 이 문서에서 미리 나누지 않는다. 회의에서 필요한 일정과 실행 범위만 확정한다.

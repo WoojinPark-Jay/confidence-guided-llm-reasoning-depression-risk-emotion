@@ -1,6 +1,6 @@
 # IEEE Access 최종 제출 준비 체크리스트
 
-최종 갱신: 2026-08-26
+최종 갱신: 2026-08-29
 대상 원고: *Confidence-Guided Selective LLM Re-Evaluation for Depression-Risk-Related Emotion Classification in Social Media Text*
 
 > 이 문서는 분류 실험을 제외한 현재 완성도와 IEEE Access 실제 제출 전 남은 작업을 공동연구자가 한번에 확인하기 위한 기준 문서다.
@@ -30,6 +30,8 @@
 - [x] High-confidence accepted-error 정량·정성 감사
 - [x] Prompt, SELF-DISCOVER module pool, 저장 output 예시, synthetic generation protocol 부록
 - [x] 참고문헌 46건 감사 및 발견된 원고 문제 9건 수정
+- [x] 최종 two-phase architecture 도식 완성 및 원고 삽입
+- [x] 편집 가능한 Draw.io 원본과 publication-ready 벡터 PDF를 GitHub `main`에 보존
 - [x] 기존 IEEEtran 최종본 독립 컴파일·전 페이지 시각 검수
 - [x] 2026-05-13 공식 `ieeeaccess.cls` 기반 새 Overleaf 패키지 생성
 
@@ -66,6 +68,7 @@
 
 - `TBD`, `Pending`, `planning estimate`, `must be replaced` 표현을 제출본에서 전부 제거한다.
 - Abstract, Table 1, Figure 1, RQ1, Discussion, Limitations, Conclusion의 수치와 해석을 대조한다.
+- 최신 architecture PDF와 Appendix/본문 수정본을 공식 `ieeeaccess.cls` 패키지에 최종 동기화한다.
 - 최종 LaTeX 소스와 PDF 내용이 일치하는지 확인한다.
 - 약어 첫 정의, 표·그림 본문 인용, 참고문헌 번호, 잘린 표/그림을 다시 검수한다.
 - 최종 패키지를 새 Overleaf 프로젝트에 올리고 pdfLaTeX로 clean compile한다.
@@ -99,13 +102,14 @@
 2. Table 1, Figure 1, RQ1 및 관련 해석에 실측치 반영
 3. 저자/소속/ORCID/교신저자/약력/연구비/Acknowledgment 입력
 4. AI 사용, 윤리, 데이터·코드 공개 문구 확정
-5. 전체 수치·용어·인용·약어·레이아웃 감사
-6. IEEE Access 공식 템플릿 Overleaf에서 pdfLaTeX clean compile
-7. LaTeX source, PDF, supplementary artifact 최종 동기화 후 제출
+5. 최신 본문·architecture·Appendix를 공식 IEEE Access 패키지에 동기화
+6. 전체 수치·용어·인용·약어·레이아웃 감사
+7. IEEE Access 공식 템플릿 Overleaf에서 pdfLaTeX clean compile
+8. LaTeX source, PDF, supplementary artifact 최종 동기화 후 제출
 
 ## 6. 당장 제출해도 되는지에 대한 최종 판정
 
-현재 프레임워크, 라우팅, Phase 2, 통계, 오류 감사, prompt 부록, reference audit은 완성단계다. 다만 실측 분류 비교가 없고 저자 정보가 빈 현재 본은 **교수 검토용 완성본**이지 **즉시 제출본**은 아니다. 3절의 필수 항목을 완료하면 IEEE Access 1차 제출 가능 상태로 판정한다.
+현재 프레임워크, 라우팅, Phase 2, 통계, 오류 감사, prompt 부록, reference audit, 최종 architecture 도식은 완성단계다. 다만 실측 분류 비교가 없고 저자 정보가 빈 현재 본은 **교수 검토용 완성본**이지 **즉시 제출본**은 아니다. 3절의 필수 항목을 완료하면 IEEE Access 1차 제출 가능 상태로 판정한다.
 
 ## 7. 공식 지침
 
