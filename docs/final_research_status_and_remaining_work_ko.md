@@ -1,6 +1,6 @@
 # 최종 연구 진행 현황 및 남은 작업
 
-최종 갱신: 2026-08-29
+최종 갱신: 2026-08-31
 
 용도: 공동연구자 회의 및 IEEE Access 제출 준비
 
@@ -26,6 +26,8 @@
 - Routing 오류 농축, routed-only accuracy, conditional correction opportunity 분석 완료
 - 최종 confidence-guided two-phase architecture 도식 완성 및 원고 삽입 완료
 - 편집 가능한 Draw.io 원본, publication-ready 벡터 PDF, 재현 안내를 GitHub `main`에 보존 완료
+- Related Work, DistilBERT, Mistral, Llama 2, threshold fallback, computing environment, Results bridge를 문장 단위로 재검토하고 논리·재현성·비교 범위를 보강
+- 원고 보강의 변경 전후 문장, 판단 근거, 실측/placeholder 경계, 3-seed 결과 반영 절차를 공동연구 상세 기록으로 정리
 - 최종 논문 초안, Appendix, 재현 코드, 결과 CSV/JSON, Overleaf ZIP 정리 완료
 
 ### 1.2 현재 핵심 결론
@@ -233,7 +235,18 @@
 - 교수 검토용 최신 원고와 공식 제출용 소스 사이에 수치, 그림 번호, caption, reference 차이가 없는지 확인한다.
 - Overleaf에서 pdfLaTeX clean compile 후 전 페이지를 다시 검수한다.
 
-### 6.6 필수: 투고 메타데이터
+### 6.6 완료: 원고 논리 및 모델 설명 감사
+
+- Related Work에서 calibration, selective prediction, cascaded re-evaluation의 차이를 독립 subsection으로 정리했다.
+- DistilBERT의 역사적 distillation 수식은 현재 연구에서 실행하지 않는 절차이므로 제거하고, exact checkpoint, full fine-tuning, calibration 및 routing 역할을 중심으로 다시 썼다.
+- Mistral과 Llama 2는 frozen-backbone comparator라는 범위와 LoRA/QLoRA 미사용을 명시하여 exhaustive 7B optimization 비교로 오해되지 않도록 했다.
+- Llama 2 Phase 1 base comparator와 Phase 2 chat reasoner의 역할을 분리했다.
+- threshold fallback은 notebook smoke test 전용이고 reported paper-scale experiment에서는 사용되지 않았음을 명시했다.
+- Phase 2 exact checkpoints와 주요 generation settings를 Computing Environment에 추가했다.
+- 중복 Results 문단을 bridge paragraph로 줄이고 상세 수치는 Reddit/Mixed subsection에 집중시켰다.
+- 전체 변경 전후 문장과 공동 검토 항목은 `docs/manuscript_logic_and_model_description_revision_2026_08_31_ko.md`에 기록했다.
+
+### 6.7 필수: 투고 메타데이터
 
 - 저자 순서와 affiliation
 - Corresponding author
@@ -242,7 +255,7 @@
 - Data/code availability
 - Keywords와 cover letter
 
-### 6.7 권장 보강
+### 6.8 권장 보강
 
 - Frozen prompt를 독립 routed subset 또는 outer fold에서 한 번 확인
 - Mixed Emotion 및 대표 Reddit 사례에 대한 복수 연구자 또는 전문가 검토
@@ -295,10 +308,13 @@
 1. `docs/final_research_status_and_remaining_work_ko.md`
 
    현재 결과, 결론, 남은 작업, 회의 결정사항을 확인하는 기준 문서
-2. `docs/final_end_to_end_workflow_ko.md`
+2. `docs/manuscript_logic_and_model_description_revision_2026_08_31_ko.md`
+
+   최신 원고의 문장 전후 비교, 수정 근거, 모델 비교 범위, 3-seed 결과 반영 절차
+3. `docs/final_end_to_end_workflow_ko.md`
 
    Final notebook 실행 순서와 Google Drive 산출물 위치
-3. `docs/ieee_access_submission_readiness_checklist_ko.md`
+4. `docs/ieee_access_submission_readiness_checklist_ko.md`
 
    실제 투고 직전 점검표
 
