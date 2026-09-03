@@ -60,20 +60,20 @@
 
 DistilBERT가 이 사전 명시 프로토콜에서 가장 높은 평균 성능을 보여 operational Phase 1 모델로 채택되었다. 이 결과는 fully optimized 7B 모델 전체에 대한 보편적 우위 주장이 아니다. 7B 비교기는 backbone을 동결하고 4,096 x 3, bias-free 분류 헤드 12,288개 파라미터만 학습한 bounded comparator다.
 
-### 3.3 선택된 학습 설정
+### 3.3 Sweep에서 선택된 학습 설정
 
-| Model | Selected learning rate | Batch | Epochs | Weight decay | Trainable regime |
-|---|---:|---:|---:|---:|---|
-| DistilBERT matched comparison | 5.717e-5 | 32 | 2 | 1e-3 | Full fine-tuning, seeds 42/43/44 |
-| Mistral 7B | 2.292e-4 | 16 | 2 | 1e-2 | Frozen backbone, linear probe |
-| Llama 2 7B | 2.824e-4 | 64 | 3 | 1e-4 | Frozen backbone, linear probe |
-| DistilBERT operational checkpoint | 8.996e-5 | 32 | 3 | 1e-2 | Fixed downstream checkpoint |
+| Model | Training | Learning rate | Batch | Epochs | Weight decay |
+|---|---|---:|---:|---:|---:|
+| DistilBERT | Full fine-tuning | 5.717e-5 | 32 | 2 | 1e-3 |
+| Mistral 7B | Linear probe | 2.292e-4 | 16 | 2 | 1e-2 |
+| Llama 2 7B | Linear probe | 2.824e-4 | 64 | 3 | 1e-4 |
 
 - Llama 2와 Mistral은 공통으로 learning rate `1e-4--1e-2`, batch `[16, 32, 64]`, epochs `[2, 3]`, weight decay `[1e-2, 1e-3, 1e-4]`에서 Bayesian 4회 탐색했다.
 - Mistral은 탐색 후보 중 epoch 2가, Llama 2는 epoch 3이 validation macro F1 기준으로 선택된 것이다.
 - 두 7B 모델의 서로 다른 최적 batch/epoch는 비교 결함이 아니라 동일 탐색 규칙을 모델별로 적용한 결과다.
 - 모델 선택 근거는 이 프로토콜에서의 정확도와 실제 운영 규모를 함께 고려한 것이다. 7B 모델의 최대 성능 자체를 규명하는 것이 본 연구의 목적은 아니다.
-- 3-seed 비교 설정과 operational checkpoint는 목적이 다르다. 전자는 모델 선택의 seed 안정성을 확인하고, 후자는 이미 고정된 calibration/routing/Phase 2 파이프라인을 재현한다. Operational accuracy 96.69%는 matched DistilBERT 95% CI [96.60, 97.20]% 안에 있다.
+- 표의 값은 validation macro F1을 최대화한 4회 Bayesian sweep에서 선택된 설정이며, `Epochs`는 각 모델에 처음부터 고정한 값이 아니라 후보 `[2, 3]` 중 선택된 학습 예산이다. 각 선택 설정은 seeds 42/43/44로 평가했다.
+- 3-seed 비교 설정과 operational checkpoint는 목적이 다르다. 전자는 모델 선택의 seed 안정성을 확인하고, 후자는 이미 고정된 calibration/routing/Phase 2 파이프라인을 재현한다. 이 구분을 과도하게 표의 별도 모델 행으로 만들지 않고, 원고 Appendix 표 아래 provenance note에서 operational 설정(`8.996e-5`, batch 32, 3 epochs, weight decay `1e-2`)과 accuracy 96.69%를 설명한다. 이 값은 matched DistilBERT 95% CI [96.60, 97.20]% 안에 있다.
 
 ## 4. Calibration과 routing 결과
 
@@ -166,6 +166,11 @@ Threshold는 test 또는 Phase 2 결과를 보고 고른 값이 아니다. Calib
 - Reference 46건 중 39건을 full text 또는 동등한 source로 감사했다. `[9], [20], [22], [27], [31], [38], [45]`는 초록·서지 기반 상태이며 `[22]`, `[31]`이 추가 전문 확인 우선순위다.
 - LaTeX reference, table/figure width, float/page break, caption spacing, Appendix 배치와 전 페이지 시각 QA를 수행했다.
 - 교수 검토용 PDF, Overleaf ZIP과 SHA-256 manifest를 생성했다.
+- 본문 Table I을 순수 성능 비교표로 정리해 모델명, accuracy와 macro F1의 `mean +/- SD` 및 95% CI만 남겼다.
+- Full fine-tuning/linear probe, learning rate, batch, selected epochs, weight decay는 Appendix의 단일 compact 표로 이동했다.
+- Operational DistilBERT를 Appendix 설정 표의 네 번째 모델처럼 제시하지 않고, downstream provenance를 설명하는 표 아래 note로 분리했다.
+- 본문 문단과 Figure caption에서 같은 학습 방식 설명이 반복되지 않도록 정리하고 Appendix를 참조하도록 연결했다.
+- 최신 IEEE Access 교수 검토본 `v4`를 Tectonic으로 재컴파일해 30페이지 전체 생성, Table I과 Appendix 설정 표의 폭·줄바꿈·잘림을 확인했고 Overleaf ZIP의 source 일치와 압축 무결성을 검증했다.
 
 ## 8. 제출 전 남은 작업
 

@@ -17,6 +17,8 @@
 - Mixed Emotion 300건 중 44건을 routing했으며 Llama 3 end-to-end accuracy는 87.33%(+6.00 pp, net +18)다.
 - Paired bootstrap, exact McNemar, Holm correction, accepted high-confidence error audit를 완료했다.
 - 최종 architecture vector/Draw.io와 IEEE Access 원고 패키지를 정리했다.
+- 본문 Phase 1 표는 성능 결과에 집중하도록 단순화하고, 모델별 학습 설정은 Appendix의 compact 표와 provenance note로 분리했다.
+- 2026-09-03 교수 검토본 `v4`를 30페이지로 재컴파일했으며 표 폭, 줄바꿈, Overleaf source 일치와 ZIP 무결성을 확인했다.
 
 ## 남은 필수 작업
 
