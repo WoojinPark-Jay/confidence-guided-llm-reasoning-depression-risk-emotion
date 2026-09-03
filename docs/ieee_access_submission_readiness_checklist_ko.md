@@ -41,7 +41,7 @@ Phase 1 분류기 실측 placeholder는 제거되었으며, 남은 작업은 새
 
 ## 3. 최종 실측값 동기화 확인
 
-- [x] DistilBERT: accuracy/macro F1 `96.70 +/- 0.10%`
+- [x] DistilBERT: accuracy/macro F1 `96.90 +/- 0.12%`
 - [x] Mistral 7B linear probe: accuracy/macro F1 `95.56 +/- 0.11%`
 - [x] Llama 2 7B linear probe: accuracy/macro F1 `95.09 +/- 0.06%`
 - [x] Operational DistilBERT: held-out accuracy `96.69%`, `T*=1.7706`, `tau*=0.70`

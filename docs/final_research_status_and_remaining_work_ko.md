@@ -54,7 +54,7 @@
 
 | Phase 1 model | Training regime | Accuracy, mean +/- SD | Macro F1, mean +/- SD | 95% CI, accuracy |
 |---|---|---:|---:|---:|
-| DistilBERT | Full fine-tuning | **96.70 +/- 0.10%** | **96.70 +/- 0.10%** | [96.45, 96.95] |
+| DistilBERT | Full fine-tuning | **96.90 +/- 0.12%** | **96.90 +/- 0.12%** | [96.60, 97.20] |
 | Mistral 7B | Frozen backbone + linear probe | 95.56 +/- 0.11% | 95.56 +/- 0.11% | [95.29, 95.83] |
 | Llama 2 7B | Frozen backbone + linear probe | 95.09 +/- 0.06% | 95.09 +/- 0.06% | [94.94, 95.24] |
 
@@ -64,14 +64,16 @@ DistilBERT가 이 사전 명시 프로토콜에서 가장 높은 평균 성능�
 
 | Model | Selected learning rate | Batch | Epochs | Weight decay | Trainable regime |
 |---|---:|---:|---:|---:|---|
-| DistilBERT operational checkpoint | 8.996e-5 | 32 | 3 | 1e-2 | Full fine-tuning |
+| DistilBERT matched comparison | 5.717e-5 | 32 | 2 | 1e-3 | Full fine-tuning, seeds 42/43/44 |
 | Mistral 7B | 2.292e-4 | 16 | 2 | 1e-2 | Frozen backbone, linear probe |
 | Llama 2 7B | 2.824e-4 | 64 | 3 | 1e-4 | Frozen backbone, linear probe |
+| DistilBERT operational checkpoint | 8.996e-5 | 32 | 3 | 1e-2 | Fixed downstream checkpoint |
 
 - Llama 2와 Mistral은 공통으로 learning rate `1e-4--1e-2`, batch `[16, 32, 64]`, epochs `[2, 3]`, weight decay `[1e-2, 1e-3, 1e-4]`에서 Bayesian 4회 탐색했다.
 - Mistral은 탐색 후보 중 epoch 2가, Llama 2는 epoch 3이 validation macro F1 기준으로 선택된 것이다.
 - 두 7B 모델의 서로 다른 최적 batch/epoch는 비교 결함이 아니라 동일 탐색 규칙을 모델별로 적용한 결과다.
 - 모델 선택 근거는 이 프로토콜에서의 정확도와 실제 운영 규모를 함께 고려한 것이다. 7B 모델의 최대 성능 자체를 규명하는 것이 본 연구의 목적은 아니다.
+- 3-seed 비교 설정과 operational checkpoint는 목적이 다르다. 전자는 모델 선택의 seed 안정성을 확인하고, 후자는 이미 고정된 calibration/routing/Phase 2 파이프라인을 재현한다. Operational accuracy 96.69%는 matched DistilBERT 95% CI [96.60, 97.20]% 안에 있다.
 
 ## 4. Calibration과 routing 결과
 

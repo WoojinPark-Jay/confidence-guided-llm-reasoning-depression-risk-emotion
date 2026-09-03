@@ -9,9 +9,10 @@
 ## 현재 결론
 
 - DistilBERT, Mistral 7B, Llama 2 7B의 동일 12,000건 held-out test, 3-seed Phase 1 비교를 완료했다.
-- Accuracy/macro F1은 DistilBERT `96.70 +/- 0.10%`, Mistral `95.56 +/- 0.11%`, Llama 2 `95.09 +/- 0.06%`다.
+- Accuracy/macro F1은 DistilBERT `96.90 +/- 0.12%`, Mistral `95.56 +/- 0.11%`, Llama 2 `95.09 +/- 0.06%`다.
 - Mistral과 Llama 2는 frozen backbone + 12,288-parameter linear probe이고, DistilBERT는 full fine-tuning이다.
 - 고정 DistilBERT operational checkpoint는 Reddit 96.69%, `T*=1.7706`, `alpha=0.05`, `tau*=0.70`이다.
+- 96.90%는 3-seed 모델 비교 평균이고, 96.69%는 calibration/routing/Phase 2에 계속 사용한 사전 고정 checkpoint다. 후자는 전자의 95% CI [96.60, 97.20]% 안에 있다.
 - Reddit 12,000건 중 171건을 routing했으며 Llama 3 end-to-end accuracy는 96.94%(+0.25 pp, net +30)다.
 - Mixed Emotion 300건 중 44건을 routing했으며 Llama 3 end-to-end accuracy는 87.33%(+6.00 pp, net +18)다.
 - Paired bootstrap, exact McNemar, Holm correction, accepted high-confidence error audit를 완료했다.
