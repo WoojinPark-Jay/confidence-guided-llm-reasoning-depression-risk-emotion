@@ -1,0 +1,21 @@
+{
+  "pages": 29,
+  "source_comparison": "2026-09-09 -> 2026-09-11",
+  "changed_paragraph_groups": 10,
+  "unchanged_operational_9669_occurrences": 11,
+  "downstream_tables_unchanged": true,
+  "downstream_figures_and_drawio_unchanged": true,
+  "bibliography_unchanged": true,
+  "table_and_figure_numbers_preserved": true,
+  "phase1_figure_text_selectable": true,
+  "undefined_references": false,
+  "overfull_warnings": [
+    "Overfull \\hbox (505.12177pt too wide) has occurred while \\output is active",
+    "Overfull \\hbox (9.2679pt too wide) in paragraph at lines 50--50",
+    "Overfull \\vbox (1.15376pt too high) has occurred while \\output is active []",
+    "Overfull \\vbox (1.18155pt too high) has occurred while \\output is active []"
+  ],
+  "pdf_sha256": "f5c1b01bbc1ecaf1b05efefdfbdb263193648c9d5fcc55d4c396c192bf1d0c65",
+  "visual_review": "All 29 pages reviewed as contact sheets; final pages 12 and 21 re-rendered and inspected at higher resolution. No clipping or overlap observed in revised tables/figure.",
+  "known_template_warnings_retained": true
+}

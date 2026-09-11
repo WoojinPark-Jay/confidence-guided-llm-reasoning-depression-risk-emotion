@@ -6,6 +6,14 @@ The project studies a confidence-guided two-phase framework for research-oriente
 
 ## Pipeline Stages
 
+### Latest Manuscript Update: 2026-09-11
+
+이번 단계에서는 공동연구의 최종 Phase 1 분류 성능과 A100 GPU 효율성 측정을 원고, Table 1, Figure 2 및 부록에 반영했습니다. 기존 operational checkpoint와 downstream 결과는 유지했으며, 진행 중인 별도 9,000건 추가 평가 결과는 포함하지 않았습니다. 아래 자료가 이번 단계의 공동 검토 기준이며, 이전 현황 문서는 해당 작성일의 기록입니다.
+
+- [공동연구 검토 안내 및 논문 파일](reports/paper_revision_20260911/README.md)
+- [변경 요약과 반영 근거](reports/paper_revision_20260911/REVISION_REPORT_KO.md)
+- [실제 문장·표 수정 전후 전체 비교](reports/paper_revision_20260911/SENTENCE_CHANGES_KO.md)
+
 ### Stage 0. Subreddit Source Data Preparation
 
 Notebook:
