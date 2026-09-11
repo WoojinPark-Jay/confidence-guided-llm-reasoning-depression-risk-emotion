@@ -1,0 +1,28 @@
+{
+  "pages": 30,
+  "original_tables_unchanged": true,
+  "figures_unchanged": true,
+  "bibliography_unchanged": true,
+  "additional_tables": 1,
+  "new_horizontal_overflow": 0,
+  "minor_vertical_warnings": [
+    "Overfull \\vbox (1.61014pt too high) has occurred while \\output is active []"
+  ],
+  "retained_template_warnings": [
+    "Overfull \\hbox (505.12177pt too wide) has occurred while \\output is active",
+    "Overfull \\hbox (9.2679pt too wide) in paragraph at lines 50--50"
+  ],
+  "undefined_references": 0,
+  "visual_review": "All current pages inspected in rendered contact sheets; final appendix inspected separately. No clipping or overlapping text observed. Known template and minor vertical box warnings retained.",
+  "review_pages": [
+    1,
+    2,
+    10,
+    11,
+    15,
+    17,
+    18,
+    30
+  ],
+  "pdf_sha256": "b9827380a8acadbb50e4b83b4d705d9b66059bf62acc7565f8f79a3a23595414"
+}
