@@ -1,0 +1,122 @@
+{
+  "checks": "passed",
+  "scope": "All 9000 prediction rows; generation traces and call timings not locally re-aggregated",
+  "summary": {
+    "n": 9000,
+    "routed": 137,
+    "phase1_errors": 294,
+    "captured_errors": 67,
+    "coverage": 0.9847777777777778,
+    "error_capture": 0.22789115646258504,
+    "selective_risk": 0.025612095227349654,
+    "probability_max_absolute_difference": 1.373727676057257e-07,
+    "bundle_manifest_sha256": "ec109e76ab8d6e9c7fcebf9adf20da30b4bfc6019a8b8b0dcf5d6db0f5666012"
+  },
+  "models": [
+    {
+      "model": "phase1_label",
+      "accuracy": 0.9673333333333334,
+      "macro_f1": 0.9673461409742229,
+      "class_f1": {
+        "Depression": 0.9586666666666667,
+        "Neutral": 0.9881528449858168,
+        "Happy": 0.9552189112701848
+      },
+      "confusion_matrix": [
+        [
+          2876,
+          11,
+          113
+        ],
+        [
+          14,
+          2961,
+          25
+        ],
+        [
+          110,
+          21,
+          2869
+        ]
+      ],
+      "corrected": 0,
+      "introduced": 0,
+      "routed_accuracy": 0.5109489051094891,
+      "net": 0
+    },
+    {
+      "model": "llama2",
+      "accuracy": 0.969,
+      "macro_f1": 0.968998091979281,
+      "class_f1": {
+        "Depression": 0.9622956289622956,
+        "Neutral": 0.9853382205931356,
+        "Happy": 0.9593604263824117
+      },
+      "confusion_matrix": [
+        [
+          2884,
+          17,
+          99
+        ],
+        [
+          18,
+          2957,
+          25
+        ],
+        [
+          92,
+          28,
+          2880
+        ]
+      ],
+      "corrected": 41,
+      "introduced": 26,
+      "routed_accuracy": 0.6204379562043796,
+      "net": 15,
+      "ci_pp": [
+        -0.011111111111111112,
+        0.3447222222222182
+      ],
+      "exact_p": 0.08643723427347086,
+      "holm_p": 0.08643723427347086
+    },
+    {
+      "model": "llama3",
+      "accuracy": 0.9703333333333334,
+      "macro_f1": 0.9703217439581627,
+      "class_f1": {
+        "Depression": 0.9635573386827148,
+        "Neutral": 0.9866888519134775,
+        "Happy": 0.9607190412782957
+      },
+      "confusion_matrix": [
+        [
+          2882,
+          18,
+          100
+        ],
+        [
+          13,
+          2965,
+          22
+        ],
+        [
+          87,
+          27,
+          2886
+        ]
+      ],
+      "corrected": 36,
+      "introduced": 9,
+      "routed_accuracy": 0.708029197080292,
+      "net": 27,
+      "ci_pp": [
+        0.15555555555555556,
+        0.4555555555555556
+      ],
+      "exact_p": 6.57466324582856e-05,
+      "holm_p": 0.0001314932649165712
+    }
+  ]
+}

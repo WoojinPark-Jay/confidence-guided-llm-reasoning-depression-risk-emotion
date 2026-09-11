@@ -1,0 +1,31 @@
+{
+  "pages": 31,
+  "original_tables_unchanged": true,
+  "figures_unchanged": true,
+  "bibliography_unchanged": true,
+  "additional_tables": 1,
+  "new_horizontal_overflow": 0,
+  "minor_vertical_warnings": [
+    "Overfull \\vbox (1.37732pt too high) has occurred while \\output is active []",
+    "Overfull \\vbox (1.52364pt too high) has occurred while \\output is active []",
+    "Overfull \\vbox (0.61014pt too high) has occurred while \\output is active []"
+  ],
+  "retained_template_warnings": [
+    "Overfull \\hbox (505.12177pt too wide) has occurred while \\output is active",
+    "Overfull \\hbox (9.2679pt too wide) in paragraph at lines 50--50"
+  ],
+  "undefined_references": 0,
+  "visual_review": "All 31 pages inspected in rendered contact sheets; pages 17 and 31 inspected at 1800px. No clipping or overlapping text observed. Appendix F tables kept together on page 31. Existing template warnings and sub-2pt vertical box warnings retained.",
+  "review_pages": [
+    1,
+    2,
+    10,
+    11,
+    15,
+    17,
+    18,
+    19,
+    31
+  ],
+  "pdf_sha256": "34282c82fa4d70fabc97ffbaa076892f0fbf6ce2bb04d7ea8cb5b5306a8b7600"
+}
