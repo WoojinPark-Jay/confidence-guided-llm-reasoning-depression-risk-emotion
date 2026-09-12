@@ -75,6 +75,8 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 - `notebooks/colab/final/04_reddit_test_routed_phase2_end_to_end_final_colab.ipynb`
 - `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final Reddit primary-policy rerun with minimally sanitized original `title + selftext`
+- `notebooks/colab/final/05_1_final_unified_phase2_llama2_cot_colab.ipynb` - new unified final-run Llama 2 CoT notebook; consumes the final DistilBERT export
+- `notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb` - new unified final-run Llama 3 direct/CoT/SELF-DISCOVER comparison on identical routed IDs
 
 Prompt-policy comparison notebooks (keep baseline results unchanged):
 
@@ -112,6 +114,14 @@ Recommended final execution order:
 2. `notebooks/colab/final/02_llm_phase2_reasoning_final_colab.ipynb`
 3. `notebooks/colab/final/03_mixed_emotion_end_to_end_orchestration_final_colab.ipynb`
 4. `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb`
+
+New unified rerun order (use after the replacement final DistilBERT model exports one canonical Phase 1 CSV):
+
+1. Final DistilBERT training, calibration, routing, and `final_phase1_reasoning_input.csv` export
+2. `notebooks/colab/final/05_1_final_unified_phase2_llama2_cot_colab.ipynb`
+3. `notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb`
+
+Both 05-series notebooks require the same canonical columns: `example_id`, `target_label`, `phase1_label`, `phase1_confidence`, `phase1_routed`, and `phase2_original_text` (or raw `title` plus `selftext`). They validate unique IDs and the routed set before model loading, save each completed row to Drive, record tokens and generation time, and never replace a parse failure silently with the Phase 1 label. The Llama 3 notebook runs direct classification, CoT, and the established Final 04.5 SELF-DISCOVER prompt as separate resumable methods on the exact same routed cases.
 
 Final model-specific prompt-policy notebooks (use these for the final matched reruns; earlier notebooks remain immutable experiment records):
 
