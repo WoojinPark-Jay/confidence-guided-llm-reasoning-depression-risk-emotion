@@ -903,6 +903,9 @@ def build() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     llama2_name = "05_1_final_unified_phase2_llama2_cot_colab.ipynb"
     llama3_name = "05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb"
+    llama3_fresh_name = (
+        "05_2_final_unified_phase2_llama3_reasoning_methods_colab_20260914.ipynb"
+    )
 
     llama2_cells = [
         markdown(
@@ -959,6 +962,7 @@ def build() -> None:
     outputs = {
         llama2_name: notebook(llama2_name, llama2_cells),
         llama3_name: notebook(llama3_name, llama3_cells),
+        llama3_fresh_name: notebook(llama3_fresh_name, llama3_cells),
     }
     for name, payload in outputs.items():
         path = OUT_DIR / name

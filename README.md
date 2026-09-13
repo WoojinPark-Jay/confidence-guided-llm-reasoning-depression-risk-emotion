@@ -77,6 +77,7 @@ Final end-to-end Colab notebooks:
 - `notebooks/colab/final/04_5_reddit_test_routed_phase2_original_text_primary_final_colab.ipynb` - final Reddit primary-policy rerun with minimally sanitized original `title + selftext`
 - `notebooks/colab/final/05_1_final_unified_phase2_llama2_cot_colab.ipynb` - new unified final-run Llama 2 CoT notebook; consumes the final DistilBERT export
 - `notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb` - new unified final-run Llama 3 direct/CoT/SELF-DISCOVER comparison on identical routed IDs
+- `notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab_20260914.ipynb` - cache-safe fresh link for the same final Llama 3 run; treats `HF_TOKEN` as optional
 
 Prompt-policy comparison notebooks (keep baseline results unchanged):
 
