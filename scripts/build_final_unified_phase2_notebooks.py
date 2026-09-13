@@ -108,10 +108,9 @@ CONFIG = code(
         "unified_final/phase2"
     )
 
-    # Leave these as None until the final Phase 1 output is known. Set them afterward
-    # to make accidental input changes fail before any costly LLM inference.
-    EXPECTED_TOTAL_ROWS = None
-    EXPECTED_ROUTED_ROWS = None
+    # Frozen final Phase 1 contract. Any accidental input change fails before inference.
+    EXPECTED_TOTAL_ROWS = 12_000
+    EXPECTED_ROUTED_ROWS = 218
 
     MAX_ROWS = None  # None for the final run; use a small integer only for a smoke test.
     MAX_REASONING_CHARACTERS = 6000
@@ -179,14 +178,17 @@ DRIVE_AND_INPUT = code(
 
 
     def limit_reasoning_text(value):
-        value = str(value or "")
+        value = "" if pd.isna(value) else str(value)
         if len(value) <= MAX_REASONING_CHARACTERS:
             return value, False
         marker = "\n\n[Middle omitted to fit model context; beginning and ending preserved.]\n\n"
+        available = MAX_REASONING_CHARACTERS - len(marker)
+        head_characters = min(REASONING_HEAD_CHARACTERS, available)
+        tail_characters = min(REASONING_TAIL_CHARACTERS, available - head_characters)
         return (
-            value[:REASONING_HEAD_CHARACTERS]
+            value[:head_characters]
             + marker
-            + value[-REASONING_TAIL_CHARACTERS:],
+            + value[-tail_characters:],
             True,
         )
 
@@ -240,9 +242,17 @@ DRIVE_AND_INPUT = code(
         if not frame["phase1_confidence"].between(0, 1).all():
             raise ValueError("phase1_confidence must be between 0 and 1.")
 
+        if "phase2_input_was_truncated" in frame.columns:
+            previously_truncated = (
+                frame["phase2_input_was_truncated"].fillna(False).map(normalize_bool)
+            )
+        else:
+            previously_truncated = pd.Series(False, index=frame.index)
         limited = frame["phase2_original_text"].map(limit_reasoning_text)
         frame["phase2_original_text"] = limited.map(lambda pair: pair[0])
-        frame["phase2_input_was_truncated"] = limited.map(lambda pair: pair[1])
+        frame["phase2_input_was_truncated"] = (
+            previously_truncated | limited.map(lambda pair: pair[1])
+        )
 
         routed = frame[frame["phase1_routed"]].copy()
         if routed.empty:
@@ -894,7 +904,7 @@ def build() -> None:
 
             This notebook consumes the final DistilBERT Phase 1 export and runs the established Llama 2 CoT re-evaluator on the routed cases only. It keeps the final model-specific prompt, minimally sanitized original text, exact-label parsing, row-level resume, token/time logging, and end-to-end evaluation.
 
-            The notebook does not contain the former `12,000 rows / 171 routed rows / tau=0.70` assumptions. After the new final Phase 1 run is frozen, set `EXPECTED_TOTAL_ROWS` and `EXPECTED_ROUTED_ROWS` in the configuration cell.
+            The frozen final input contract is 12,000 test rows with 218 routed cases. The notebook checks both counts before loading the LLM so an accidental input substitution cannot trigger a costly run.
             """
         ),
         SETUP, IMPORTS,
