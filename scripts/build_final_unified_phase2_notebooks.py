@@ -133,12 +133,19 @@ DRIVE_AND_INPUT = code(
     try:
         from google.colab import drive, userdata
         drive.mount("/content/drive")
-        hf_token = userdata.get("HF_TOKEN")
-        if hf_token:
-            os.environ["HF_TOKEN"] = hf_token
-            os.environ["HUGGINGFACE_HUB_TOKEN"] = hf_token
     except Exception as exc:
         raise RuntimeError("Google Drive must be mounted before the final run.") from exc
+
+    # Optional for the public NousResearch checkpoints used below. A token can
+    # still be supplied through Colab Secrets to reduce Hugging Face rate limits.
+    try:
+        hf_token = userdata.get("HF_TOKEN")
+    except Exception:
+        hf_token = None
+        print("HF_TOKEN is not set; continuing with public Hugging Face access.")
+    if hf_token:
+        os.environ["HF_TOKEN"] = hf_token
+        os.environ["HUGGINGFACE_HUB_TOKEN"] = hf_token
 
     DRIVE_OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     if not PHASE1_INPUT_PATH.exists():
