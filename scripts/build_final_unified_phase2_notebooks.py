@@ -408,9 +408,22 @@ MODEL_HELPERS = code(
     def parse_final_label(output):
         text = str(output)
         match = re.search(
-            r"Final label\s*:\s*(Depression|Neutral|Happy)", text, flags=re.I
+            r"Final\s+label\s*\*{0,2}\s*:\s*\*{0,2}\s*"
+            r"(Depression|Neutral|Happy)\b",
+            text,
+            flags=re.I,
         )
-        return normalize_label(match.group(1)) if match else np.nan
+        if match:
+            return normalize_label(match.group(1))
+
+        # Some models return a clear terminal label without the requested prefix.
+        # Recover it only when the final-stage answer contains one unique allowed
+        # label; refusals and outputs mentioning multiple labels remain unparsed.
+        labels = {
+            normalize_label(label)
+            for label in re.findall(r"\b(Depression|Neutral|Happy)\b", text, flags=re.I)
+        }
+        return next(iter(labels)) if len(labels) == 1 else np.nan
 
 
     def load_results(path):
@@ -450,13 +463,17 @@ MODEL_HELPERS = code(
         )
         merged["final_label"] = merged["phase1_label"]
         routed_mask = merged["phase1_routed"]
-        merged.loc[routed_mask, "final_label"] = merged.loc[routed_mask, prediction_col]
+        parsed_routed_mask = routed_mask & merged[prediction_col].isin(LABELS)
+        merged.loc[parsed_routed_mask, "final_label"] = merged.loc[
+            parsed_routed_mask, prediction_col
+        ]
+        merged["phase2_parse_success"] = ~routed_mask | parsed_routed_mask
+        merged["phase2_fallback_to_phase1"] = routed_mask & ~parsed_routed_mask
         merged["phase1_correct"] = merged["phase1_label"].eq(merged["target_label"])
         merged["final_correct"] = merged["final_label"].eq(merged["target_label"])
         corrected = int((routed_mask & ~merged["phase1_correct"] & merged["final_correct"]).sum())
         introduced = int((routed_mask & merged["phase1_correct"] & ~merged["final_correct"]).sum())
         parsed = routed_results[prediction_col].isin(LABELS)
-        evaluation_predictions = merged["final_label"].fillna("PARSE_FAILURE")
         summary = {
             "method": method,
             "scope": scope,
@@ -467,7 +484,7 @@ MODEL_HELPERS = code(
             "phase1_accuracy": float(merged["phase1_correct"].mean()),
             "end_to_end_accuracy": float(merged["final_correct"].mean()),
             "end_to_end_macro_f1": float(
-                f1_score(merged["target_label"], evaluation_predictions, labels=LABELS, average="macro")
+                f1_score(merged["target_label"], merged["final_label"], labels=LABELS, average="macro")
             ),
             "corrected": corrected,
             "introduced": introduced,
@@ -481,29 +498,27 @@ MODEL_HELPERS = code(
 LLAMA2_PROMPT = code(
     r'''
     LLAMA2_MODEL_NAME = "NousResearch/Llama-2-7b-chat-hf"
-    LLAMA2_OUTPUT_DIR = DRIVE_OUTPUT_ROOT / "llama2_cot"
+    LLAMA2_OUTPUT_DIR = DRIVE_OUTPUT_ROOT / "llama2_cot_matched_llama3"
     LLAMA2_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    LLAMA2_RESULTS_PATH = LLAMA2_OUTPUT_DIR / "llama2_cot_results.csv"
-    LLAMA2_PROMPT_VERSION = "final-llama2-cot-v2-original-text"
-    MAX_NEW_TOKENS_COT = 256
+    LLAMA2_RESULTS_PATH = LLAMA2_OUTPUT_DIR / "llama2_cot_matched_results.csv"
+    LLAMA2_PROMPT_VERSION = "final-llama2-cot-v3-matched-llama3"
+    MAX_NEW_TOKENS_COT = 512
 
-    LLAMA2_COT_REQUESTS = [
-        "You are an expert annotator for research-oriented, non-clinical emotion classification. Assist in analyzing emotions in text data. Do not make a clinical diagnosis, infer a medical condition, or provide treatment advice.",
-        "I will first provide a piece of text. Independently assess its emotional content before comparing it with a Phase 1 AI-generated label. The only permitted labels are Depression, Neutral, and Happy.",
-        """Independently analyze the text using the classification policy below. State the dominant emotion and the textual evidence before considering the Phase 1 label.
-
-    Classification Policy:
+    LLAMA2_CLASSIFICATION_POLICY = """Classification Policy:
     - Depression: unresolved sadness, hopelessness, emotional distress, emotional exhaustion, withdrawal, self-devaluation, or a clearly negative overall trajectory is dominant.
     - Neutral: the text is mainly factual, routine, balanced, informational, or emotionally mild, without a dominant positive or distress-related state.
     - Happy: happiness, relief, gratitude, accomplishment, fulfillment, or a clearly positive resolution is dominant.
 
-    For every text, assess the dominant emotional meaning of the full text. Do not decide from isolated words, brief cues, or a simple average of positive and negative expressions. When the text contains multiple emotional cues or a clear temporal emotional shift, additionally consider the overall trajectory and final takeaway. Do not assume a trajectory when the text does not clearly support one. Do not select Neutral merely because multiple cues are present. A brief positive cue does not make the text Happy when unresolved distress remains dominant, and a brief negative cue does not make the text Depression when the text clearly resolves into sustained relief or positive resolution.
+    Assess the dominant emotional meaning of the full text. For mixed or shifting emotions, consider the overall trajectory and final takeaway. Do not decide from isolated words, and do not make clinical diagnoses or treatment recommendations."""
 
-    Use only Depression, Neutral, or Happy for your provisional label.""",
+    LLAMA2_COT_REQUESTS = [
+        "You are an expert annotator for research-oriented, non-clinical emotion classification. Assist in analyzing emotions in text data. Do not make a clinical diagnosis, infer a medical condition, or provide treatment advice.",
+        "I will first provide a piece of text. Independently assess its emotional content before comparing it with a Phase 1 AI-generated label. The only permitted labels are Depression, Neutral, and Happy.",
+        "Independently analyze the text. State the dominant emotion and textual evidence before considering the Phase 1 label.\n\n{policy}\n\nUse only Depression, Neutral, or Happy for your provisional label.",
         """The Phase 1 classifier predicted: {phase1_label}
 
     Compare that prediction with your independent assessment. Confirm it only when it is supported by the dominant emotional meaning of the full text. Otherwise, explain the correction using textual evidence only.""",
-        "Provide the final Phase 2 decision. Use only one exact label: Depression, Neutral, or Happy. Do not use synonyms or additional labels such as Sad, Positive, Mixed, Anxiety, or Other. Do not provide a percentage breakdown.\n\nEnd the response with exactly one line: Final label: [label]",
+        "Provide the final Phase 2 decision. Use only one exact label: Depression, Neutral, or Happy. Do not use synonyms or additional labels. End the response with exactly one line: Final label: [label]",
     ]
 
 
@@ -518,7 +533,7 @@ LLAMA2_PROMPT = code(
         ack = chat_generate(
             tokenizer, model, messages, max_new_tokens=MAX_NEW_TOKENS_COT,
             seed=stable_seed(example_id, "llama2_cot", "ack"),
-            do_sample=True, temperature=0.6, top_p=0.9,
+            do_sample=False,
         )
         stages.append(ack)
         messages.append({"role": "assistant", "content": ack["text"]})
@@ -527,16 +542,21 @@ LLAMA2_PROMPT = code(
         text_response = chat_generate(
             tokenizer, model, messages, max_new_tokens=MAX_NEW_TOKENS_COT,
             seed=stable_seed(example_id, "llama2_cot", "text_response"),
-            do_sample=True, temperature=0.6, top_p=0.9,
+            do_sample=False,
         )
         stages.append(text_response)
         messages.append({"role": "assistant", "content": text_response["text"]})
-        messages.append({"role": "user", "content": LLAMA2_COT_REQUESTS[2]})
+        messages.append({
+            "role": "user",
+            "content": LLAMA2_COT_REQUESTS[2].format(
+                policy=LLAMA2_CLASSIFICATION_POLICY
+            ),
+        })
 
         independent = chat_generate(
             tokenizer, model, messages, max_new_tokens=MAX_NEW_TOKENS_COT,
             seed=stable_seed(example_id, "llama2_cot", "independent"),
-            do_sample=True, temperature=0.6, top_p=0.9,
+            do_sample=False,
         )
         stages.append(independent)
         messages.append({"role": "assistant", "content": independent["text"]})
@@ -545,7 +565,7 @@ LLAMA2_PROMPT = code(
         comparison = chat_generate(
             tokenizer, model, messages, max_new_tokens=MAX_NEW_TOKENS_COT,
             seed=stable_seed(example_id, "llama2_cot", "comparison"),
-            do_sample=True, temperature=0.6, top_p=0.9,
+            do_sample=False,
         )
         stages.append(comparison)
         messages.append({"role": "assistant", "content": comparison["text"]})
@@ -554,7 +574,7 @@ LLAMA2_PROMPT = code(
         final = chat_generate(
             tokenizer, model, messages, max_new_tokens=MAX_NEW_TOKENS_COT,
             seed=stable_seed(example_id, "llama2_cot", "final"),
-            do_sample=True, temperature=0.6, top_p=0.9,
+            do_sample=False,
         )
         stages.append(final)
         return {
@@ -607,10 +627,10 @@ LLAMA2_RUN = code(
     if len(results) != len(routed_df) or set(results["example_id"].astype(str)) != set(routed_df["example_id"]):
         raise ValueError("Llama 2 result IDs do not exactly match the routed input IDs.")
     end_to_end, summary = summarize_method(
-        phase1_df, results, "llama2_final_label", "Llama 2 CoT"
+        phase1_df, results, "llama2_final_label", "Llama 2 CoT matched"
     )
-    end_to_end.to_csv(LLAMA2_OUTPUT_DIR / "llama2_cot_end_to_end_predictions.csv", index=False)
-    pd.DataFrame([summary]).to_csv(LLAMA2_OUTPUT_DIR / "llama2_cot_summary.csv", index=False)
+    end_to_end.to_csv(LLAMA2_OUTPUT_DIR / "llama2_cot_matched_end_to_end_predictions.csv", index=False)
+    pd.DataFrame([summary]).to_csv(LLAMA2_OUTPUT_DIR / "llama2_cot_matched_summary.csv", index=False)
     display(pd.DataFrame([summary]))
     display(results[["example_id", "target_label", "phase1_label", "llama2_final_label"]].head())
     print("Saved:", LLAMA2_OUTPUT_DIR)
@@ -902,6 +922,9 @@ LLAMA3_QA = code(
 def build() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     llama2_name = "05_1_final_unified_phase2_llama2_cot_colab.ipynb"
+    llama2_matched_name = (
+        "05_1_final_unified_phase2_llama2_cot_matched_colab_20260914.ipynb"
+    )
     llama3_name = "05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb"
     llama3_fresh_name = (
         "05_2_final_unified_phase2_llama3_reasoning_methods_colab_20260914.ipynb"
@@ -910,9 +933,9 @@ def build() -> None:
     llama2_cells = [
         markdown(
             """
-            # Final Unified Phase 2: Llama 2 CoT
+            # Final Unified Phase 2: Matched Llama 2 CoT
 
-            This notebook consumes the final DistilBERT Phase 1 export and runs the established Llama 2 CoT re-evaluator on the routed cases only. It keeps the final model-specific prompt, minimally sanitized original text, exact-label parsing, row-level resume, token/time logging, and end-to-end evaluation.
+            This notebook consumes the final DistilBERT Phase 1 export and runs Llama 2 CoT on the routed cases only. Its classification policy, five-stage CoT structure, greedy decoding, parser, and failure fallback match the Llama 3 CoT comparison. The model-specific chat template is retained, and a separate output directory prevents reuse of the earlier sampled Llama 2 run.
 
             The frozen final input contract is 12,000 test rows with 218 routed cases. The notebook checks both counts before loading the LLM so an accidental input substitution cannot trigger a costly run.
             """
@@ -922,7 +945,7 @@ def build() -> None:
         CONFIG, DRIVE_AND_INPUT,
         markdown("## Model, generation, persistence, and evaluation helpers"),
         MODEL_HELPERS,
-        markdown("## Established Llama 2 CoT prompt and runner"),
+        markdown("## Llama 3-matched Llama 2 CoT prompt and runner"),
         LLAMA2_PROMPT,
         markdown("## Run or resume Llama 2 CoT"),
         LLAMA2_RUN,
@@ -939,7 +962,7 @@ def build() -> None:
             2. chain-of-thought re-evaluation,
             3. SELF-DISCOVER re-evaluation.
 
-            The model, routed inputs, original-text policy, label set, parser, and greedy decoding are fixed across the three Llama 3 paths. The established SELF-DISCOVER prompt cells are copied verbatim from Final 04.5; the direct and CoT paths are the added comparators. Every result is saved row by row and can resume safely. Parse failures remain failures; they are never replaced silently with the Phase 1 label.
+            The model, routed inputs, original-text policy, label set, parser, and greedy decoding are fixed across the three Llama 3 paths. The established SELF-DISCOVER prompt cells are copied verbatim from Final 04.5; the direct and CoT paths are the added comparators. Every result is saved row by row and can resume safely. Unambiguous terminal labels are parsed uniformly; a true parse failure is recorded and retains the Phase 1 label in the end-to-end output.
             """
         ),
         SETUP, IMPORTS,
@@ -961,6 +984,7 @@ def build() -> None:
 
     outputs = {
         llama2_name: notebook(llama2_name, llama2_cells),
+        llama2_matched_name: notebook(llama2_matched_name, llama2_cells),
         llama3_name: notebook(llama3_name, llama3_cells),
         llama3_fresh_name: notebook(llama3_fresh_name, llama3_cells),
     }
