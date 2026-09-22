@@ -4,6 +4,7 @@ import json
 
 from build_final_unified_phase2_notebooks import OUT_DIR, code, markdown
 from build_mixed_sd_countercheck_notebook import find_cell
+from llama2_context_resume_patch import patch_helpers, MIGRATION
 
 
 def build():
@@ -48,7 +49,32 @@ Direct 218회 + SD 872회 = 총 1,090회 생성합니다.
     run = "".join(nb["cells"][run_index]["source"]).split("\n", 1)[1]
     run = run.replace("mixed-llama2-direct-final-sd-v1", "reddit-llama2-direct-final-sd-v1")
     digest = hashlib.sha256((json.dumps(nb["cells"][:run_index], sort_keys=True) + run).encode()).hexdigest()
-    nb["cells"][run_index] = code(f'IMPLEMENTATION_SHA256 = "{digest}"\n' + run)
+    legacy_digest = digest
+    for i, cell in enumerate(nb["cells"]):
+        text = "".join(cell["source"])
+        if cell["cell_type"] == "code" and "def chat_generate(" in text:
+            nb["cells"][i] = code(patch_helpers(text))
+        elif cell["cell_type"] == "code" and "INDEPENDENT_TASK =" in text:
+            text = text.replace('"final_label": parse_final_label(answer),',
+                '"final_label": (np.nan if any(s.get("context_capacity_exceeded", False) for s in logs) '
+                'else parse_final_label(answer)),\n'
+                '        "any_stage_context_capacity_exceeded": any(s.get("context_capacity_exceeded", False) for s in logs),\n'
+                '        "any_stage_context_budget_adjusted": any(s.get("context_budget_adjusted", False) for s in logs),')
+            nb["cells"][i] = code(text)
+    marker = 'manifest_path = LLAMA2_OUTPUT_DIR / "experiment_manifest.json"\n'
+    assert run.count(marker) == 1
+    run = run.replace(marker, marker + MIGRATION)
+    progress = '        print(f"{method}: {len(completed)} completed, {len(pending)} pending")\n'
+    assert run.count(progress) == 1
+    run = run.replace(progress, progress +
+        '        if pending.empty:\n'
+        '            print(f"{method}: saved results complete; no generation will run.")\n'
+        '            continue\n')
+    digest = hashlib.sha256((json.dumps(nb["cells"][:run_index], sort_keys=True) + run).encode()).hexdigest()
+    nb["cells"][run_index] = code(f'IMPLEMENTATION_SHA256 = "{digest}"\nLEGACY_IMPLEMENTATION_SHA256 = "{legacy_digest}"\n' + run)
+    nb["cells"][0]["source"] = [s.replace(
+        '모델 context를 초과하면 몰래 자르지 않고 중단합니다.',
+        '입력은 더 자르지 않고 생성 상한을 남은 context 길이로 줄여 기록합니다. 입력 자체가 한도를 넘으면 실패로 기록하고 Phase 1 예측을 유지합니다.') for s in nb["cells"][0]["source"]]
     for i, cell in enumerate(nb["cells"]):
         cell["id"] = f"reddit-llama2-direct-sd-{i:02d}"
         if cell["cell_type"] == "code":

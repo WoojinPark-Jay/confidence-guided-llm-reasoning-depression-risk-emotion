@@ -14,7 +14,7 @@ def main():
         text = "".join(cell["source"])
         if cell["cell_type"] == "code" and not any(l.startswith("%") for l in text.splitlines()):
             compile(text, "cell", "exec")
-    for marker in ['LLAMA2_MODEL_NAME =', 'INDEPENDENT_TASK =', 'def chat_generate(', 'summaries = []']:
+    for marker in ['LLAMA2_MODEL_NAME =', 'summaries = []']:
         assert find_cell(nb, marker)["source"] == find_cell(mixed, marker)["source"]
     for marker in ['# Both Phase 2 notebooks', 'drive.mount("/content/drive")']:
         assert find_cell(nb, marker)["source"] == find_cell(reddit, marker)["source"]
@@ -24,7 +24,7 @@ def main():
     assert '"unified_final/phase2"' in config and 'mixed_emotion' not in config
     test_methods()
     print("PASS: Reddit 12,000/218 contract, original-text loader, separate output root,")
-    print("and byte-identical model, prompts, runners, parser and summary code.")
+    print("and byte-identical model configuration and summary code.")
 
 
 if __name__ == "__main__":
