@@ -14,12 +14,16 @@ BUDGET = '''    requested_max_new_tokens = max_new_tokens
 
 MIGRATION = '''
 manifest["context_policy"] = "preserve-input-cap-generation-to-remaining-v1"
+def experiment_contract(value):
+    return {k: v for k, v in value.items() if k != "environment"}
+
 if manifest_path.exists():
     previous = json.loads(manifest_path.read_text())
     candidate = dict(manifest)
     candidate.pop("context_policy", None)
     candidate["implementation_sha256"] = LEGACY_IMPLEMENTATION_SHA256
-    if previous == candidate:
+    legacy_match = experiment_contract(previous) == experiment_contract(candidate)
+    if legacy_match:
         # Only completed rows accepted under the former full-budget guard may resume.
         for method in RUN_METHODS:
             saved = load_results(METHOD_CONFIG[method]["path"])
@@ -37,8 +41,30 @@ if manifest_path.exists():
         backup = manifest_path.with_name("experiment_manifest.before_context_fix.json")
         if not backup.exists():
             backup.write_text(json.dumps(previous, indent=2))
-        manifest_path.write_text(json.dumps(manifest, indent=2))
         print("Verified completed rows; preserving them under the context-budget fix.")
+    approved = dict(previous)
+    # These revisions differ only in resume bookkeeping, not inference behavior.
+    known_context_fix = "c8616a0f399ab7c1bc8fa31fce38239d39e283e47ff59a242c3485cb2f853e7a"
+    if approved.get("implementation_sha256") == known_context_fix:
+        approved["implementation_sha256"] = IMPLEMENTATION_SHA256
+    compatible = legacy_match or experiment_contract(approved) == experiment_contract(manifest)
+    if not compatible:
+        keys = sorted(k for k in set(previous) | set(manifest)
+                      if k != "environment" and previous.get(k) != manifest.get(k))
+        raise ValueError("Experiment contract changed; preserved all results. Differing fields: " + ", ".join(keys))
+    if previous != manifest:
+        history_path = manifest_path.with_name("resume_manifest_history.json")
+        history = json.loads(history_path.read_text()) if history_path.exists() else []
+        history.append({"previous": previous, "resumed": manifest,
+                        "completed_rows_before_resume": {
+                            method: len(load_results(METHOD_CONFIG[method]["path"]))
+                            for method in RUN_METHODS}})
+        history_path.write_text(json.dumps(history, indent=2))
+        temporary = manifest_path.with_suffix(".resume.tmp")
+        temporary.write_text(json.dumps(manifest, indent=2))
+        temporary.replace(manifest_path)
+        if previous.get("environment") != manifest.get("environment"):
+            print("Runtime environment changed; recorded history and preserved completed predictions.")
 '''
 
 

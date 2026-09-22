@@ -64,6 +64,9 @@ Direct 218회 + SD 872회 = 총 1,090회 생성합니다.
     marker = 'manifest_path = LLAMA2_OUTPUT_DIR / "experiment_manifest.json"\n'
     assert run.count(marker) == 1
     run = run.replace(marker, marker + MIGRATION)
+    run = run.replace('                "model_revision": LLAMA2_MODEL_REVISION,',
+                      '                "runtime_environment_json": json.dumps(manifest["environment"], sort_keys=True),\n'
+                      '                "model_revision": LLAMA2_MODEL_REVISION,')
     progress = '        print(f"{method}: {len(completed)} completed, {len(pending)} pending")\n'
     assert run.count(progress) == 1
     run = run.replace(progress, progress +
