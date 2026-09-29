@@ -1,0 +1,2 @@
+threshold,accepted_count,routed_count,coverage,routing_rate,selective_risk,selective_risk_upper_bound
+0.7,11807.0,193.0,0.9839166666666667,0.01608333333333334,0.01939527399000593,0.021615397470906083

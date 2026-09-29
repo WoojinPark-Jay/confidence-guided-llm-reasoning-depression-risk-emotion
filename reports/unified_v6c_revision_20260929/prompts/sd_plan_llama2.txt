@@ -1,0 +1,27 @@
+Here is a step-by-step reasoning plan in JSON format to annotate the emotional meaning of English social-media posts:
+
+Step 1: Separate the writer's own emotions from those of others (input: full post)
+
+* Identify emotional language used in the post (e.g. "I feel", "they feel", "it seems")
+* Determine whether the language refers to the writer's own emotions or someone else's
+* Assign a label based on the identified emotional language (e.g. "Depression" if the language refers to the writer's own emotions, "Neutral" if it refers to someone else's emotions)
+
+Step 2: Locate the emotional stance the post opens with and the emotional stance it closes with (input: full post)
+
+* Identify the opening and closing sentences of the post
+* Determine whether the emotional stance of the opening sentence differs from the emotional stance of the closing sentence
+* Assign a label based on the identified emotional stance (e.g. "Depression" if the stance differs, "Neutral" if the stance is the same)
+
+Step 3: Determine the final emotional takeaway the writer leaves the reader with (input: full post)
+
+* Identify the concluding sentence of the post
+* Determine whether the concluding sentence reflects a positive, negative, or neutral emotional state
+* Assign a label based on the identified emotional takeaway (e.g. "Happy" if the takeaway is positive, "Neutral" if it is neutral, "Depression" if it is negative)
+
+Step 4 (final step): Weigh the gathered evidence and select a label (input: full post)
+
+* Review the labels assigned in steps 1-3
+* Select the label that best reflects the dominant emotional meaning of the post
+* Output the selected label as the research annotation label.
+
+Note: These steps are designed to be carried out in sequence, with each step building on the previous one to gather more information and refine the annotation. The final step is the only one that assigns a label to the post, based on the gathered evidence.

@@ -1,0 +1,3 @@
+The Phase 1 classifier predicted: {phase1_label}
+
+Compare that prediction with your independent assessment. Confirm it only when it is supported by the dominant emotional meaning of the full text. Otherwise, explain the correction using textual evidence only.

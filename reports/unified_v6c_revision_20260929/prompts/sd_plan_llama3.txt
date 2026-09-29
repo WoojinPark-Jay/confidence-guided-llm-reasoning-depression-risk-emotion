@@ -1,0 +1,26 @@
+Here is the operationalized reasoning plan in JSON format:
+
+```
+{
+  "steps": [
+    {
+      "name": "Emotion Extraction",
+      "sentence": "Extract the writer's explicit and implicit emotional expressions, distinguishing between their own emotions and those attributed to others, quoted text, or hypothetical situations."
+    },
+    {
+      "name": "Emotional Arc and Essence",
+      "sentence": "Analyze the emotional trajectory of the post, identifying the emotional stance at the beginning and end, and determine the dominant emotional takeaway the writer intends to convey."
+    },
+    {
+      "name": "Contextual Clarification and Purpose Identification",
+      "sentence": "Disentangle past events or experiences from the writer's current emotional state, identify the primary purpose of the post, and consider the implications for their emotional expression."
+    }
+  ],
+  "final_step": {
+    "name": "Label Prioritization",
+    "sentence": "Rank the three candidate labels (Depression, Neutral, Happy) in order of likelihood, considering the emotional essence, emotional arc, and contextual factors, and provide a second-best label to ensure the annotation is robust and defensible."
+  }
+}
+```
+
+This plan consists of three main steps that extract the writer's emotional expressions, analyze the emotional trajectory and essence, and clarify the context and purpose of the post. The final step prioritizes the candidate labels based on the gathered evidence.

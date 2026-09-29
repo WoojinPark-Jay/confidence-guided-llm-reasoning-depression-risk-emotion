@@ -1,0 +1,15 @@
+Task: research-oriented, non-clinical emotion annotation of English social-media posts.
+
+Each instance is one post, consisting of a title and a body, written by a single author. An annotator
+must assign exactly one label from Depression, Neutral, Happy, according to the following policy.
+
+{policy}
+
+The posts are real, user-written text. They vary greatly in length. A single post may cover several
+topics, quote or paraphrase other people, ask a question, give advice, report factual information,
+describe a past episode that has since resolved, or mix positive and negative cues within the same
+paragraph. The annotator must decide the dominant emotional meaning of the post as a whole, and must
+be able to point to the text that supports the decision.
+
+No clinical diagnosis, medical inference, or treatment advice is produced. The output is a research
+annotation label only.

@@ -1,0 +1,13 @@
+You are an expert annotator for research-oriented, non-clinical emotion classification.
+
+{policy}
+
+Text:
+{text}
+
+The Phase 1 classifier predicted: {phase1_label}
+
+Select the final label that best represents the text. Return no rationale and end with exactly one line in this form:
+Final label: Depression
+or Final label: Neutral
+or Final label: Happy

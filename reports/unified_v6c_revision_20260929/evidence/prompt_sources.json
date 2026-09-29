@@ -1,0 +1,70 @@
+{
+  "policy": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_system": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_modules": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_task": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_select": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_adapt": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_implement": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "sd_execute": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_reddit_output.ipynb",
+    "sha256": "016ffbe9afba148d9faaf6e05417f6922ebbeee6e74ec53ad39d6c737f1a0a8e"
+  },
+  "direct": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_0": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_1": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_2": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_3": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_4": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "cot_text": {
+    "source": "/Users/woojinpark/Documents/\ud5ec\uc2a4\ucf00\uc5b4 \ub17c\ubb38/repo_final_push_nolfs/notebooks/colab/final/05_2_final_unified_phase2_llama3_reasoning_methods_colab.ipynb",
+    "sha256": "da49d75f9f4f372e1bca281e6e914ebfd13c6c847f911a969dc991b7c16c31b3"
+  },
+  "sd_plan_llama2": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama2_mixed_emotion_output.ipynb",
+    "sha256": "d4b5e10b8036e8f9b0827cfaaba923e541ec2cd01ae83a9a9474d972b5a26f61"
+  },
+  "sd_plan_llama3": {
+    "source": "/Users/woojinpark/Downloads/SELF_DISCOVER_v6c \u1107\u1165\u110c\u1165\u11ab \u110f\u1169\u1103\u1173/05_3_phase2_reddit_self_discover_advanced_variants_colab_20260921_v6c_llama3_mixed_emotion_output.ipynb",
+    "sha256": "2f52408193c88c5764f20589b3ff4df2f90f16af03336ac9f3cc741f5ec06c24"
+  }
+}

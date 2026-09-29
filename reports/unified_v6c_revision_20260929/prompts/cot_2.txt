@@ -1,0 +1,5 @@
+Independently analyze the text. State the dominant emotion and textual evidence before considering the Phase 1 label.
+
+{policy}
+
+Use only Depression, Neutral, or Happy for your provisional label.

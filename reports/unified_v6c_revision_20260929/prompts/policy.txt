@@ -1,0 +1,6 @@
+Classification Policy:
+- Depression: unresolved sadness, hopelessness, emotional distress, emotional exhaustion, withdrawal, self-devaluation, or a clearly negative overall trajectory is dominant.
+- Neutral: the text is mainly factual, routine, balanced, informational, or emotionally mild, without a dominant positive or distress-related state.
+- Happy: happiness, relief, gratitude, accomplishment, fulfillment, or a clearly positive resolution is dominant.
+
+Assess the dominant emotional meaning of the full text. For mixed or shifting emotions, consider the overall trajectory and final takeaway. Do not decide from isolated words, and do not make clinical diagnoses or treatment recommendations.
