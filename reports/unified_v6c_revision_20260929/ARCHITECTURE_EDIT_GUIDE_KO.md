@@ -2,7 +2,7 @@
 
 ## 이번에 할 작업
 
-**기존 전체 아키텍처의 틀을 유지하고, 텍스트 박스 3개와 점선 1개만 수정한다.**
+**기존 전체 아키텍처의 틀을 유지하고, 박스 4개의 문구·제목 1개·점선 1개만 수정한다.**
 
 전체 3열 배치, 색상, 글꼴, 데이터 분할, 실선 데이터 흐름은 그대로 둔다. 아래는 다음에 draw.io에서 진행할 작업 목록이며, 아직 원본 그림을 수정했다는 뜻은 아니다.
 
@@ -12,6 +12,8 @@
 | 2 | 중앙 아래 `Phase 2 re-evaluators` | 두 모델 모두 Direct·CoT·SELF-DISCOVER를 비교한 구조로 교체 |
 | 3 | 오른쪽 `End-to-end prediction` | 파싱 실패 시 Phase 1 예측 유지 규칙 추가 |
 | 4 | 보정 박스 → 신뢰도 박스 | `fixed T*` 점선 화살표 추가 |
+| 5 | 중앙 아래 `Parsed Phase 2 label` | 파싱 동작과 실패 시 Phase 1 유지 규칙 표시 |
+| 6 | 왼쪽 아래 `Strict data-use boundary` | 제목만 `Data-use scope`로 변경 |
 
 ## 1. Phase 1 model development
 
@@ -45,11 +47,9 @@ Llama 2 / Mistral comparator runs
 
 ```text
 Phase 2 re-evaluators
-Llama 2 / Llama 3
-Direct · CoT · SELF-DISCOVER
-SD: cached task-level plan
-+ per-post evidence checks
-one configuration per run; no ensemble
+Llama 2-7B-Chat / Llama 3-8B-Instruct
+Each evaluated with Direct, CoT, and SELF-DISCOVER
+Six separate configurations; no ensemble
 ```
 
 ### 수정 이유
@@ -58,7 +58,7 @@ one configuration per run; no ensemble
 - SD는 공통 계획을 저장해 재사용하되, 각 게시물의 근거와 최종 라벨은 새로 생성한다.
 - 한 실행에는 한 모델·한 방법을 적용한다. 여러 결과를 합치는 앙상블이 아니다.
 
-SELECT → ADAPT → IMPLEMENT의 상세 흐름은 새 본문 Figure 2와 부록 Figure C1에서 설명한다. 이 작은 박스에 다시 모두 넣거나 보조 박스를 추가할 필요는 없다.
+공통 계획과 SELECT → ADAPT → IMPLEMENT의 상세 흐름은 새 본문 Figure 2와 부록 Figure C1에서 설명한다. 이 작은 박스에서는 SD 세부 절차를 생략한다. 세 방법 모두 공통 계획을 사용하는 것처럼 표시하지 않는다. 긴 문장은 의미 단위로 줄바꿈하되, 박스에 맞추려고 글씨만 지나치게 줄이지 않는다.
 
 `v6c`, 생성 토큰 상한, 정확도 수치 등은 이번 전체 아키텍처 그림에 추가하지 않는다.
 
@@ -108,6 +108,29 @@ Calibrated confidence
 - 점선 라벨이 박스 글씨나 선과 겹치지 않게 한다.
 - 화살촉 바로 앞의 직선 구간에 충분한 길이를 둔다. 꺾이는 지점과 삼각형 화살촉이 붙지 않게 한다.
 
+## 5. Parse Phase 2 label
+
+중앙 아래의 진한 파란색 `Parsed Phase 2 label` 박스 문구를 다음으로 교체한다.
+
+```text
+Parse Phase 2 label
+If parsing fails, retain Phase 1 label
+```
+
+실행 과정에서의 실패 처리를 이 박스에 표시하고, 오른쪽 End-to-end 박스에서는 그 결과가 최종 예측에 어떻게 반영되는지 보여준다. 같은 규칙이며 별도의 재생성이나 수동 정답 보정은 아니다.
+
+## 6. Data-use scope
+
+왼쪽 아래 점선 박스의 제목만 `Strict data-use boundary`에서 `Data-use scope`로 바꾼다. 기존 두 설명 문장은 유지한다.
+
+```text
+Data-use scope
+Evaluation inputs do not train, tune, or calibrate Phase 1
+Original Reddit text is retrieved only after routing
+```
+
+위 문장은 Phase 1의 데이터 사용 범위를 설명한다. Phase 2 프롬프트 개발에서 기존 평가 결과를 참고한 이력은 본문에서 설명하며, 이 제목 변경이 그 이력을 없애거나 전체 파이프라인의 독립 평가를 뜻하는 것은 아니다.
+
 ## 그대로 유지할 부분
 
 - Reddit 120,000건과 70/10/10/10 분할, test 12,000건.
@@ -122,7 +145,9 @@ Calibrated confidence
 
 - [ ] Phase 1 개발 박스 문구 교체.
 - [ ] Phase 2 재평가 박스 문구 교체.
+- [ ] Parse Phase 2 label 박스에 파싱 실패 규칙 표시.
 - [ ] End-to-end 박스에 파싱 실패 규칙 추가.
+- [ ] 왼쪽 아래 제목을 Data-use scope로 변경하고 기존 설명 유지.
 - [ ] 보정 → 신뢰도 박스에 `fixed T*` 점선 추가.
 - [ ] 기존 `FIXED τ*` 점선과 나머지 배치 유지.
 - [ ] 줄바꿈·박스 여백·화살촉 간격 확인.
