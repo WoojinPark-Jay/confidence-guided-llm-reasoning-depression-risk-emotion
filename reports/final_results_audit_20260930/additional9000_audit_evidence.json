@@ -1,0 +1,85 @@
+{
+  "row_audit_passed": true,
+  "total_rows": 9000,
+  "routed_rows": 111,
+  "generation_calls_checked": 777,
+  "source_files": [
+    {
+      "method": "direct",
+      "raw_sha256": "1d7c8bc21493e095e4d13fe10cdf6fa2e06852efc7ee3d5ec564afa2729c9466",
+      "end_to_end_sha256": "f776b6ffd2b492e5dc389d2896bd3fd304fe395b9541f7975da23b43765dc7d8"
+    },
+    {
+      "method": "cot",
+      "raw_sha256": "b2c8bf43260a3d937627264e06b94e82bb907d30f9837d34226df6ca403252a1",
+      "end_to_end_sha256": "83e2e30418afe2742b4106a2c1043cc9a30e04e9ad0ff6e8cabe89af13e5704b"
+    },
+    {
+      "method": "v6c",
+      "raw_sha256": "b1e3cc422d5f78070915af43455bbd2847aab6d9eb213a5f8cc42aa02d7f9af7",
+      "end_to_end_sha256": "b0f0552c3386808d1ea581969f38e9b000748c01c1274b4d7e1a03e245577131"
+    }
+  ],
+  "statistics": [
+    {
+      "reference": "Phase 1",
+      "method": "direct",
+      "family": "phase1_3",
+      "corrected": 32,
+      "introduced": 19,
+      "change_pp": 0.14444444444444443,
+      "ci_low_pp": -0.011111111111111112,
+      "ci_high_pp": 0.3,
+      "exact_p": 0.09191454981585423,
+      "holm_p": 0.1319880689115962
+    },
+    {
+      "reference": "Phase 1",
+      "method": "cot",
+      "family": "phase1_3",
+      "corrected": 28,
+      "introduced": 15,
+      "change_pp": 0.14444444444444443,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.28888888888888886,
+      "exact_p": 0.0659940344557981,
+      "holm_p": 0.1319880689115962
+    },
+    {
+      "reference": "Phase 1",
+      "method": "v6c",
+      "family": "phase1_3",
+      "corrected": 30,
+      "introduced": 13,
+      "change_pp": 0.18888888888888888,
+      "ci_low_pp": 0.044444444444444446,
+      "ci_high_pp": 0.33333333333333337,
+      "exact_p": 0.0137181850586785,
+      "holm_p": 0.0411545551760355
+    },
+    {
+      "reference": "direct",
+      "method": "v6c",
+      "family": "sd_2",
+      "corrected": 13,
+      "introduced": 9,
+      "change_pp": 0.044444444444444446,
+      "ci_low_pp": -0.05555555555555555,
+      "ci_high_pp": 0.14444444444444443,
+      "exact_p": 0.5234670639038086,
+      "holm_p": 0.96136474609375
+    },
+    {
+      "reference": "cot",
+      "method": "v6c",
+      "family": "sd_2",
+      "corrected": 11,
+      "introduced": 7,
+      "change_pp": 0.044444444444444446,
+      "ci_low_pp": -0.044444444444444446,
+      "ci_high_pp": 0.13333333333333333,
+      "exact_p": 0.480682373046875,
+      "holm_p": 0.96136474609375
+    }
+  ]
+}

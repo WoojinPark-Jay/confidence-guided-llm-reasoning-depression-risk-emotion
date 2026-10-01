@@ -1,0 +1,18 @@
+1 Separate the writer's own current emotional state from emotions they attribute to other people, to quoted text, or to hypothetical situations.
+2 Locate the emotional stance the post opens with and the emotional stance it closes with, and state explicitly whether they differ.
+3 Determine the final emotional takeaway the writer leaves the reader with, instead of averaging every emotional word in the post.
+4 Distinguish a past state the writer describes as changed or resolved from a state that is still ongoing at the time of writing.
+5 Decide whether the post is primarily informational, procedural, advice-giving, or a question about a topic, rather than an expression of the writer's own current feelings.
+6 Check for irony, sarcasm, dark humour, or understatement that inverts the literal sentiment of a phrase.
+7 Weigh explicit emotional statements against implicit signals such as sleep, appetite, isolation, disrupted routine, or loss of interest.
+8 Identify markers of resolution: relief, gratitude, recovery, accomplishment, reconnection, or a plan the writer feels good about.
+9 Identify markers of unresolved distress: hopelessness, exhaustion, self-devaluation, numbness, withdrawal, or an appeal for help that the post never resolves.
+10 Judge emotional intensity, separating strong affect from mild, passing, or conventional affect.
+11 Check whether the post seeks support or asks a question, and whether the surrounding text is distressed or matter-of-fact about it.
+12 Separate discussing mental health as a subject, or reporting facts about it, from the writer expressing their own mental state.
+13 For long or multi-topic posts, identify which segment carries the writer's main point and weight that segment above digressions.
+14 Rank all three candidate labels for this post and name which label is second-best, rather than stopping at the first label that seems to fit.
+15 State the single strongest piece of textual evidence for each of the three labels before choosing between them.
+16 Test the leading label by asking what would have to appear in the text for a different label to be correct, then check whether it appears.
+17 Check whether the tone is measured and observational rather than emotionally invested, which can occur even when the subject matter is heavy.
+18 Check whether apparent positivity is aspirational, hypothetical, conventional politeness, or directed at someone else, rather than reflecting the writer's own current state.

@@ -1,0 +1,23 @@
+Operationalize the reasoning modules into a step-by-step reasoning plan in JSON format.
+
+<Task>
+{Task}
+</Task>
+
+ADAPTED module descriptions:
+{adapted_modules}
+
+Implement a reasoning structure that generalises to every instance of this task.
+
+The plan must obey these constraints. They exist because a plan that violates them throws away
+evidence before it can be used, or is too long to be carried out:
+
+1. **At most three steps.** Merge related checks rather than listing them separately.
+2. **Each step is one line.** A name and a single sentence, nothing more. No nested fields, no
+   examples, no restating of the instructions.
+3. Every step takes the full original post as its input. A step may refer to an earlier step's
+   finding, but it must re-read the post rather than work only from an earlier summary.
+4. No step before the final one may name, choose, rank or imply the answer.
+5. The final step is the only one that weighs the gathered evidence and selects a single label.
+
+Return only the JSON plan.

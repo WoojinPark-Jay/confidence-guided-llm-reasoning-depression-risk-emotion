@@ -1,0 +1,15 @@
+{
+  "samples_per_class": 40000,
+  "train_rows": 84000,
+  "validation_rows": 12000,
+  "calibration_rows": 12000,
+  "test_rows": 12000,
+  "temperature": 1.4801950079829693,
+  "routing_threshold": 0.7,
+  "test_accuracy": 0.9691666666666666,
+  "test_precision_macro": 0.9691734765507983,
+  "test_recall_macro": 0.9691666666666667,
+  "test_f1_macro": 0.9691661950720855,
+  "test_coverage": 0.9818333333333333,
+  "test_routing_rate": 0.018166666666666668
+}

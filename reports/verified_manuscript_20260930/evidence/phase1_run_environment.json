@@ -1,0 +1,26 @@
+{
+  "model_source": "reference_seed_42_model",
+  "reference_model_dir": "/content/drive/MyDrive/confidence_guided_llm_reasoning/distilbert_classification_fine_tuned/seed_42_model",
+  "tokenizer_source": "/content/drive/MyDrive/confidence_guided_llm_reasoning/distilbert_classification_fine_tuned/seed_42_model",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "bf16_supported": true,
+  "training_precision": "not trained here; weights loaded",
+  "evaluation_precision": "fp32",
+  "max_length": 256,
+  "lr_scheduler_type": "linear",
+  "warmup_ratio": 0.0,
+  "max_grad_norm": 1.0,
+  "early_stopping_patience": 2,
+  "samples_per_class": 40000,
+  "seed": 42,
+  "hyperparameters": {
+    "learning_rate": 4.03677668397417e-05,
+    "batch_size": 64,
+    "epochs": 3,
+    "weight_decay": 0.001
+  },
+  "hyperparameter_source": "notebooks/colab/distilbert_classification_fine_tuned_gpu_output.ipynb (W&B Bayesian sweep, 4 trials, objective validation_f1_macro)",
+  "data_source": "https://media.githubusercontent.com/media/WoojinPark-Jay/confidence-guided-llm-reasoning-depression-risk-emotion/refs/heads/main/data/final_preprocessed_whole_df.csv",
+  "torch": "2.11.0+cu128",
+  "transformers": "5.17.0"
+}

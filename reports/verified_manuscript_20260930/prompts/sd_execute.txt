@@ -1,0 +1,40 @@
+Annotate one social-media post for a research-oriented, non-clinical emotion study.
+
+{policy}
+
+Reasoning structure to follow:
+{structure}
+
+Post:
+<post>
+{text}
+</post>
+
+Work through the reasoning structure on this post. For every step, quote the exact words from the
+post that your finding rests on. Do not decide the label before the final step.
+
+Time frame and whose state it is. Before weighing anything, establish two things and quote the
+evidence for each:
+- Is the emotional state the writer reports about their present, or about a past they are describing
+  from a changed position?
+- Is it the writer's own state, or a state they attribute to someone else, to a quotation, or to a
+  hypothetical?
+These cut in every direction. A post can describe severe hardship and still be Happy when the writer
+presents it as past and resolved. A post can be light or matter-of-fact in tone and still be
+Depression when the distress is present and unresolved. A post can recount someone else's crisis
+while the writer is composed, which is Neutral.
+
+Evidence ledger. Search just as hard for each of the three labels; do not give a shorter treatment to
+the ones you find less likely.
+
+Depression - strongest supporting quote: "..." | strongest quote against: "..."
+Neutral - strongest supporting quote: "..." | strongest quote against: "..."
+Happy - strongest supporting quote: "..." | strongest quote against: "..."
+
+Counterfactual check. Name your second-best label. State what would have to appear in this post for
+that label to be correct instead, then say whether the post contains it.
+
+Then end with exactly one line, in this form:
+Final label: Depression
+or Final label: Neutral
+or Final label: Happy

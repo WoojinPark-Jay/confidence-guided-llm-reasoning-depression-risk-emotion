@@ -1,0 +1,1 @@
+I will first provide a piece of text. Independently assess its emotional content before comparing it with a Phase 1 AI-generated label. The only permitted labels are Depression, Neutral, and Happy.

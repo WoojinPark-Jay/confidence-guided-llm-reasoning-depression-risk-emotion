@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="921.964467pt" height="242.462749pt" viewBox="0 0 921.964467 242.462749" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-01T01:57:29.867984</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 242.462749
+L 921.964467 242.462749
+L 921.964467 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 99.004467 233.822749
+L 272.264041 233.822749
+L 272.264041 60.563175
+L 99.004467 60.563175
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g clip-path="url(#p5da510366f)">
+    <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAPAAAADxCAYAAAD1CTo3AAADFUlEQVR4nO3VMWpCQRhGUefh0qwtJFuxNa4ltQjZWYit5rmHvGK4cE4/8PHDZcbP72Pd8W/LGK63wfF6c78Nli2PgbkEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCNsvY8zekHb8vM2ekPZ9/Zg9Ic0PDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhI3D+WudPaLsfjnNnpD2fP3NnpDmB4YwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDLuuN4j5EQYm6sItAAAAAElFTkSuQmCC" id="imagec5b0f0ee28" transform="scale(1 -1) translate(0 -173.52)" x="99.36" y="-60.302749" width="172.8" height="173.52"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="127.881063" y="49.666866" transform="rotate(-0 127.881063 49.666866)">Depression</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="49.666866" transform="rotate(-0 185.634254 49.666866)">Neutral</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="243.387446" y="49.666866" transform="rotate(-0 243.387446 49.666866)">Happy</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <path d="M 99.004467 233.822749
+L 99.004467 60.563175
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5"/>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_6">
+      <path d="M 156.757658 233.822749
+L 156.757658 60.563175
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7"/>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_8">
+      <path d="M 214.51085 233.822749
+L 214.51085 60.563175
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9"/>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_10">
+      <path d="M 272.264041 233.822749
+L 272.264041 60.563175
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_11"/>
+    </g>
+    <g id="text_4">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="31.348354" transform="rotate(-0 185.634254 31.348354)">Predicted label</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_12"/>
+     <g id="text_5">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="91.004467" y="94.099027" transform="rotate(-0 91.004467 94.099027)">Depression</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_13"/>
+     <g id="text_6">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="91.004467" y="151.852218" transform="rotate(-0 91.004467 151.852218)">Neutral</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_14"/>
+     <g id="text_7">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="91.004467" y="209.598595" transform="rotate(-0 91.004467 209.598595)">Happy</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_15">
+      <path d="M 99.004467 60.563175
+L 272.264041 60.563175
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_16"/>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_17">
+      <path d="M 99.004467 118.316366
+L 272.264041 118.316366
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_18"/>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_19">
+      <path d="M 99.004467 176.069558
+L 272.264041 176.069558
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_20"/>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_21">
+      <path d="M 99.004467 233.822749
+L 272.264041 233.822749
+" clip-path="url(#p5da510366f)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_22"/>
+    </g>
+    <g id="text_8">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="17.728643" y="147.192962" transform="rotate(-90 17.728643 147.192962)">Reference label</text>
+    </g>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="127.881063" y="88.197152" transform="rotate(-0 127.881063 88.197152)">2,894</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="127.881063" y="102.748333" transform="rotate(-0 127.881063 102.748333)">96.5%</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="88.197152" transform="rotate(-0 185.634254 88.197152)">13</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="102.748333" transform="rotate(-0 185.634254 102.748333)">0.4%</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="243.387446" y="88.197152" transform="rotate(-0 243.387446 88.197152)">93</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="243.387446" y="102.748333" transform="rotate(-0 243.387446 102.748333)">3.1%</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="127.881063" y="145.950344" transform="rotate(-0 127.881063 145.950344)">13</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="127.881063" y="160.501525" transform="rotate(-0 127.881063 160.501525)">0.4%</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="185.634254" y="145.950344" transform="rotate(-0 185.634254 145.950344)">2,958</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="185.634254" y="160.501525" transform="rotate(-0 185.634254 160.501525)">98.6%</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="243.387446" y="145.950344" transform="rotate(-0 243.387446 145.950344)">29</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="243.387446" y="160.501525" transform="rotate(-0 243.387446 160.501525)">1.0%</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="127.881063" y="203.703535" transform="rotate(-0 127.881063 203.703535)">39</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="127.881063" y="218.254716" transform="rotate(-0 127.881063 218.254716)">1.3%</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="203.703535" transform="rotate(-0 185.634254 203.703535)">18</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="218.254716" transform="rotate(-0 185.634254 218.254716)">0.6%</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="243.387446" y="203.703535" transform="rotate(-0 243.387446 203.703535)">2,943</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="243.387446" y="218.254716" transform="rotate(-0 243.387446 218.254716)">98.1%</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="185.634254" y="18.563175" transform="rotate(-0 185.634254 18.563175)">(a)  Direct</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_3">
+    <path d="M 419.53468 233.822749
+L 592.794254 233.822749
+L 592.794254 60.563175
+L 419.53468 60.563175
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g clip-path="url(#p171fa88462)">
+    <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAPAAAADxCAYAAAD1CTo3AAADF0lEQVR4nO3VS0oDQQBF0XSbpTnVgWQrmTZZi1OD4M4kmea3h7RQXDxnXvCo4lLT7+l83/C0eZrc3grvh6P7W2FecxgYS8AQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoaw7cus4TXelq8/e4z/6OewGz0hTb0QJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUPY9Lr/vI8eUfa9fIyekHa53kZPSPMDQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGTdcDjLkRBqVTpnwAAAAASUVORK5CYII=" id="image549e161725" transform="scale(1 -1) translate(0 -173.52)" x="419.76" y="-60.302749" width="172.8" height="173.52"/>
+   </g>
+   <g id="matplotlib.axis_3">
+    <g id="xtick_8">
+     <g id="line2d_23"/>
+     <g id="text_28">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="448.411275" y="49.666866" transform="rotate(-0 448.411275 49.666866)">Depression</text>
+     </g>
+    </g>
+    <g id="xtick_9">
+     <g id="line2d_24"/>
+     <g id="text_29">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="49.666866" transform="rotate(-0 506.164467 49.666866)">Neutral</text>
+     </g>
+    </g>
+    <g id="xtick_10">
+     <g id="line2d_25"/>
+     <g id="text_30">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.917658" y="49.666866" transform="rotate(-0 563.917658 49.666866)">Happy</text>
+     </g>
+    </g>
+    <g id="xtick_11">
+     <g id="line2d_26">
+      <path d="M 419.53468 233.822749
+L 419.53468 60.563175
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_27"/>
+    </g>
+    <g id="xtick_12">
+     <g id="line2d_28">
+      <path d="M 477.287871 233.822749
+L 477.287871 60.563175
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_29"/>
+    </g>
+    <g id="xtick_13">
+     <g id="line2d_30">
+      <path d="M 535.041063 233.822749
+L 535.041063 60.563175
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_31"/>
+    </g>
+    <g id="xtick_14">
+     <g id="line2d_32">
+      <path d="M 592.794254 233.822749
+L 592.794254 60.563175
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_33"/>
+    </g>
+    <g id="text_31">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="31.348354" transform="rotate(-0 506.164467 31.348354)">Predicted label</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_4">
+    <g id="ytick_8">
+     <g id="line2d_34"/>
+     <g id="text_32">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="411.53468" y="94.099027" transform="rotate(-0 411.53468 94.099027)">Depression</text>
+     </g>
+    </g>
+    <g id="ytick_9">
+     <g id="line2d_35"/>
+     <g id="text_33">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="411.53468" y="151.852218" transform="rotate(-0 411.53468 151.852218)">Neutral</text>
+     </g>
+    </g>
+    <g id="ytick_10">
+     <g id="line2d_36"/>
+     <g id="text_34">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="411.53468" y="209.598595" transform="rotate(-0 411.53468 209.598595)">Happy</text>
+     </g>
+    </g>
+    <g id="ytick_11">
+     <g id="line2d_37">
+      <path d="M 419.53468 60.563175
+L 592.794254 60.563175
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_38"/>
+    </g>
+    <g id="ytick_12">
+     <g id="line2d_39">
+      <path d="M 419.53468 118.316366
+L 592.794254 118.316366
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_40"/>
+    </g>
+    <g id="ytick_13">
+     <g id="line2d_41">
+      <path d="M 419.53468 176.069558
+L 592.794254 176.069558
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_42"/>
+    </g>
+    <g id="ytick_14">
+     <g id="line2d_43">
+      <path d="M 419.53468 233.822749
+L 592.794254 233.822749
+" clip-path="url(#p171fa88462)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_44"/>
+    </g>
+    <g id="text_35">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="338.258855" y="147.192962" transform="rotate(-90 338.258855 147.192962)">Reference label</text>
+    </g>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="448.411275" y="88.197152" transform="rotate(-0 448.411275 88.197152)">2,889</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="448.411275" y="102.748333" transform="rotate(-0 448.411275 102.748333)">96.3%</text>
+   </g>
+   <g id="text_38">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="88.197152" transform="rotate(-0 506.164467 88.197152)">18</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="102.748333" transform="rotate(-0 506.164467 102.748333)">0.6%</text>
+   </g>
+   <g id="text_40">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.917658" y="88.197152" transform="rotate(-0 563.917658 88.197152)">93</text>
+   </g>
+   <g id="text_41">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.917658" y="102.748333" transform="rotate(-0 563.917658 102.748333)">3.1%</text>
+   </g>
+   <g id="text_42">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="448.411275" y="145.950344" transform="rotate(-0 448.411275 145.950344)">11</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="448.411275" y="160.501525" transform="rotate(-0 448.411275 160.501525)">0.4%</text>
+   </g>
+   <g id="text_44">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="506.164467" y="145.950344" transform="rotate(-0 506.164467 145.950344)">2,960</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="506.164467" y="160.501525" transform="rotate(-0 506.164467 160.501525)">98.7%</text>
+   </g>
+   <g id="text_46">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.917658" y="145.950344" transform="rotate(-0 563.917658 145.950344)">29</text>
+   </g>
+   <g id="text_47">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.917658" y="160.501525" transform="rotate(-0 563.917658 160.501525)">1.0%</text>
+   </g>
+   <g id="text_48">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="448.411275" y="203.703535" transform="rotate(-0 448.411275 203.703535)">36</text>
+   </g>
+   <g id="text_49">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="448.411275" y="218.254716" transform="rotate(-0 448.411275 218.254716)">1.2%</text>
+   </g>
+   <g id="text_50">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="203.703535" transform="rotate(-0 506.164467 203.703535)">18</text>
+   </g>
+   <g id="text_51">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="218.254716" transform="rotate(-0 506.164467 218.254716)">0.6%</text>
+   </g>
+   <g id="text_52">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="563.917658" y="203.703535" transform="rotate(-0 563.917658 203.703535)">2,946</text>
+   </g>
+   <g id="text_53">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="563.917658" y="218.254716" transform="rotate(-0 563.917658 218.254716)">98.2%</text>
+   </g>
+   <g id="text_54">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="506.164467" y="18.563175" transform="rotate(-0 506.164467 18.563175)">(b)  CoT</text>
+   </g>
+  </g>
+  <g id="axes_3">
+   <g id="patch_4">
+    <path d="M 740.064892 233.822749
+L 913.324467 233.822749
+L 913.324467 60.563175
+L 740.064892 60.563175
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g clip-path="url(#pfcc28c5764)">
+    <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAPEAAADxCAYAAAAay1EJAAADFklEQVR4nO3VwWlCQRhGUedhaa5dSFpxa6wlaxHSWYhLJc8e8hbDhXMKGD5+uMz4+X2sO/5tGcP1Njheb+630bL1AWAuEUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOL2yxizN6QdP2+zJ6R9Xz9mT8jzE0OciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHHjcP5aZ48ou19OsyekPV9/syfk+YkhTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EUOciCFOxBAnYogTMcSJGOJEDHEihjgRQ5yIIU7EECdiiBMxxIkY4kQMcSKGOBFDnIghTsQQJ2KIEzHEiRjiRAxxIoY4EcOu7Q34VREE2yJFJwAAAABJRU5ErkJggg==" id="imaged063329451" transform="scale(1 -1) translate(0 -173.52)" x="740.16" y="-60.302749" width="173.52" height="173.52"/>
+   </g>
+   <g id="matplotlib.axis_5">
+    <g id="xtick_15">
+     <g id="line2d_45"/>
+     <g id="text_55">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="768.941488" y="49.666866" transform="rotate(-0 768.941488 49.666866)">Depression</text>
+     </g>
+    </g>
+    <g id="xtick_16">
+     <g id="line2d_46"/>
+     <g id="text_56">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="49.666866" transform="rotate(-0 826.69468 49.666866)">Neutral</text>
+     </g>
+    </g>
+    <g id="xtick_17">
+     <g id="line2d_47"/>
+     <g id="text_57">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="884.447871" y="49.666866" transform="rotate(-0 884.447871 49.666866)">Happy</text>
+     </g>
+    </g>
+    <g id="xtick_18">
+     <g id="line2d_48">
+      <path d="M 740.064892 233.822749
+L 740.064892 60.563175
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_49"/>
+    </g>
+    <g id="xtick_19">
+     <g id="line2d_50">
+      <path d="M 797.818084 233.822749
+L 797.818084 60.563175
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_51"/>
+    </g>
+    <g id="xtick_20">
+     <g id="line2d_52">
+      <path d="M 855.571275 233.822749
+L 855.571275 60.563175
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_53"/>
+    </g>
+    <g id="xtick_21">
+     <g id="line2d_54">
+      <path d="M 913.324467 233.822749
+L 913.324467 60.563175
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_55"/>
+    </g>
+    <g id="text_58">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="31.348354" transform="rotate(-0 826.69468 31.348354)">Predicted label</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_6">
+    <g id="ytick_15">
+     <g id="line2d_56"/>
+     <g id="text_59">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="732.064892" y="94.099027" transform="rotate(-0 732.064892 94.099027)">Depression</text>
+     </g>
+    </g>
+    <g id="ytick_16">
+     <g id="line2d_57"/>
+     <g id="text_60">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="732.064892" y="151.852218" transform="rotate(-0 732.064892 151.852218)">Neutral</text>
+     </g>
+    </g>
+    <g id="ytick_17">
+     <g id="line2d_58"/>
+     <g id="text_61">
+      <text style="font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: end; fill: #30363a" x="732.064892" y="209.598595" transform="rotate(-0 732.064892 209.598595)">Happy</text>
+     </g>
+    </g>
+    <g id="ytick_18">
+     <g id="line2d_59">
+      <path d="M 740.064892 60.563175
+L 913.324467 60.563175
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_60"/>
+    </g>
+    <g id="ytick_19">
+     <g id="line2d_61">
+      <path d="M 740.064892 118.316366
+L 913.324467 118.316366
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_62"/>
+    </g>
+    <g id="ytick_20">
+     <g id="line2d_63">
+      <path d="M 740.064892 176.069558
+L 913.324467 176.069558
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_64"/>
+    </g>
+    <g id="ytick_21">
+     <g id="line2d_65">
+      <path d="M 740.064892 233.822749
+L 913.324467 233.822749
+" clip-path="url(#pfcc28c5764)" style="fill: none; stroke: #ffffff; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_66"/>
+    </g>
+    <g id="text_62">
+     <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="658.789068" y="147.192962" transform="rotate(-90 658.789068 147.192962)">Reference label</text>
+    </g>
+   </g>
+   <g id="text_63">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="768.941488" y="88.197152" transform="rotate(-0 768.941488 88.197152)">2,890</text>
+   </g>
+   <g id="text_64">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="768.941488" y="102.748333" transform="rotate(-0 768.941488 102.748333)">96.3%</text>
+   </g>
+   <g id="text_65">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="88.197152" transform="rotate(-0 826.69468 88.197152)">13</text>
+   </g>
+   <g id="text_66">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="102.748333" transform="rotate(-0 826.69468 102.748333)">0.4%</text>
+   </g>
+   <g id="text_67">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="884.447871" y="88.197152" transform="rotate(-0 884.447871 88.197152)">97</text>
+   </g>
+   <g id="text_68">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="884.447871" y="102.748333" transform="rotate(-0 884.447871 102.748333)">3.2%</text>
+   </g>
+   <g id="text_69">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="768.941488" y="145.950344" transform="rotate(-0 768.941488 145.950344)">12</text>
+   </g>
+   <g id="text_70">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="768.941488" y="160.501525" transform="rotate(-0 768.941488 160.501525)">0.4%</text>
+   </g>
+   <g id="text_71">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="826.69468" y="145.950344" transform="rotate(-0 826.69468 145.950344)">2,959</text>
+   </g>
+   <g id="text_72">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="826.69468" y="160.501525" transform="rotate(-0 826.69468 160.501525)">98.6%</text>
+   </g>
+   <g id="text_73">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="884.447871" y="145.950344" transform="rotate(-0 884.447871 145.950344)">29</text>
+   </g>
+   <g id="text_74">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="884.447871" y="160.501525" transform="rotate(-0 884.447871 160.501525)">1.0%</text>
+   </g>
+   <g id="text_75">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="768.941488" y="203.703535" transform="rotate(-0 768.941488 203.703535)">36</text>
+   </g>
+   <g id="text_76">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="768.941488" y="218.254716" transform="rotate(-0 768.941488 218.254716)">1.2%</text>
+   </g>
+   <g id="text_77">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="203.703535" transform="rotate(-0 826.69468 203.703535)">14</text>
+   </g>
+   <g id="text_78">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="218.254716" transform="rotate(-0 826.69468 218.254716)">0.5%</text>
+   </g>
+   <g id="text_79">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="884.447871" y="203.703535" transform="rotate(-0 884.447871 203.703535)">2,950</text>
+   </g>
+   <g id="text_80">
+    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: middle; fill: #ffffff" x="884.447871" y="218.254716" transform="rotate(-0 884.447871 218.254716)">98.3%</text>
+   </g>
+   <g id="text_81">
+    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="826.69468" y="18.563175" transform="rotate(-0 826.69468 18.563175)">(c)  SELF-DISCOVER</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5da510366f">
+   <rect x="99.004467" y="60.563175" width="173.259574" height="173.259574"/>
+  </clipPath>
+  <clipPath id="p171fa88462">
+   <rect x="419.53468" y="60.563175" width="173.259574" height="173.259574"/>
+  </clipPath>
+  <clipPath id="pfcc28c5764">
+   <rect x="740.064892" y="60.563175" width="173.259574" height="173.259574"/>
+  </clipPath>
+ </defs>
+</svg>

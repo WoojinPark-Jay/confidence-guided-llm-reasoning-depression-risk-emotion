@@ -1,0 +1,28 @@
+"""Present the verified contribution first without changing statistical evidence."""
+
+ABSTRACT = r'''Confidence-guided routing enables selective LLM re-evaluation of difficult inputs while retaining the predictions of an efficient first-stage classifier for most posts. We develop and evaluate a two-phase pipeline for three-class, non-clinical proxy emotion classification in social media. A validation-selected DistilBERT model supplies calibrated predictions, and low-confidence posts undergo original-text re-evaluation. We compare Direct, Chain-of-Thought (CoT), and task-adapted SELF-DISCOVER with Llama~2 and Llama~3. On 12,000 Reddit posts, Phase~1 achieves 96.9167\% accuracy and routes only 218 posts (1.82\%); Llama~3 SELF-DISCOVER raises accuracy to 97.2000\%, correcting 72 errors and introducing 38. On 300 synthetic Mixed Emotion examples, it increases accuracy from 83.6667\% to 92.6667\%, with 28 corrections and one introduced error. A separate 9,000-post same-source evaluation fixes the final classifier, prompts, and cached plan and routes 111 posts (1.23\%). SELF-DISCOVER improves accuracy from 97.5778\% to 97.7667\%, yielding 17 net corrections. Its gains over the Phase~1 classifier are statistically significant on all three evaluation sets after the stated Holm adjustments; the additional evaluation gives $p=0.0412$. Llama~3 SELF-DISCOVER also achieves the highest observed accuracy among the evaluated configurations on each set. These findings support confidence-guided selective re-evaluation as a means of improving classifier performance while limiting the number of posts sent to an LLM, and show the importance of model and prompting-protocol choice for balancing corrections against introduced errors.'''
+
+
+def polish_frontmatter(source):
+    start = source.index(r'\begin{abstract}') + len(r'\begin{abstract}')
+    end = source.index(r'\end{abstract}', start)
+    source = source[:start] + '\n' + ABSTRACT + '\n\n' + source[end:]
+    edits = [
+        ('This burden motivates research on emotional signals in everyday language, provided that computational text labels remain distinct from clinical assessment.',
+         'This burden motivates research on emotional signals in everyday language, including computational analysis of non-clinical social-media text.'),
+        ("Social-media analysis serves a different purpose: it allows researchers to study linguistic and emotional patterns in non-clinical text \\cite{ref7}. A post-level emotion prediction neither replaces those instruments nor establishes the author's clinical condition.",
+         'Social-media analysis offers a complementary research setting for studying linguistic and emotional patterns \\cite{ref7}. We focus on post-level proxy emotion labels rather than clinical diagnosis.'),
+        ("For user-level prediction, processing posts independently can also discard temporal and inter-post information \\cite{ref10}. Our post-level task does not model a user's longitudinal history. Research on clinical explainability further emphasizes that useful explanations depend on the intended setting and the information clinicians need \\cite{ref11}; a generated rationale alone does not meet those requirements.",
+         'User-level prediction can additionally benefit from temporal and inter-post information \\cite{ref10}. Research on clinical explainability emphasizes that explanations should match the intended setting and information needs \\cite{ref11}. In our post-level setting, textual rationales accompany label decisions, while predictive value is assessed through observed corrections and introduced errors.'),
+        ('Separating these questions allows a useful router and an ineffective re-evaluator to be identified within the same experiment.',
+         'Separating these questions makes the contribution of case selection and subsequent correction measurable within the same pipeline.'),
+        ('The Phase~1 comparison supports operational model selection through predictive performance and measured inference throughput, latency, and memory on a common accelerator, rather than claiming exhaustive optimization of every 7B architecture.',
+         'The Phase~1 comparison grounds model selection in predictive performance and measured inference throughput, latency, and memory on a common accelerator under a defined search budget.'),
+        ('The contribution is the integration and evaluation protocol, together with a task-specific adaptation of structured re-evaluation, not a new calibration estimator or language-model architecture.\nClassifier performance and resource measurements support the first-stage choice; calibration and error concentration assess routing; and the model--protocol comparison measures correction gains against newly introduced errors. The task-level SELF-DISCOVER adaptation is evaluated within this comparison, not assumed superior to label-only prediction.',
+         'Together, these contributions connect efficient classifier selection, calibrated routing, and task-adapted LLM re-evaluation in a unified, auditable pipeline. Llama~3 SELF-DISCOVER yields positive net corrections and statistically significant accuracy gains over Phase~1 on all three evaluation sets under the stated Holm adjustments. Within-model comparisons further characterize how prompting protocols affect correction yield across datasets; detailed paired results are reported in the results section and Appendix~\\ref{app:statistics}.'),
+    ]
+    for old, new in edits:
+        if source.count(old) != 1:
+            raise ValueError(f'Expected one front-matter anchor: {old[:80]}')
+        source = source.replace(old, new, 1)
+    return source

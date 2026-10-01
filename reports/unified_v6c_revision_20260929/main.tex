@@ -75,10 +75,12 @@ The study makes four concrete contributions:
 \item It operationalizes selective LLM re-evaluation as an end-to-end pipeline in which an efficient classifier handles high-confidence inputs and reasoning models receive only calibration-defined low-confidence inputs. The Phase~1 comparison supports operational model selection through predictive performance and measured inference throughput, latency, and memory on a common accelerator, rather than claiming exhaustive optimization of every 7B architecture.
 \item It replaces a heuristic confidence cutoff with a reproducible calibration protocol: temperature scaling, a prespecified threshold grid, a one-sided selective-risk upper bound, and maximum-coverage selection among feasible thresholds. The selected policy is fixed before held-out and Phase~2 evaluation.
 \item It evaluates routing quality separately from re-evaluation quality. Coverage, selective risk, error capture, corrected errors, introduced errors, and net corrections reveal whether the router finds difficult inputs and whether the LLM actually improves them. The final comparison crosses two language models with three re-evaluation protocols on the same routed examples within each dataset.
-\item It contributes a controlled Mixed Emotion stress test and case-level reasoning audit trail for studying posts whose surface cues and dominant emotional trajectory diverge. The stress test is explicitly separated from model training and threshold selection.
+\item It develops a task-specific SELF-DISCOVER adaptation \cite{ref18} combining an emotion-oriented module bank, a reusable model-generated procedure, and fixed checks for emotional subject, temporal context, competing label evidence, and alternative interpretations. Its empirical evaluation includes a controlled Mixed Emotion stress test and recorded outputs for inspecting ambiguous or shifting affect. The stress test is explicitly separated from model training and threshold selection.
 \end{itemize}
 
 The contribution is the integration and evaluation protocol, together with a task-specific adaptation of structured re-evaluation, not a new calibration estimator or language-model architecture.
+Classifier performance and resource measurements support the first-stage choice; calibration and error concentration assess routing; and the model--protocol comparison measures correction gains against newly introduced errors. The task-level SELF-DISCOVER adaptation is evaluated within this comparison, not assumed superior to label-only prediction.
+
 
 \section{Literature Review}
 
@@ -165,7 +167,7 @@ In addition to the primary Reddit dataset, we constructed a supplementary synthe
 
 The current dataset includes seven controlled scenario groups: blended-emotion co-occurrence (40), positive-to-distress shift (40), distress-to-recovery shift (40), neutral framing with subtle affect (40), conflicting cues with a dominant trajectory (40), clear technical or informational Neutral examples (75), and Neutral examples with mild factual or procedural ambiguity (25). Each example was assigned a target label according to the dominant overall emotional trajectory rather than isolated sentiment-bearing phrases. The two Neutral groups preserve the proxy-label definition while avoiding a stress set that is artificially dominated by either completely trivial or clinically suggestive Neutral content. This design is intended to test whether confidence-guided routing and reasoning-based re-evaluation can address cases that are plausibly more difficult for a single-stage classifier.
 
-Synthetic examples were generated using controlled prompting and checked against inclusion and exclusion criteria. Kang et al. \cite{ref19} used LLM-generated clinical-interview summaries for depression-prediction training augmentation. Here, synthetic posts serve a different purpose: supplementary stress-test evaluation, not training augmentation or clinical validation. Inclusion required consistency with the assigned scenario and target label: mixed or shifting cues for the affective scenarios, and low-affect content for the Neutral controls. Exclusions covered explicit clinical diagnosis claims, treatment recommendations, crisis language, identifying information, and off-scenario content. Appendix Table~A5 records the generation protocol. These checks were not an independent expert-annotation study; results describe the final 300 synthetic examples rather than naturally occurring mixed-emotion performance.
+Synthetic examples were generated using controlled prompting and checked against inclusion and exclusion criteria. Kang et al. \cite{ref19} used LLM-generated clinical-interview summaries for depression-prediction training augmentation. Here, synthetic posts serve a different purpose: supplementary stress-test evaluation, not training augmentation or clinical validation. Inclusion required consistency with the assigned scenario and target label: mixed or shifting cues for the affective scenarios, and low-affect content for the Neutral controls. Exclusions covered explicit clinical diagnosis claims, treatment recommendations, crisis language, identifying information, and off-scenario content. Appendix Table~F1 records the generation protocol. These checks were not an independent expert-annotation study; results describe the final 300 synthetic examples rather than naturally occurring mixed-emotion performance.
 
 \subsection{Data Partitioning and Model Inputs}
 
@@ -393,22 +395,41 @@ The export notebook prints a warning and falls back to the lowest empirical risk
 
 The routing mechanism is entirely confidence-based during inference. It does not directly detect blended emotion or sentiment shift. Instead, the Mixed Emotion Dataset serves a complementary evaluation role by stress-testing whether the Phase 1 classifier and the Phase 2 reasoning stage behave more reliably on examples where the one-label-per-input assumption is more difficult. This separation keeps the routing rule reproducible while allowing the evaluation to probe emotionally complex cases.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/sd_task_level_overview.pdf}
+\caption{Task-specific SELF-DISCOVER design within selective re-evaluation. (a) Before post classification, the selected LLM constructs a model-specific procedure from researcher-authored task materials; the code saves it for reuse. (b) Each routed original post is evaluated anew using that procedure and fixed subject, time-frame, evidence, and alternative-interpretation checks. The dashed arrow denotes procedure reuse, not answer reuse. Discovery is skipped when a retained plan exists. Appendix~\ref{app:sd-templates} provides the detailed workflow and exact prompts; label parsing and Phase~1 fallback follow Algorithm~\ref{alg:sd-final}.}
+\label{fig:sd-task-level}
+\end{figure*}
+
 \subsection{Phase 2: Factorial Model and Protocol Comparison}
 Direct prompting requests one final label without a rationale and includes the Phase~1 prediction. CoT first requests an independent assessment, subsequently discloses the Phase~1 label for comparison, and finally requests a terminal label. The implemented CoT dialogue contains five generation calls, including the initial acknowledgment and text-response turns. Final SELF-DISCOVER withholds the Phase~1 label throughout. These are complete prompting protocols: their comparison does not isolate rationale length alone, because label disclosure and call structure also differ.
 
 \subsection{Task-Level SELF-DISCOVER}
-The final protocol adapts SELECT, ADAPT, and IMPLEMENT \cite{ref18} to the three-class emotion task. SELECT chooses from 18 domain-oriented reasoning modules. ADAPT specializes the selected modules to the classification policy. IMPLEMENT requests a JSON plan with at most three one-line steps, requiring each step to return to the original post and delaying label selection until the final step. The compact-plan constraint is an instruction, not a programmatic validator; generated plans can depart from it. Each model uses its own discovered plan, which is cached and reused across posts in a run.
+SELF-DISCOVER separates \emph{constructing a procedure} from \emph{applying it}, as summarized in Figure~\ref{fig:sd-task-level}. Each model generates a plan for the three-class task, stores it, and reuses it across routed posts. This \emph{cached plan} is a saved procedure, not stored post-level answers. Every post still requires a new model response.
 
-The execution prompt combines the plan, class policy, and original post. It asks the model to identify whose emotional state is expressed and whether that state is current or retrospectively resolved; cite supporting and opposing text for all three labels; and consider what evidence would favor a second-best label. One final line supplies the classification. This procedure is intended to reduce premature commitment and unsupported reinterpretation, but generated text does not establish faithful internal reasoning or clinical validity. The full literal prompt templates are reproduced in the appendices.
+\textit{Task-specific design.} We retain the SELECT--ADAPT--IMPLEMENT framework of SELF-DISCOVER \cite{ref18} and specialize its inputs and execution guidance to proxy emotion classification. Researchers supply the class policy, 18 emotion-oriented reasoning modules, and fixed evidence-checking instructions; the LLM generates the procedure from those materials. The adaptation addresses distinctions that isolated affect words cannot resolve: whose emotion is expressed, whether distress is current or retrospectively resolved, and whether positive wording describes an actual state rather than a wish. The contribution is this task-specific specification and its integration with selective re-evaluation, not the invention of task-level planning or caching.
+
+\textit{Who constructs the plan, and when.} Before classifying a routed post, the code checks for a retained plan for the selected LLM. If none exists, that LLM receives only the researcher-authored task description, policy, and module bank. It does not receive the first post, any other evaluation post, a reference label, or a Phase~1 prediction during discovery. SELECT chooses relevant modules; ADAPT specializes them to the task; IMPLEMENT generates the reusable procedure, which the code stores. If a plan already exists, all three discovery calls are skipped. Llama~2 and Llama~3 generate separate plans; each model reuses its own plan across Reddit and Mixed Emotion.
+
+IMPLEMENT requests at most three one-line JSON steps, each returning to the original text and deferring label selection until the end. This format is requested, not enforced; the realized plans are reproduced in Appendix~\ref{app:sd-templates}. Access to the post is an instruction for subsequent execution, not an input to plan construction.
+
+\textit{Per-post execution.} The prompt combines the plan, policy, original post, and fixed checks. It asks whose emotion is expressed, whether it is current or retrospectively resolved, and which quotations support or oppose each label. A counterfactual check asks what evidence would favor the second-best label and whether it is present. The model emits a final classification line. SD never receives the Phase~1 label; the evaluator retains it as a fallback if parsing fails.
+
+This division keeps the procedure shared while requiring fresh, post-specific evidence and a new decision for every routed input. The evidence ledger and counterfactual check are researcher-authored execution instructions, not automatically discovered properties of the cached plan. Generated explanations do not establish faithful internal reasoning. Appendix~\ref{app:sd-templates} provides the workflow, templates, and actual plans; Appendix~\ref{app:sd-variants} compares the earlier per-post and final task-level designs without attributing their differences to any single component.
 
 \begin{algorithm}[t]
 \caption{Final task-level SELF-DISCOVER re-evaluation}
 \label{alg:sd-final}\footnotesize
 \begin{algorithmic}[1]
-\State \textbf{Input:} model $g$, policy, domain modules, routed posts
-\State SELECT relevant modules for the task
-\State ADAPT selected modules to the classification policy
-\State IMPLEMENT a compact task-level plan; cache the output
+\State \textbf{Input:} model $g$; researcher-authored task, policy, modules, execution guidance; routed posts
+\If{a retained plan for $g$ exists}
+\State Load that plan; skip discovery
+\Else
+\State Give $g$ task materials only; no post text or labels
+\State $g$: SELECT relevant modules and ADAPT them to the task
+\State $g$: IMPLEMENT the procedure; store it as the plan
+\EndIf
 \For{each routed post $x$}
 \State Execute the plan on the original post, without the Phase~1 label
 \State Request source quotes, three-label evidence, and a counterfactual check
@@ -475,7 +496,7 @@ Llama~2~7B & 55.5 $\pm$ 0.0 & 34.05 $\pm$ 0.10 & 14.05 \\
 \parbox{\textwidth}{\footnotesize \textit{Note.} Panel (b) reports mean $\pm$ SD across three timing repetitions, distinct from the training seeds in panel (a). Throughput uses batch size 32 and all 12,000 test posts; p50 is the median latency for 512 posts processed individually. All models use fp16 and a 256-token cap. Memory refers to batched inference. An SD displayed as 0.0 reflects rounding. Appendix Table~A1d provides p95 latency and the full protocol.}
 \end{table*}
 
-Figure~\ref{fig:phase1-model-comparison} visualizes the same observed three-seed results and their 95\% confidence intervals. DistilBERT achieved 96.88 $\pm$ 0.04\% accuracy, compared with 95.36 $\pm$ 0.08\% for Mistral and 95.17 $\pm$ 0.07\% for Llama~2. Macro F1 showed the same pattern. Under this fixed comparison protocol, DistilBERT exceeded Mistral and Llama~2 by 1.52 and 1.71 percentage points in mean accuracy, respectively. The two probes differed by 0.19 points; their relative ordering is not the basis of the operational choice. 
+Figure~\ref{fig:phase1-model-comparison} visualizes the same observed three-seed results and their 95\% confidence intervals. DistilBERT achieved 96.88 $\pm$ 0.04\% accuracy, compared with 95.36 $\pm$ 0.08\% for Mistral and 95.17 $\pm$ 0.07\% for Llama~2. Macro F1 showed the same pattern. Under this fixed comparison protocol, DistilBERT exceeded Mistral and Llama~2 by 1.52 and 1.71 percentage points in mean accuracy, respectively. The two probes differed by 0.19 points; their relative ordering is not the basis of the operational choice.
 
 \begin{figure*}[t]
 \centering
@@ -548,7 +569,7 @@ Table~\ref{tab:final-e2e} reports the complete final comparison. Llama~3 SELF-DI
 \begin{table*}[t]
 \centering\small
 \setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.14}
-\caption{Final full-set outcomes. Accuracy and macro F1 are percentages; change is relative to Phase 1 in percentage points.}
+\caption{Final full-set outcomes on 12,000 Reddit posts and 300 Mixed Emotion examples. Accuracy and macro F1 are percentages; change is relative to Phase 1 in percentage points. $C$ counts corrected errors and $I$ newly introduced errors; $C-I$ is their net difference. Unparsed responses retain Phase 1 predictions.}
 \label{tab:final-e2e}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lllrrrrrr@{}}
 \toprule
@@ -591,11 +612,18 @@ On Mixed Emotion, Llama~3 SELF-DISCOVER corrects 28 errors and introduces one. T
 
 \subsection{Conditional Correction Opportunity}
 With the router held fixed, a conditional oracle corrects every routed error without changing any initially correct prediction. Its full-set ceiling is $\mathrm{Acc}_{P1}+E_R/N$, where $E_R$ is the number of routed Phase~1 errors. The ceiling is 97.7333\% on Reddit and 93.0000\% on Mixed Emotion. Final Llama~3 SELF-DISCOVER realizes $34/98=34.69\%$ and $27/28=96.43\%$ of these respective net-correction opportunities. These are descriptive ceilings under a fixed router, not achievable performance guarantees or alternative tuned baselines.
-\clearpage\twocolumn\raggedbottom
+\Needspace{6\baselineskip}
 \section{Discussion}
+\subsection{An Efficient First Stage and a Selective Second Stage}
 The linked experiment separates three decisions: selecting a practical classifier, routing uncertain posts, and choosing a re-evaluation protocol. DistilBERT retains strong three-seed predictive performance and a measured classifier-stage inference advantage under the bounded Phase~1 comparison. The final run then supplies one consistent set of predictions and confidence scores for every Phase~2 condition. Classifier means and downstream single-run scores answer different questions without requiring different hyperparameter configurations.
 
+\subsection{Selection and Correction Are Different Outcomes}
 Confidence routing identifies an error-enriched subset, but enrichment alone is insufficient. Llama~2 CoT is nearly neutral on Reddit and harmful on Mixed Emotion, whereas final SELF-DISCOVER with Llama~3 improves both sets. On the stress test, searching for evidence for and against all three classes and distinguishing present distress from resolved or attributed events are plausible contributors to the observed pattern. The experiment evaluates the complete prompt package; it does not establish the separate causal effect of each instruction or demonstrate that the generated rationale faithfully reveals the model's computation.
+
+\subsection{What the Model--Protocol Comparison Shows}
+Llama~3 SELF-DISCOVER has the highest observed accuracy and macro F1 on both sets. However, the 0.2833-point Reddit gain uses a 1.82\% routing rate, whereas the 9.00-point Mixed Emotion gain uses 28.67\%. These are different correction opportunities, not directly comparable effect sizes. Likewise, one introduced stress-test error versus 38 Reddit errors warrants dataset-specific interpretation rather than a universal reliability claim.
+
+The methodological value of the adaptation is to specify what evidence a selected post should be checked against, rather than merely requesting a longer explanation. Emotional subject and time-frame checks address attribution and trajectory, while the three-label ledger and counterfactual check make competing interpretations explicit. The observed gains support this complete configuration within the evaluated settings; they do not identify which instruction caused the gain. Appendix~\ref{app:sd-variants} shows that the final design improves on the earlier independent-countercheck variant for Llama~3 on both sets, but not for every model--dataset combination.
 
 The final model-by-protocol comparison is more informative than contrasting different models with different prompts only. Nevertheless, different context windows, generation budgets, and exposure to the Phase~1 label remain part of the evaluated configurations. Llama~3's advantage is therefore a configuration-level finding, not an isolated causal estimate of model generation or parameter count. Likewise, Direct is a label-only re-evaluation baseline: its benefit does not prove that an explicit reasoning trace is necessary.
 
@@ -842,7 +870,7 @@ The following templates are extracted from the executed notebook code. Placehold
 
 
 \par\medskip
-\noindent\textsc{Appendix Table A2. Final re-evaluation protocols}\par\smallskip
+\noindent\textsc{Appendix Table B1. Final re-evaluation protocols}\par\smallskip
 {\small\renewcommand{\arraystretch}{1.18}
 \noindent\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}YYY@{}}\toprule
 Protocol & Information supplied & Processing structure & Scored output \\\midrule
@@ -874,16 +902,20 @@ The following system message and user instructions are sent in order. Assistant 
 \par\smallskip\Needspace{6\baselineskip}\noindent\textbf{Final decision}\par
 \lstinputlisting{prompts/cot_4.txt}
 
-\section{Final SELF-DISCOVER Templates}
-This is the final compact task-level protocol (implementation identifier v6c). The identifier distinguishes execution artifacts; it is not an additional comparator in the main tables. SELECT, ADAPT, and IMPLEMENT are task-level discovery calls. Their output is cached and inserted into the per-post execution template. Each model discovers its own plan; the input policy and evidence-oriented execution instructions are shared. The requested maximum of three steps is not enforced through a validator or retry mechanism.
+\section{Final SELF-DISCOVER Templates}\label{app:sd-templates}
+This appendix documents the final task-level SELF-DISCOVER protocol (artifact identifier v6c). Read it in two parts: \emph{discovery} generates and stores a model-specific procedure, whereas \emph{execution} applies that procedure to each routed original post. Figure~C1 separates these scopes. The source templates below are reproduced verbatim; the explanatory paragraphs describe how they connect, rather than modifying the prompts.
+
+The chronology and authorship are distinct. Researchers first write the task description, class policy, module bank, and execution guidance. When no retained plan exists, the selected LLM performs SELECT, ADAPT, and IMPLEMENT using the task materials only; the code saves its generated procedure before classifying any post. No individual post or reference label enters these discovery calls. Only then does the LLM receive a routed original post together with the saved procedure and fixed execution guidance. A retained plan bypasses all three discovery calls.
+
+The stored plan is a reusable text artifact, not a set of cached predictions. Each model uses its own plan for both datasets. Reusing it does not mean learning a procedure from the first evaluation post, reusing that post's answer, updating model weights, or bypassing per-post inference.
 
 \Needspace{24\baselineskip}
 \begin{center}
 \includegraphics[width=0.96\textwidth]{figures/appendix_sd_workflow.pdf}
 \end{center}
-\noindent\footnotesize\textbf{Appendix Figure C1.} Final task-level SELF-DISCOVER workflow. Each model generates its own cached plan, reused for Reddit and Mixed Emotion. The compact-plan instruction is not a guaranteed output constraint. The diagram summarizes the final protocol rather than the earlier per-post discovery variant.\normalsize\par\medskip
+\noindent\footnotesize\textbf{Appendix Figure C1.} Final task-level SELF-DISCOVER workflow, separating authorship, timing, and input scope. (a) Researchers supply task materials; before post classification, the selected LLM generates a plan through SELECT, ADAPT, and IMPLEMENT if no retained plan exists. No evaluation post or reference label enters discovery. (b) The same LLM applies the saved plan and fixed researcher-authored checks to each routed original post, generating a fresh response. The dashed arrow denotes plan reuse, not reuse of an answer. Parsing and fallback are code operations, not additional LLM calls.\normalsize\par\medskip
 
-\noindent\textsc{Appendix Table A3. Final SELF-DISCOVER stages}\par\smallskip
+\Needspace{15\baselineskip}\noindent\textsc{Appendix Table C1. Final SELF-DISCOVER stages}\par\smallskip
 {\small\renewcommand{\arraystretch}{1.18}
 \noindent\begin{tabularx}{\textwidth}{@{}p{0.15\textwidth}YYY@{}}\toprule
 Stage & Input & Requested operation & Retained output \\\midrule
@@ -893,22 +925,38 @@ IMPLEMENT & Adapted modules & Request a compact plan of at most three one-line s
 Execution & Original post, policy, cached plan & Compare evidence for all three labels and check an alternative interpretation & Response text, parsed label, and failure status \\\bottomrule
 \end{tabularx}}\par\medskip
 
+\Needspace{12\baselineskip}
 \subsection{Task Description and Module Bank}
-The policy placeholder expands to the shared classification policy. The source template's reference to a title and body also remains in the Mixed Emotion run, whose input is the synthetic post text.
+\textit{Purpose and scope.} These are researcher-authored inputs to model-level discovery, not an individual evaluation post. The task description defines the three-label annotation problem, and the module bank supplies 18 candidate operations concerning emotional subject, time frame, trajectory, topic, and competing evidence. The policy placeholder expands to the shared classification policy in Appendix~B. The title--body wording is retained verbatim in the Mixed Emotion run, whose supplied input is the synthetic post text.
 \lstinputlisting{prompts/sd_task.txt}
 \lstinputlisting{prompts/sd_modules.txt}
+\Needspace{12\baselineskip}
 \subsection{SELECT}
-The module placeholder expands to the complete bank above; its spelling is retained from the code.
+\textit{Input:} the task description and full module bank. \textit{Output:} the model's selected module descriptions, passed to ADAPT. This selection occurs during plan construction, not separately for each evaluated post. Placeholder spelling, including \texttt{resonining\_modules}, is retained from the code.
 \lstinputlisting{prompts/sd_select.txt}
+\Needspace{12\baselineskip}
 \subsection{ADAPT}
+\textit{Input:} the task description and SELECT output. \textit{Output:} task-specialized module descriptions, passed to IMPLEMENT. This step asks the model to translate the selected operations into the emotion-classification setting; it does not yet assign a post-level label.
 \lstinputlisting{prompts/sd_adapt.txt}
+\Needspace{12\baselineskip}
 \subsection{Compact IMPLEMENT}
+\textit{Input:} the task description and ADAPT output. \textit{Output:} a reusable reasoning plan, retained for later execution. Here IMPLEMENT means constructing the procedure, not executing it on every post. The prompt requests at most three one-line steps and access to the full post at each step. There is no conformance validator or retry enforcing those requests; the realized plans are reported below.
 \lstinputlisting{prompts/sd_implement.txt}
+\Needspace{12\baselineskip}
 \subsection{Per-Post Execution}
-The system message below precedes the execution user message. The structure placeholder is the model-generated cached plan, not a manually supplied answer, and the text placeholder is the routed original post.
+\textit{Input:} one routed original post, the shared policy, the model's saved plan, and the fixed execution instructions below. \textit{Output:} a newly generated response ending in a classification line. The system message precedes the user message; \texttt{structure} is replaced by the saved plan and \texttt{text} by this post. No Phase~1 label is supplied to the model.
+
+The evidence ledger is a three-way comparison: for each label the model is asked to identify the strongest supporting and opposing quotation. The subsequent counterfactual check evaluates a competing interpretation rather than changing the post. These are explicit instructions attached to every execution call, not properties guaranteed by caching or by the discovered plan alone.
 \lstinputlisting{prompts/sd_system.txt}
 \lstinputlisting{prompts/sd_execute.txt}
 
+\Needspace{15\baselineskip}
+\subsection{Illustrative Passage Through the Execution Stage}
+Consider the constructed sentence, ``Last year I felt isolated; now I enjoy meeting my friends again and feel relieved.'' This is an explanatory example, not a dataset record, model response, or additional evaluation result. The same cached plan would be inserted regardless of this sentence's eventual label. A policy-consistent reading would separate past isolation from current relief, use the quoted time markers as evidence, and examine whether unresolved current distress is actually stated. Under the stated policy, the resolved positive trajectory supports Happy. The example illustrates what the instructions request; it does not show that every generated response follows them.
+
+The evaluator then reads the terminal label from the actual response. A permitted label replaces the Phase~1 prediction for this routed post. If no label is parsed, the evaluator retains Phase~1 instead. Unrouted posts never enter this execution stage. The scored prediction is therefore distinct from the generated explanation, and a parsing failure is not automatically a wrong classification.
+
+\Needspace{12\baselineskip}
 \subsection{Realized Cached Plans}
 The following plans are reproduced from the recorded notebook outputs, not rewritten to make them conform to the instructions. The Mixed Emotion runs explicitly reused the cached plans. Llama~3 produced three evidence-oriented steps plus a separate final step. Llama~2 produced four prose steps and included provisional label assignment inside early steps. These differences show why the requested plan constraints should not be reported as enforced behavior; they do not independently establish the cause of the performance difference.
 \par\medskip\noindent\begin{minipage}{\textwidth}
@@ -924,21 +972,36 @@ The following plans are reproduced from the recorded notebook outputs, not rewri
 Direct and CoT request 1,024 new tokens per generation call. Final SD execution requests 1,024 for Llama~2 and 1,536 for Llama~3. The SD discovery calls request up to 512 tokens for Llama~2 and 768 for Llama~3. The source uses a shared per-model cache for the task-level structures, allowing reuse across the Reddit and Mixed Emotion runs. The templates specify instructions, not guaranteed instruction compliance. Quantized model loading, model-specific chat formatting, context limits, and call structure are part of the evaluated implementation. A shorter plan instruction does not by itself prove lower measured cost.
 
 Remaining final SD parsing failures are zero for Llama~2 on both sets, two for Llama~3 Reddit, and one for Llama~3 Mixed Emotion. These remain failures and use Phase~1 fallback. No additional model call is added to resolve them in the reported final SD results.
-\section{SELF-DISCOVER Design-Variant Comparison}
+\section{SELF-DISCOVER Design-Variant Comparison}\label{app:sd-variants}
 The earlier independent-countercheck variant generated an instance-specific plan using general reasoning modules; the final version uses a domain-oriented task-level plan and an explicit evidence ledger. Both withhold the Phase~1 label. Multiple components change jointly, so this is a design-variant comparison rather than a single-component causal ablation. The earlier variant is not used in the main six-configuration comparison.
 
-\par\medskip\noindent\textsc{Appendix Table D1. SELF-DISCOVER design-variant comparison}\par\smallskip
+\par\medskip\noindent\textsc{Appendix Table D1. Earlier and final SELF-DISCOVER designs}\par\smallskip
+{\small\renewcommand{\arraystretch}{1.18}
+\noindent\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}YY@{}}\toprule
+Component & Earlier independent-countercheck & Final task-level compact plan \\\midrule
+Discovery scope & A plan constructed for each post & A model-specific plan constructed for the task and reused \\
+Module bank & General reasoning operations & 18 emotion-oriented operations \\
+Execution guidance & Independent assessment and countercheck & Explicit subject/time checks, three-label quotation ledger, and counterfactual check \\
+Phase 1 label & Withheld during SD reasoning & Withheld during SD reasoning \\
+Evaluation role & Earlier design comparator in this appendix & SELF-DISCOVER condition in the main comparison \\\bottomrule
+\end{tabularx}}\par\medskip
+
+\par\medskip\noindent\textsc{Appendix Table D2. Full-set outcomes of the two SD designs}\par\smallskip
 {\small\renewcommand{\arraystretch}{1.18}\noindent\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrrrr@{}}\toprule
-Dataset & Model & Earlier accuracy & Final accuracy & Earlier net & Final net \\\midrule
+Dataset & Model & Earlier acc. & Final acc. & Earlier net & Final net \\\midrule
 Reddit & Llama 2 & 97.0500\% & 96.9417\% & 16 & 3 \\
 Reddit & Llama 3 & 97.1583\% & 97.2000\% & 29 & 34 \\
 Mixed Emotion & Llama 2 & 87.6667\% & 89.3333\% & 12 & 17 \\
 Mixed Emotion & Llama 3 & 90.3333\% & 92.6667\% & 20 & 27 \\\bottomrule
 \end{tabular*}}\par\medskip
+\noindent\textit{Table note.} Accuracy uses all 12,000 Reddit posts or all 300 Mixed Emotion examples, not only routed posts. Net denotes corrected minus introduced errors relative to the same final Phase~1 predictions. ``Earlier'' refers only to the independent-countercheck design, not another intermediate compact-plan version. Table~D2 reports observed outcomes, not a paired significance test between the two SD designs.
+
 The final design improves three of these four model--dataset combinations; it does not uniformly dominate the earlier design. Its Llama~3 configuration improves both datasets. The change in input-independent planning also changes the number and scope of discovery calls, so a cost comparison requires measured generation records rather than accuracy alone.
 
 \Needspace{28\baselineskip}
 \section{Paired Accuracy Summaries}\label{app:statistics}
+Each row asks whether one complete re-evaluation configuration differs from Phase~1 on the same examples. It does not ask whether SD is better than Direct or CoT. ``Change'' is the full-set accuracy difference in percentage points; the interval estimates uncertainty in that difference; exact $p$ compares the numbers corrected and newly harmed; Holm $p$ adjusts the 12 displayed comparisons.
+
 These calculations use the final reported corrected/introduced counts, with all unparseable SD responses left at the implemented Phase~1 fallback. For accuracy change, the paired correctness-difference counts are sufficient for the exact test and paired bootstrap. This does not constitute a new audit of all raw responses, nor a paired SD-versus-CoT significance test. The latter requires matched per-example predictions from both configurations. Intervals are percentile bootstrap intervals in percentage points. Holm adjustment covers all 12 rows below; it does not account for selection over previously explored prompts.
 
 \par\medskip\noindent\textsc{Appendix Table E1. Paired accuracy comparisons with Phase 1}\par\smallskip
@@ -958,13 +1021,14 @@ Mixed Emotion & Llama 3 & CoT & +1.0000 & [-2.333, 4.333] & 0.7011 & 1.0000 \\
 Mixed Emotion & Llama 3 & SELF-DISCOVER & +9.0000 & [5.667, 12.667] & $<0.0001$ & $<0.0001$ \\
 \bottomrule\end{tabular*}}\par\medskip
 
+\clearpage
 \section{Synthetic Mixed Emotion Dataset Generation Protocol}
 
 \par\medskip
-\noindent\textsc{Appendix Table A5. Synthetic Mixed Emotion Dataset generation protocol}\par
+\noindent\textsc{Appendix Table F1. Synthetic Mixed Emotion Dataset generation protocol}\par
 \label{tab:appendix-a5-mixed-emotion-protocol}
 \smallskip
-\footnotesize
+\small
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{1.08}
 \noindent\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}Y@{}}
@@ -986,15 +1050,15 @@ Limitations & Synthetic origin, generation-model style bias, and lack of expert 
 \par\medskip
 
 
-\noindent\footnotesize\textit{Generation prompt used for synthetic stress-test examples.}\normalsize\par
+\noindent\small\textit{Generation prompt used for synthetic stress-test examples.}\normalsize\par
 \smallskip
 \noindent
-\begin{minipage}[t]{0.49\textwidth}\scriptsize
+\begingroup\small
 Generate synthetic Reddit-style posts for a controlled mixed-emotion stress-test dataset. Use one of three target labels: Depression, Neutral, or Happy. For Depression and Happy examples, include mixed or shifting cues but make the final emotional trajectory clear to a trained reviewer. For Neutral examples, retain low affective intensity: include either technical/informational content or mild factual/procedural ambiguity without sustained distress, relief, accomplishment, or other dominant affect. When multiple emotions occur, the target label must follow the overall message and final takeaway rather than an isolated phrase.
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\textwidth}\scriptsize
+\par\endgroup\medskip
+\begingroup\small
 For each example, write one realistic post between 60 and 90 words. Do not include explicit diagnosis claims, medication names, therapy claims, suicide, self-harm, crisis language, usernames, URLs, subreddit names, hashtags, or personally identifying information. Avoid duplicated phrasing and avoid making the label obvious through a single keyword. Return structured records with: example identifier, target label, scenario type, primary context, dominant emotional trajectory, text, and brief label rationale.
-\end{minipage}
+\par\endgroup
 
 \par\medskip
 

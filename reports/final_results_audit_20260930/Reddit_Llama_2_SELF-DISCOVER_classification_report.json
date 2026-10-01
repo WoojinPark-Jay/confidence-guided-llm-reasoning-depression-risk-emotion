@@ -1,0 +1,33 @@
+{
+  "Depression": {
+    "precision": 0.9687421225107133,
+    "recall": 0.96075,
+    "f1-score": 0.9647295092255554,
+    "support": 4000.0
+  },
+  "Neutral": {
+    "precision": 0.979667741135631,
+    "recall": 0.98775,
+    "f1-score": 0.9836922693887713,
+    "support": 4000.0
+  },
+  "Happy": {
+    "precision": 0.95975,
+    "recall": 0.95975,
+    "f1-score": 0.95975,
+    "support": 4000.0
+  },
+  "accuracy": 0.9694166666666667,
+  "macro avg": {
+    "precision": 0.9693866212154482,
+    "recall": 0.9694166666666667,
+    "f1-score": 0.9693905928714422,
+    "support": 12000.0
+  },
+  "weighted avg": {
+    "precision": 0.969386621215448,
+    "recall": 0.9694166666666667,
+    "f1-score": 0.9693905928714422,
+    "support": 12000.0
+  }
+}

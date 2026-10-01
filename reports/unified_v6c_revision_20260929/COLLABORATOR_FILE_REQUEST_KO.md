@@ -1,4 +1,38 @@
-# 최종 SELF-DISCOVER 결과 파일 공유 요청
+# 최종 결과 파일 공유 현황
+
+## 2026-09-30 최종 상태: 결과 파일 확보·검증 완료
+
+**아래에서 남아 있던 본 실험 5조건과 추가 9,000건 파일까지 ZIP으로 모두 받았다. 전체 15조건의 행별 대조와 대응 통계를 완료했으므로 이번 결과 검증을 위한 추가 파일 전달은 필요 없다.** 9,000건의 777개 저장 호출 검사도 로컬에서 재현했다.
+
+[완료된 검증 결과와 통계](../final_results_audit_20260930/README.md)
+
+아래 목록은 확보한 파일의 위치와 요청 이력을 보존한 것이다. 미완료 요청으로 해석하지 않는다.
+
+## 같은 날 파일 수령 전 기록
+
+**아래 과거 요청의 v6c CSV 네 개, 전체 예측 CSV, 모델별 계획 JSON은 모두 확보했고 대조를 완료했다. 다시 전달할 필요 없다.** 최종 DistilBERT 가중치도 확보했고 파일 해시를 기록했다.
+
+남은 것은 실행 계정 Drive에 저장된 일부 비교 방법과 추가 9,000건 결과를 로컬 검증 자료에 합치는 일이다. 새 학습이나 추론을 요청하는 것이 아니다.
+
+기준 폴더: `내 드라이브/confidence_guided_llm_reasoning/outputs_final/unified_final/`
+
+| 필요한 조건 | 하위 폴더 |
+|---|---|
+| Reddit · Llama 2 CoT | `phase2/llama2_cot_matched_1024_v1/` |
+| Mixed Emotion · Llama 2 CoT | `mixed_emotion/phase2/llama2_cot_matched_1024_v1/` |
+| Mixed Emotion · Llama 2 Direct | `mixed_emotion/phase2/llama2_direct_final_sd_v1/` |
+| Mixed Emotion · Llama 3 Direct·CoT | `mixed_emotion/phase2/llama3_reasoning_comparison/` |
+| 추가 9,000건 · Phase 1 및 Llama 3 세 방법 | `additional_9000_20260930/` |
+
+필요한 자료는 `*_results.csv`, `*_end_to_end_predictions.csv`, 집계·설정 JSON이다. 9,000건은 handoff와 저장된 호출 캐시도 포함한다. 같은 글에서 SD와 Direct·CoT의 정오답이 어떻게 달랐는지 검정하고, 기존 집계를 확인하기 위한 자료다.
+
+[기존 Colab의 마지막 CPU 검사 셀](https://colab.research.google.com/drive/1WPr9Jh5H563GDVm3DYDTRQYX--GiN6Kv#scrollTo=audit-saved-results-20260930)만 실행하면 검사와 ZIP 다운로드를 진행한다. 모델이나 GPU 재실행은 필요 없다. 위 폴더가 실행 계정 Drive에 없으면 그 폴더만 별도로 확보한다. 토큰·비밀번호·모델 가중치는 전달하지 않는다.
+
+최신 수치와 검증 범위는 [검증 보고서](../final_results_audit_20260930/README.md)에 정리했다.
+
+---
+
+## 이전 요청 기록 (수령 완료, 아래 내용은 재요청 아님)
 
 공동 검토용 · 2026-09-29
 

@@ -1,0 +1,18 @@
+{
+  "pages": 29,
+  "metric_rows_checked": 15,
+  "bibliography_unchanged": true,
+  "prompt_files_unchanged": true,
+  "undefined_references": false,
+  "words_outside_page": [],
+  "replacement_glyphs": false,
+  "inherited_overfull_warning_types": [
+    "Overfull \\hbox (505.12177pt too wide) has occurred while \\output is active",
+    "Overfull \\hbox (9.2679pt too wide) in paragraph at lines 56--56"
+  ],
+  "visual_review": {
+    "status": "completed",
+    "scope": "All 29 pages reviewed in rendered contact sheets; pages 14, 16, 27 and the updated architecture inspected separately.",
+    "finding": "No visible clipping or overlapping content found; large forced appendix gap removed."
+  }
+}

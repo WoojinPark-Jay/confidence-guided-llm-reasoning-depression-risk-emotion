@@ -1,0 +1,7 @@
+Rephrase and specify each reasoning module so that it better helps solving the task:
+<Task>
+{Task}
+</Task>
+SELECTED module descriptions:
+{selected_modules}
+Adapt each reasoning module description to better solve the task:
