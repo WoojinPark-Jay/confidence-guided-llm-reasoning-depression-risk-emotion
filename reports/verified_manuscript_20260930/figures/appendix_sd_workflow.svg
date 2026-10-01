@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="849.888pt" height="546.48pt" viewBox="0 0 849.888 546.48" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="849.888pt" height="528.84pt" viewBox="0 0 849.888 528.84" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-09-29T22:41:31.263555</dc:date>
+    <dc:date>2026-10-02T00:29:33.140031</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -21,8 +21,8 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 546.48
-L 849.888 546.48
+   <path d="M 0 528.84
+L 849.888 528.84
 L 849.888 0
 L 0 0
 z
@@ -30,268 +30,259 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 15.5784 171.707442
-L 175.1616 171.707442
-L 175.1616 88.635349
-L 15.5784 88.635349
+    <path d="M 19.0476 163.639617
+L 178.6308 163.639617
+L 178.6308 85.833485
+L 19.0476 85.833485
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #f3f4f5; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #f3f4f5; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
-    <path d="M 202.9152 171.707442
-L 320.868 171.707442
-L 320.868 88.635349
-L 202.9152 88.635349
+    <path d="M 202.9152 163.639617
+L 320.868 163.639617
+L 320.868 85.833485
+L 202.9152 85.833485
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #e7edf1; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #f7f9fa; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
-    <path d="M 348.6216 171.707442
-L 466.5744 171.707442
-L 466.5744 88.635349
-L 348.6216 88.635349
+    <path d="M 348.6216 163.639617
+L 466.5744 163.639617
+L 466.5744 85.833485
+L 348.6216 85.833485
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #e7edf1; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #e8f0f5; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
-    <path d="M 494.328 171.707442
-L 633.096 171.707442
-L 633.096 88.635349
-L 494.328 88.635349
+    <path d="M 494.328 163.639617
+L 633.096 163.639617
+L 633.096 85.833485
+L 494.328 85.833485
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #d8e2ea; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #d7e5ef; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
-    <path d="M 667.788 171.707442
-L 827.3712 171.707442
-L 827.3712 88.635349
-L 667.788 88.635349
+    <path d="M 667.788 163.639617
+L 830.8404 163.639617
+L 830.8404 85.833485
+L 667.788 85.833485
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #d8e2ea; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #d8e2ea; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_7">
-    <path d="M 177.163843 130.171395
-Q 189.038325 130.171395 199.682968 130.171395
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 194.882968 127.771395
-L 199.682968 130.171395
-L 194.882968 132.571395
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 181.517706 124.736551
+Q 190.772734 124.736551 198.406612 124.736551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 193.206612 122.136551
+L 198.406612 124.736551
+L 193.206612 127.336551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_8">
-    <path d="M 322.870243 130.171395
-Q 334.744725 130.171395 345.389368 130.171395
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 340.589368 127.771395
-L 345.389368 130.171395
-L 340.589368 132.571395
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 323.752789 124.736551
+Q 334.743804 124.736551 344.11367 124.736551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 338.91367 122.136551
+L 344.11367 124.736551
+L 338.91367 127.336551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_9">
-    <path d="M 468.576643 130.171395
-Q 480.451125 130.171395 491.095768 130.171395
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 486.295768 127.771395
-L 491.095768 130.171395
-L 486.295768 132.571395
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 469.459189 124.736551
+Q 480.450204 124.736551 489.82007 124.736551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 484.62007 122.136551
+L 489.82007 124.736551
+L 484.62007 127.336551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_10">
-    <path d="M 635.09909 130.171395
-Q 650.443964 130.171395 664.559 130.171395
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 659.759 127.771395
-L 664.559 130.171395
-L 659.759 132.571395
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 635.983669 124.736551
+Q 650.443831 124.736551 663.282844 124.736551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 658.082844 122.136551
+L 663.282844 124.736551
+L 658.082844 127.336551
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_11">
-    <path d="M 418.0056 264.778803
-Q 418.0056 271.085311 418.0056 276.161981
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke-dasharray: 4.4,3.3; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 420.4056 271.361981
-L 418.0056 276.161981
-L 415.6056 271.361981
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #245c96; stroke-dasharray: 4.4,3.3; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 421.4748 255.201881
+Q 421.4748 262.888052 421.4748 269.120779
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke-dasharray: 5.2,3.9; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 424.0748 263.920779
+L 421.4748 269.120779
+L 418.8748 263.920779
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke-dasharray: 5.2,3.9; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.3; stroke-linecap: round"/>
    </g>
    <g id="patch_12">
-    <path d="M 15.5784 494.765581
-L 209.8536 494.765581
-L 209.8536 279.393488
-L 15.5784 279.393488
+    <path d="M 19.0476 482.215904
+L 209.8536 482.215904
+L 209.8536 284.331018
+L 19.0476 284.331018
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #f3f4f5; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #f3f4f5; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_13">
-    <path d="M 251.484 494.765581
-L 584.5272 494.765581
-L 584.5272 279.393488
-L 251.484 279.393488
+    <path d="M 248.0148 482.215904
+L 584.5272 482.215904
+L 584.5272 284.331018
+L 248.0148 284.331018
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #e7edf1; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #e7edf1; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_14">
-    <path d="M 619.2192 377.849302
-L 827.3712 377.849302
-L 827.3712 279.393488
-L 619.2192 279.393488
+    <path d="M 615.75 371.939497
+L 830.8404 371.939497
+L 830.8404 284.331018
+L 615.75 284.331018
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #d8e2ea; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #d8e2ea; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_15">
-    <path d="M 619.2192 494.765581
-L 827.3712 494.765581
-L 827.3712 408.616744
-L 619.2192 408.616744
+    <path d="M 615.75 482.215904
+L 830.8404 482.215904
+L 830.8404 401.346539
+L 615.75 401.346539
 z
-" clip-path="url(#p2fca22a5e2)" style="fill: #f3f4f5; stroke: #687e8f; stroke-width: 0.9; stroke-linejoin: miter"/>
+" clip-path="url(#peb64cf21f3)" style="fill: #f3f4f5; stroke: #647b8c; stroke-width: 1.05; stroke-linejoin: miter"/>
    </g>
    <g id="patch_16">
-    <path d="M 211.853302 387.079535
-Q 230.66966 387.079535 248.256179 387.079535
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 243.456179 384.679535
-L 248.256179 387.079535
-L 243.456179 389.479535
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 212.740168 383.273461
+Q 228.932853 383.273461 243.504388 383.273461
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 238.304388 380.673461
+L 243.504388 383.273461
+L 238.304388 385.873461
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_17">
-    <path d="M 586.53029 328.621395
-Q 601.875164 328.621395 615.9902 328.621395
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 611.1902 326.221395
-L 615.9902 328.621395
-L 611.1902 331.021395
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 587.411565 328.135257
+Q 600.138493 328.135257 611.244272 328.135257
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 606.044272 325.535257
+L 611.244272 328.135257
+L 606.044272 330.735257
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="patch_18">
-    <path d="M 723.2952 379.851139
-Q 723.2952 393.234941 723.2952 405.388905
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
-    <path d="M 725.6952 400.588905
-L 723.2952 405.388905
-L 720.8952 400.588905
-z
-" clip-path="url(#p2fca22a5e2)" style="fill: #56616a; stroke: #56616a; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 723.2952 374.662006
+Q 723.2952 386.641088 723.2952 396.99902
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
+    <path d="M 725.8952 391.79902
+L 723.2952 396.99902
+L 720.6952 391.79902
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke: #4f5e68; stroke-width: 1.45; stroke-linecap: round"/>
    </g>
    <g id="line2d_1">
-    <path d="M 747.5796 171.707442
-L 747.5796 262.77907
-L 418.0056 262.77907
-" clip-path="url(#p2fca22a5e2)" style="fill: none; stroke-dasharray: 4.4,3.3; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.1"/>
+    <path d="M 749.3142 163.639617
+L 749.3142 253.698683
+L 421.4748 253.698683
+" clip-path="url(#peb64cf21f3)" style="fill: none; stroke-dasharray: 5.2,3.9; stroke-dashoffset: 0; stroke: #245c96; stroke-width: 1.3; stroke-linecap: round"/>
    </g>
    <g id="text_1">
-    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: start; fill: #30363a" x="15.5784" y="25.869767" transform="rotate(-0 15.5784 25.869767)">(a)  Before post classification: construct the plan if no saved plan exists</text>
+    <text style="fill: #30363a; font: 700 14.64px 'Times New Roman'; text-anchor: start" x="19.0476" y="25.181461" transform="rotate(-0 19.0476 25.181461)">(a)  Before routed-post evaluation: construct the plan if none is saved</text>
    </g>
    <g id="text_2">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: start; fill: #30363a" x="15.5784" y="51.09907" transform="rotate(-0 15.5784 51.09907)">No evaluation post or reference label is supplied during SELECT, ADAPT, or IMPLEMENT.</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'; text-anchor: start" x="19.0476" y="50.299976" transform="rotate(-0 19.0476 50.299976)">No evaluation post or reference label is supplied during SELECT, ADAPT, or IMPLEMENT.</text>
    </g>
    <g id="text_3">
-    <text style="font-weight: 700; font-size: 10.98px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="95.37" y="76.328372" transform="rotate(-0 95.37 76.328372)">RESEARCHER-AUTHORED</text>
+    <text style="fill: #30363a; font: 700 10.98px 'Times New Roman'; text-anchor: middle" x="98.8392" y="74.805844" transform="rotate(-0 98.8392 74.805844)">RESEARCHER-AUTHORED</text>
    </g>
    <g id="text_4">
-    <text style="font-weight: 700; font-size: 10.98px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="418.0056" y="76.328372" transform="rotate(-0 418.0056 76.328372)">GENERATED BY THE SELECTED LLM</text>
+    <text style="fill: #30363a; font: 700 10.98px 'Times New Roman'; text-anchor: middle" x="419.39328" y="74.805844" transform="rotate(-0 419.39328 74.805844)">GENERATED BY THE SELECTED LLM</text>
    </g>
    <g id="text_5">
-    <text style="font-weight: 700; font-size: 10.98px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="747.5796" y="76.328372" transform="rotate(-0 747.5796 76.328372)">SAVED BY CODE</text>
+    <text style="fill: #30363a; font: 700 10.98px 'Times New Roman'; text-anchor: middle" x="748.96728" y="74.805844" transform="rotate(-0 748.96728 74.805844)">SAVED BY CODE</text>
    </g>
    <g id="text_6">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="95.37" y="111.269267" transform="rotate(-0 95.37 111.269267)">Task materials</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="98.8392" y="105.586108" transform="rotate(-0 98.8392 105.586108)">Task materials</text>
    </g>
    <g id="text_7">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(48.817469 136.402702)">Task + class policy</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(41.832969 151.931491)">18 reasoning modules</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(52.287622 128.10036)">Task + class policy</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(45.302169 141.915106)">18 reasoning modules</text>
    </g>
    <g id="text_8">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="261.8916" y="111.261666" transform="rotate(-0 261.8916 111.261666)">SELECT</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="261.8916" y="105.586108" transform="rotate(-0 261.8916 105.586108)">SELECT</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(222.421741 137.626514)">Choose relevant</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(241.220225 153.163881)">modules</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(222.421741 128.123235)">Choose relevant</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(241.220225 141.915106)">modules</text>
    </g>
    <g id="text_10">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="407.598" y="111.261666" transform="rotate(-0 407.598 111.261666)">ADAPT</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="407.598" y="105.586108" transform="rotate(-0 407.598 105.586108)">ADAPT</text>
    </g>
    <g id="text_11">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(368.810578 136.414139)">Specialize them</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(382.524141 153.163881)">to the task</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(368.810578 128.123235)">Specialize them</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(382.524141 141.915106)">to the task</text>
    </g>
    <g id="text_12">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="563.712" y="111.261666" transform="rotate(-0 563.712 111.261666)">IMPLEMENT</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="563.712" y="105.586108" transform="rotate(-0 563.712 105.586108)">IMPLEMENT</text>
    </g>
    <g id="text_13">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(528.391094 137.626514)">Write a shared</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(514.7595 151.93435)">judgment procedure</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(528.391094 128.108023)">Write a shared</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(514.7595 141.907443)">judgment procedure</text>
    </g>
    <g id="text_14">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="747.5796" y="111.261666" transform="rotate(-0 747.5796 111.261666)">Cached plan</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="749.3142" y="105.791983" transform="rotate(-0 749.3142 105.791983)">Saved model-specific plan</text>
    </g>
    <g id="text_15">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(699.307631 136.414139)">Reusable procedure</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(697.095428 151.746585)">Not a post or answer</text>
+    <text style="fill: #30363a; font: 11.834px 'Times New Roman'" transform="translate(702.49039 128.242187)">Reusable procedure</text>
+    <text style="fill: #30363a; font: 11.834px 'Times New Roman'" transform="translate(693.282984 141.620303)">Not a post-level answer</text>
    </g>
    <g id="text_16">
-    <text style="font-size: 11.59px; font-family: 'Times New Roman'; text-anchor: start; fill: #245c96" x="494.328" y="210.474419" transform="rotate(-0 494.328 210.474419)">Reuse the same plan for every post</text>
+    <text style="fill: #245c96; font: 11.59px 'Times New Roman'; text-anchor: start" x="495.71568" y="207.75018" transform="rotate(-0 495.71568 207.75018)">Reuse the model-specific plan</text>
    </g>
    <g id="text_17">
-    <text style="font-weight: 700; font-size: 14.64px; font-family: 'Times New Roman'; text-anchor: start; fill: #30363a" x="15.5784" y="235.703721" transform="rotate(-0 15.5784 235.703721)">(b)  For each routed post: the LLM generates a fresh analysis and label</text>
+    <text style="fill: #30363a; font: 700 14.64px 'Times New Roman'; text-anchor: start" x="19.0476" y="231.030754" transform="rotate(-0 19.0476 231.030754)">(b)  Fresh execution for each routed post: generate a new analysis and label</text>
    </g>
    <g id="text_18">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; text-anchor: start; fill: #30363a" x="15.5784" y="251.702791" transform="rotate(-0 15.5784 251.702791)">Post text first enters here. An existing plan bypasses all three discovery calls in (a).</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'; text-anchor: start" x="19.0476" y="248.797509" transform="rotate(-0 19.0476 248.797509)">Post text first enters here. A saved plan bypasses all three discovery calls in (a).</text>
    </g>
    <g id="text_19">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="112.716" y="302.027407" transform="rotate(-0 112.716 302.027407)">Execution inputs</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="114.4506" y="304.289516" transform="rotate(-0 114.4506 304.289516)">Execution inputs</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(90.177453 354.500306)">This post</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(81.715609 370.017658)">Original text</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(112.716 382.627025)"/>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(48.6965 401.075236)">Fixed researcher guidance</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(50.838172 416.604025)">Policy + evidence checks</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(112.716 429.213392)"/>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(57.656828 448.893994)">Phase 1 label withheld</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(59.04735 359.04209)">This post: original text</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(114.4506 372.856837)"/>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(50.4311 386.648708)">Fixed researcher guidance</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(52.572772 400.463454)">Policy + evidence checks</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(114.4506 414.2782)"/>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(59.391428 428.070072)">Phase 1 label withheld</text>
    </g>
    <g id="text_21">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="418.0056" y="302.027407" transform="rotate(-0 418.0056 302.027407)">LLM: per-post execution</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="416.271" y="304.289516" transform="rotate(-0 416.271 304.289516)">LLM: per-post execution</text>
    </g>
    <g id="text_22">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(321.506459 354.488869)">Saved plan + this post + fixed guidance</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(418.0056 367.098236)"/>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(336.016834 385.557884)">Whose emotion? Current or past?</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(332.969694 401.075236)">Quotes for / against all three labels</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(336.529616 416.604025)">Check a competing interpretation</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(418.0056 429.213392)"/>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(327.036491 447.661603)">Choose the final label only at the end</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(319.771859 352.134717)">Saved plan + this post + fixed guidance</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(416.271 365.949463)"/>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(334.282234 379.741335)">Whose emotion? Current or past?</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(308.37725 393.533206)">Source evidence for / against all three labels</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(334.795016 407.347952)">Check a competing interpretation</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(416.271 421.162698)"/>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(325.301891 434.95457)">Choose the final label only at the end</text>
    </g>
    <g id="text_23">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="723.2952" y="302.027407" transform="rotate(-0 723.2952 302.027407)">Generated output</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="723.2952" y="304.289516" transform="rotate(-0 723.2952 304.289516)">Generated output</text>
    </g>
    <g id="text_24">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(669.553247 336.085092)">Evidence + final label</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(677.564263 351.605303)">One execution call</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(669.553247 331.521942)">Evidence + final label</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(677.564263 345.313813)">One execution call</text>
    </g>
    <g id="text_25">
-    <text style="font-weight: 700; font-size: 13.42px; font-family: 'Times New Roman'; text-anchor: middle; fill: #30363a" x="723.2952" y="431.250662" transform="rotate(-0 723.2952 431.250662)">Evaluation code</text>
+    <text style="fill: #30363a; font: 700 13.176px 'Times New Roman'; text-anchor: middle" x="723.2952" y="421.099162" transform="rotate(-0 723.2952 421.099162)">Evaluation code</text>
    </g>
    <g id="text_26">
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(655.534684 458.222704)">Parse label; if unsuccessful,</text>
-    <text style="font-size: 12.2px; font-family: 'Times New Roman'; fill: #30363a" transform="translate(662.821325 473.462696)">retain Phase 1 prediction</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(655.534684 445.167906)">Parse label; if unsuccessful,</text>
+    <text style="fill: #30363a; font: 12.2px 'Times New Roman'" transform="translate(662.821325 458.959777)">retain Phase 1 prediction</text>
    </g>
    <g id="text_27">
-    <text style="font-size: 11.59px; font-family: 'Times New Roman'; text-anchor: start; fill: #30363a" x="15.5784" y="525.533023" transform="rotate(-0 15.5784 525.533023)">Llama 2 and Llama 3 each generate their own plan; each plan is reused for Reddit and Mixed Emotion.</text>
+    <text style="fill: #30363a; font: 11.59px 'Times New Roman'; text-anchor: start" x="19.0476" y="509.785006" transform="rotate(-0 19.0476 509.785006)">Llama 2 and Llama 3 each retain their own plan; each plan is reused across Reddit and Mixed Emotion.</text>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p2fca22a5e2">
-   <rect x="8.64" y="8.64" width="832.608" height="529.2"/>
+  <clipPath id="peb64cf21f3">
+   <rect x="8.64" y="8.64" width="832.608" height="511.56"/>
   </clipPath>
  </defs>
 </svg>

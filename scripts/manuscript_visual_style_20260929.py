@@ -221,101 +221,163 @@ def build_figures(out, p1, results, phase1_metrics, selected):
 
 
 def build_sd_overview(out):
-    fig, ax = plt.subplots(figsize=(11.8, 5.1))
-    ax.set(xlim=(0, 12), ylim=(0, 5.4))
+    fig, ax = plt.subplots(figsize=(11.8, 4.5))
+    ax.set(xlim=(0, 12), ylim=(0, 4.8))
     ax.axis('off')
 
-    def panel(x, y, w, h, title, body, fill=PALE):
-        ax.add_patch(Rectangle((x, y), w, h, fc=fill, ec='#687E8F', lw=.9))
-        ax.text(x+w/2, y+h-.19, title, ha='center', va='top',
-                fontsize=10.6, weight='bold')
+    border = '#647B8C'
+    arrow_color = '#4F5E68'
+
+    def panel(x, y, w, h, title, body, fill=PALE, body_size=9.65):
+        ax.add_patch(Rectangle((x, y), w, h, fc=fill, ec=border, lw=1.05))
+        ax.text(x+w/2, y+h-.16, title, ha='center', va='top',
+                fontsize=10.8, weight='bold')
         if body:
-            ax.text(x+w/2, y+.43*h, body, ha='center', va='center',
-                    fontsize=9.6, linespacing=1.45)
+            ax.text(x+w/2, y+.40*h, body, ha='center', va='center',
+                    fontsize=body_size, linespacing=1.24)
 
-    def arrow(start, end, dashed=False):
-        ax.add_patch(FancyArrowPatch(start, end, arrowstyle='-|>',
-                    mutation_scale=12, lw=1.05, shrinkA=2, shrinkB=2,
-                    linestyle=(0, (4, 3)) if dashed else '-',
-                    color=BLUE if dashed else '#56616A'))
+    def arrow(start, end, dashed=False, scale=12):
+        color = BLUE if dashed else arrow_color
+        patch = FancyArrowPatch(
+            start, end, arrowstyle='->', mutation_scale=scale,
+            lw=1.45 if not dashed else 1.3, shrinkA=1.5, shrinkB=1.5,
+            linestyle=(0, (4, 3)) if dashed else '-',
+            edgecolor=color, facecolor='none', fill=False,
+            capstyle='round', joinstyle='round')
+        ax.add_patch(patch)
 
-    ax.text(.1, 5.17, '(a)  Plan construction | Before post classification',
-            weight='bold', fontsize=11.5)
-    panel(.1, 3.55, 2.7, 1.35, 'Researcher-authored inputs',
-          'Task + class policy\n18 emotion-oriented modules', '#F3F4F5')
-    panel(3.3, 3.55, 5.45, 1.35, 'LLM: construct the procedure', '')
-    for x, title, detail in [(4.22, 'SELECT', 'Choose modules'),
-                              (6.02, 'ADAPT', 'Specialize to task'),
-                              (7.82, 'IMPLEMENT', 'Write the plan')]:
-        ax.text(x, 4.14, title, ha='center', va='center', fontsize=10, weight='bold')
-        ax.text(x, 3.79, detail, ha='center', va='center', fontsize=8.9)
-    arrow((4.85, 4.14), (5.35, 4.14))
-    arrow((6.66, 4.14), (7.08, 4.14))
-    panel(9.25, 3.55, 2.55, 1.35, 'Saved model-specific plan',
-          'Code stores the procedure\nNot a post or an answer', '#D8E2EA')
-    arrow((2.8, 4.225), (3.3, 4.225))
-    arrow((8.75, 4.225), (9.25, 4.225))
+    ax.text(.15, 4.57, '(a)  Plan construction | Before routed-post evaluation',
+            weight='bold', fontsize=11.8)
+    panel(.15, 3.12, 2.75, 1.32, 'Researcher-authored inputs',
+          'Task + class policy\n18 emotion-oriented modules\nNo evaluation post or reference label',
+          '#F3F4F5', body_size=9.25)
+    panel(3.25, 3.12, 5.5, 1.32, 'LLM: construct the procedure', '')
 
-    ax.text(.1, 3.14, '(b)  Fresh execution | Every routed post',
-            weight='bold', fontsize=11.5)
-    ax.plot([10.525, 10.525, 6.025], [3.55, 2.86, 2.86],
-            color=BLUE, lw=1.05, ls=(0, (4, 3)))
-    arrow((6.025, 2.86), (6.025, 2.5), True)
-    ax.text(8.2, 3.02, 'Reuse the procedure', ha='center', fontsize=9, color=BLUE)
+    stage_y, stage_h, stage_w = 3.32, .76, 1.45
+    stages = [
+        (3.45, 'SELECT', 'Choose modules', '#F7F9FA'),
+        (5.25, 'ADAPT', 'Specialize to task', '#E8F0F5'),
+        (7.05, 'IMPLEMENT', 'Write the plan', '#D7E5EF'),
+    ]
+    for x, title, detail, fill in stages:
+        ax.add_patch(Rectangle((x, stage_y), stage_w, stage_h,
+                               fc=fill, ec='#7890A2', lw=.95))
+        ax.text(x+stage_w/2, stage_y+.49, title, ha='center', va='center',
+                fontsize=9.7, weight='bold', color=INK)
+        ax.text(x+stage_w/2, stage_y+.21, detail, ha='center', va='center',
+                fontsize=8.65, color=INK)
+    arrow((4.92, 3.70), (5.23, 3.70), scale=12)
+    arrow((6.72, 3.70), (7.03, 3.70), scale=12)
 
-    panel(.1, .8, 2.7, 1.7, 'Post-specific input',
+    panel(9.1, 3.12, 2.75, 1.32, 'Saved model-specific plan',
+          'Code stores the procedure\nNot a post-level answer', '#D8E2EA')
+    arrow((2.92, 3.78), (3.23, 3.78), scale=13)
+    arrow((8.77, 3.78), (9.08, 3.78), scale=13)
+
+    ax.text(.15, 2.18, '(b)  Fresh execution | For every routed post',
+            weight='bold', fontsize=11.8)
+    ax.plot([10.475, 10.475, 6.0], [3.12, 1.99, 1.99],
+            color=BLUE, lw=1.3, ls=(0, (4, 3)),
+            solid_capstyle='round', dash_capstyle='round')
+    arrow((6.0, 1.99), (6.0, 1.79), True, scale=13)
+    ax.text(8.18, 2.11, 'Reuse the procedure', ha='center',
+            fontsize=9.25, color=BLUE)
+
+    panel(.15, .35, 2.75, 1.38, 'Post-specific input',
           'This post: original text\nPolicy + fixed checks\nPhase 1 label withheld', '#F3F4F5')
-    panel(3.3, .8, 5.45, 1.7, 'LLM: evidence-based re-evaluation',
-          'Emotional subject and time frame\nQuotes for / against all three labels\nCheck the competing interpretation')
-    panel(9.25, .8, 2.55, 1.7, 'New response',
+    panel(3.25, .35, 5.5, 1.38, 'LLM: evidence-based re-evaluation',
+          'Emotional subject and time frame\nEvidence for / against all three labels\nCheck the competing interpretation')
+    panel(9.1, .35, 2.75, 1.38, 'New response',
           'Evidence + final label\nDepression / Neutral / Happy', '#D8E2EA')
-    arrow((2.8, 1.65), (3.3, 1.65))
-    arrow((8.75, 1.65), (9.25, 1.65))
-    ax.text(.1, .36, 'Discovery uses no evaluation post or reference label. A saved plan bypasses all three discovery calls.',
-            fontsize=9.1)
-    ax.text(.1, .05, 'Each LLM retains its own plan across both datasets; every routed post receives a new execution response.',
-            fontsize=9.1)
+    arrow((2.92, 1.04), (3.23, 1.04), scale=13)
+    arrow((8.77, 1.04), (9.08, 1.04), scale=13)
     fig.subplots_adjust(left=.01, right=.99, top=.99, bottom=.01)
     save(fig, out, 'sd_task_level_overview')
 
 
 def build_workflow(out):
-    fig,ax=plt.subplots(figsize=(11.8,7.5))
-    ax.set(xlim=(0,12),ylim=(0,8.6));ax.axis('off')
-    def box(x,y,w,h,title,body,fill=PALE):
-        ax.add_patch(Rectangle((x,y),w,h,fc=fill,ec='#687E8F',lw=.9))
-        ax.text(x+w/2,y+h-.22,title,ha='center',va='top',weight='bold',fontsize=11)
-        ax.text(x+w/2,y+h/2-.18,body,ha='center',va='center',fontsize=10,linespacing=1.4)
-    def arrow(start,end,dashed=False):
-        ax.add_patch(FancyArrowPatch(start,end,arrowstyle='-|>',mutation_scale=12,lw=1.1,
-                                    linestyle=(0,(4,3)) if dashed else '-',color=BLUE if dashed else '#56616A'))
-    ax.text(.1,8.32,'(a)  Before post classification: construct the plan if no saved plan exists',weight='bold',fontsize=12)
-    ax.text(.1,7.91,'No evaluation post or reference label is supplied during SELECT, ADAPT, or IMPLEMENT.',fontsize=10)
-    ax.text(1.25,7.50,'RESEARCHER-AUTHORED',ha='center',weight='bold',fontsize=9)
-    ax.text(5.9,7.50,'GENERATED BY THE SELECTED LLM',ha='center',weight='bold',fontsize=9)
-    ax.text(10.65,7.50,'SAVED BY CODE',ha='center',weight='bold',fontsize=9)
-    box(.1,5.95,2.3,1.35,'Task materials','Task + class policy\n18 reasoning modules','#F3F4F5')
-    box(2.8,5.95,1.7,1.35,'SELECT','Choose relevant\nmodules')
-    box(4.9,5.95,1.7,1.35,'ADAPT','Specialize them\nto the task')
-    box(7,5.95,2,1.35,'IMPLEMENT','Write a shared\njudgment procedure','#D8E2EA')
-    box(9.5,5.95,2.3,1.35,'Cached plan','Reusable procedure\nNot a post or answer','#D8E2EA')
-    for a,b in [(2.4,2.8),(4.5,4.9),(6.6,7),(9,9.5)]:
-        arrow((a,6.625),(b,6.625))
-    ax.plot([10.65,10.65,5.9],[5.95,4.47,4.47],color=BLUE,lw=1.1,ls=(0,(4,3)))
-    arrow((5.9,4.47),(5.9,4.2),True)
-    ax.text(7.0,5.32,'Reuse the same plan for every post',fontsize=9.5,color=BLUE)
-    ax.text(.1,4.91,'(b)  For each routed post: the LLM generates a fresh analysis and label',weight='bold',fontsize=12)
-    ax.text(.1,4.65,'Post text first enters here. An existing plan bypasses all three discovery calls in (a).',fontsize=10)
-    box(.1,.7,2.8,3.5,'Execution inputs',
-        'This post\nOriginal text\n\nFixed researcher guidance\nPolicy + evidence checks\n\nPhase 1 label withheld','#F3F4F5')
-    box(3.5,.7,4.8,3.5,'LLM: per-post execution',
-        'Saved plan + this post + fixed guidance\n\nWhose emotion? Current or past?\nQuotes for / against all three labels\nCheck a competing interpretation\n\nChoose the final label only at the end')
-    box(8.8,2.6,3,1.6,'Generated output','Evidence + final label\nOne execution call','#D8E2EA')
-    box(8.8,.7,3,1.4,'Evaluation code','Parse label; if unsuccessful,\nretain Phase 1 prediction','#F3F4F5')
-    arrow((2.9,2.45),(3.5,2.45));arrow((8.3,3.4),(8.8,3.4));arrow((10.3,2.6),(10.3,2.1))
-    ax.text(.1,.2,'Llama 2 and Llama 3 each generate their own plan; each plan is reused for Reddit and Mixed Emotion.',fontsize=9.5)
-    fig.subplots_adjust(left=.01,right=.99,top=.99,bottom=.01)
-    save(fig,out,'appendix_sd_workflow')
+    fig, ax = plt.subplots(figsize=(11.8, 7.25))
+    ax.set(xlim=(0, 12), ylim=(0, 8.35))
+    ax.axis('off')
+    border = '#647B8C'
+    arrow_color = '#4F5E68'
+
+    def box(x, y, w, h, title, body, fill=PALE, body_size=10):
+        ax.add_patch(Rectangle((x, y), w, h, fc=fill, ec=border, lw=1.05))
+        ax.text(x+w/2, y+h-.18, title, ha='center', va='top',
+                weight='bold', fontsize=10.8)
+        ax.text(x+w/2, y+h/2-.12, body, ha='center', va='center',
+                fontsize=body_size, linespacing=1.32)
+
+    def arrow(start, end, dashed=False, scale=13):
+        color = BLUE if dashed else arrow_color
+        ax.add_patch(FancyArrowPatch(
+            start, end, arrowstyle='->', mutation_scale=scale,
+            lw=1.45 if not dashed else 1.3,
+            linestyle=(0, (4, 3)) if dashed else '-',
+            edgecolor=color, facecolor='none', fill=False,
+            shrinkA=1.5, shrinkB=1.5,
+            capstyle='round', joinstyle='round'))
+
+    ax.text(.15, 8.08,
+            '(a)  Before routed-post evaluation: construct the plan if none is saved',
+            weight='bold', fontsize=12)
+    ax.text(.15, 7.67,
+            'No evaluation post or reference label is supplied during SELECT, ADAPT, or IMPLEMENT.',
+            fontsize=10)
+    ax.text(1.30, 7.27, 'RESEARCHER-AUTHORED', ha='center',
+            weight='bold', fontsize=9)
+    ax.text(5.92, 7.27, 'GENERATED BY THE SELECTED LLM', ha='center',
+            weight='bold', fontsize=9)
+    ax.text(10.67, 7.27, 'SAVED BY CODE', ha='center',
+            weight='bold', fontsize=9)
+
+    top_y, top_h = 5.82, 1.27
+    box(.15, top_y, 2.30, top_h, 'Task materials',
+        'Task + class policy\n18 reasoning modules', '#F3F4F5')
+    box(2.80, top_y, 1.70, top_h, 'SELECT',
+        'Choose relevant\nmodules', '#F7F9FA')
+    box(4.90, top_y, 1.70, top_h, 'ADAPT',
+        'Specialize them\nto the task', '#E8F0F5')
+    box(7.00, top_y, 2.00, top_h, 'IMPLEMENT',
+        'Write a shared\njudgment procedure', '#D7E5EF')
+    box(9.50, top_y, 2.35, top_h, 'Saved model-specific plan',
+        'Reusable procedure\nNot a post-level answer', '#D8E2EA', body_size=9.7)
+    for a, b in [(2.47, 2.78), (4.52, 4.88), (6.62, 6.98), (9.02, 9.48)]:
+        arrow((a, 6.455), (b, 6.455))
+
+    ax.plot([10.675, 10.675, 5.95], [top_y, 4.35, 4.35],
+            color=BLUE, lw=1.3, ls=(0, (4, 3)),
+            solid_capstyle='round', dash_capstyle='round')
+    arrow((5.95, 4.35), (5.95, 4.05), True)
+    ax.text(7.02, 5.10, 'Reuse the model-specific plan',
+            fontsize=9.5, color=BLUE)
+
+    ax.text(.15, 4.72,
+            '(b)  Fresh execution for each routed post: generate a new analysis and label',
+            weight='bold', fontsize=12)
+    ax.text(.15, 4.43,
+            'Post text first enters here. A saved plan bypasses all three discovery calls in (a).',
+            fontsize=10)
+
+    bottom_y, bottom_h = .62, 3.23
+    box(.15, bottom_y, 2.75, bottom_h, 'Execution inputs',
+        'This post: original text\n\nFixed researcher guidance\nPolicy + evidence checks\n\nPhase 1 label withheld',
+        '#F3F4F5')
+    box(3.45, bottom_y, 4.85, bottom_h, 'LLM: per-post execution',
+        'Saved plan + this post + fixed guidance\n\nWhose emotion? Current or past?\nSource evidence for / against all three labels\nCheck a competing interpretation\n\nChoose the final label only at the end')
+    box(8.75, 2.42, 3.10, 1.43, 'Generated output',
+        'Evidence + final label\nOne execution call', '#D8E2EA')
+    box(8.75, bottom_y, 3.10, 1.32, 'Evaluation code',
+        'Parse label; if unsuccessful,\nretain Phase 1 prediction', '#F3F4F5')
+    arrow((2.92, 2.235), (3.43, 2.235))
+    arrow((8.32, 3.135), (8.73, 3.135))
+    arrow((10.30, 2.40), (10.30, 1.96))
+    ax.text(.15, .17,
+            'Llama 2 and Llama 3 each retain their own plan; each plan is reused across Reddit and Mixed Emotion.',
+            fontsize=9.5)
+    fig.subplots_adjust(left=.01, right=.99, top=.99, bottom=.01)
+    save(fig, out, 'appendix_sd_workflow')
 
 
 def restyle_source(source):
@@ -372,7 +434,7 @@ The sections below reproduce the literal prompt text. Placeholder names remain a
 \begin{center}
 \includegraphics[width=0.96\textwidth]{figures/appendix_sd_workflow.pdf}
 \end{center}
-\noindent\footnotesize\textbf{Appendix Figure C1.} Final task-level SELF-DISCOVER workflow. Each model generates its own cached plan, reused for Reddit and Mixed Emotion. The compact-plan instruction is not a guaranteed output constraint. The diagram summarizes the final protocol rather than the earlier per-post discovery variant.\normalsize\par\medskip
+\noindent\footnotesize\textbf{Appendix Figure C1.} Final task-level SELF-DISCOVER workflow. Each model generates its own cached plan before routed-post evaluation and reuses it across Reddit and Mixed Emotion. The compact-plan instruction is not a guaranteed output constraint. The diagram summarizes the final protocol rather than the earlier per-post discovery variant.\normalsize\par\medskip
 
 \noindent\textsc{Appendix Table A3. Final SELF-DISCOVER stages}\par\smallskip
 {\small\renewcommand{\arraystretch}{1.18}
